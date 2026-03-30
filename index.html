@@ -754,8 +754,8 @@ function toggleFaq(item) {
   item.classList.toggle('open');
 }
 
-// ── Smooth scroll for nav links ─────────────────────────
-document.querySelectorAll('.nav-links a').forEach(a => {
+// ── Smooth scroll for in-page nav links only ─────────────
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
     const target = document.querySelector(a.getAttribute('href'));
