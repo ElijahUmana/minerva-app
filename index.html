@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 4.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.15rem; color: rgba(245,240,235,0.75);
+  max-width: 650px; margin: 0 auto 2rem; line-height: 1.6;
+}
+.hero-stats {
+  display: flex; gap: 2.5rem; justify-content: center;
+  flex-wrap: wrap; margin-top: 1rem;
+}
+.hero-stat { text-align: center; }
+.hero-stat .num {
+  font-size: 2rem; font-weight: 800; color: var(--clay-light);
+  display: block; line-height: 1.2;
+}
+.hero-stat .label { font-size: 0.8rem; color: rgba(245,240,235,0.55); }
+
+/* ── Sections ───────────────────────────────────────── */
+section { padding: 4.5rem 1.5rem; }
+.container { max-width: 900px; margin: 0 auto; }
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 1rem;
+  color: var(--obsidian); line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 650px; margin-bottom: 2.5rem; line-height: 1.6;
+}
+.alt-bg { background: var(--light-gray); }
+
+/* ── Cards ──────────────────────────────────────────── */
+.card-grid {
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+.card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; margin-bottom: 1rem;
+}
+.card-icon.red { background: rgba(200,85,61,0.1); }
+.card-icon.blue { background: rgba(37,99,235,0.1); }
+.card-icon.green { background: rgba(5,150,105,0.1); }
+.card-icon.purple { background: rgba(124,58,237,0.1); }
+.card h3 {
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;
+  color: var(--obsidian);
+}
+.card p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+
+/* ── Steps ──────────────────────────────────────────── */
+.steps { counter-reset: step; }
+.step-item {
+  display: flex; gap: 1.5rem; margin-bottom: 2rem;
+  position: relative;
+}
+.step-item::before {
+  content: ''; position: absolute; left: 22px; top: 48px;
+  bottom: -2rem; width: 2px; background: var(--mid-gray);
+}
+.step-item:last-child::before { display: none; }
+.step-num {
+  counter-increment: step;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--clay); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 1.1rem; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.step-content { flex: 1; padding-top: 0.4rem; }
+.step-content h3 {
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;
+  color: var(--obsidian);
+}
+.step-content p { font-size: 0.92rem; color: var(--text2); }
+
+/* ── Tips ───────────────────────────────────────────── */
+.tip-box {
+  background: linear-gradient(135deg, rgba(200,85,61,0.06), rgba(200,85,61,0.02));
+  border: 1px solid rgba(200,85,61,0.15);
+  border-left: 4px solid var(--clay);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.tip-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--clay);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.tip-box p { font-size: 0.9rem; color: var(--text); }
+
+.insight-box {
+  background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(37,99,235,0.02));
+  border: 1px solid rgba(37,99,235,0.15);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.insight-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.insight-box p { font-size: 0.9rem; color: var(--text); }
+
+/* ── Checklist ──────────────────────────────────────── */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.85rem 1rem; border-radius: 8px;
+  margin-bottom: 0.35rem; cursor: pointer;
+  transition: background 0.15s; font-size: 0.95rem;
+}
+.checklist li:hover { background: rgba(0,0,0,0.02); }
+.checklist li.checked { text-decoration: line-through; color: var(--text2); }
+.checklist li.checked .check-box {
+  background: var(--green); border-color: var(--green); color: white;
+}
+.check-box {
+  width: 22px; height: 22px; border: 2px solid var(--mid-gray);
+  border-radius: 6px; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; transition: all 0.15s;
+}
+.checklist-progress {
+  margin-top: 1.25rem; background: var(--mid-gray); border-radius: 999px;
+  height: 8px; overflow: hidden;
+}
+.checklist-progress-bar {
+  height: 100%; background: var(--green); border-radius: 999px;
+  transition: width 0.3s; width: 0%;
+}
+.checklist-count {
+  margin-top: 0.5rem; font-size: 0.85rem; color: var(--text2); text-align: right;
+}
+
+/* ── FAQ ────────────────────────────────────────────── */
+.faq-item {
+  border-bottom: 1px solid var(--mid-gray);
+  padding: 1.25rem 0;
+}
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; font-weight: 600; font-size: 1rem;
+  color: var(--obsidian);
+}
+.faq-q:hover { color: var(--clay); }
+.faq-arrow {
+  font-size: 1.2rem; transition: transform 0.2s;
+  color: var(--text2);
+}
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-a {
+  max-height: 0; overflow: hidden; transition: max-height 0.3s;
+  font-size: 0.92rem; color: var(--text2); line-height: 1.7;
+}
+.faq-item.open .faq-a { max-height: 500px; padding-top: 0.75rem; }
+
+/* ── Essay Brainstorm ───────────────────────────────── */
+.brainstorm-area {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.75rem;
+}
+.prompt-carousel {
+  background: var(--light-gray); border-radius: 10px;
+  padding: 1.5rem; margin-bottom: 1.25rem; min-height: 100px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.prompt-carousel p {
+  font-size: 1.1rem; font-weight: 600; color: var(--obsidian);
+  line-height: 1.5;
+}
+.prompt-carousel .prompt-hint {
+  font-size: 0.85rem; color: var(--text2); margin-top: 0.5rem;
+  font-weight: 400;
+}
+.prompt-nav {
+  display: flex; gap: 0.5rem; align-items: center;
+  justify-content: space-between;
+}
+.prompt-nav button {
+  background: var(--clay); color: white; border: none;
+  border-radius: 8px; padding: 0.55rem 1.2rem;
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  transition: background 0.2s;
+}
+.prompt-nav button:hover { background: var(--clay-dark); }
+.prompt-nav .prompt-count { font-size: 0.85rem; color: var(--text2); }
+textarea {
+  width: 100%; min-height: 150px; border: 1px solid var(--mid-gray);
+  border-radius: 10px; padding: 1rem; font-family: inherit;
+  font-size: 0.95rem; resize: vertical; outline: none;
+  transition: border-color 0.2s; margin-top: 1rem;
+  line-height: 1.6;
+}
+textarea:focus { border-color: var(--clay); }
+textarea::placeholder { color: #aaa; }
+.textarea-label {
+  font-size: 0.85rem; color: var(--text2); margin-top: 0.5rem;
+}
+
+/* ── CTA ────────────────────────────────────────────── */
+.cta-section {
+  background: var(--obsidian); color: var(--bone);
+  text-align: center; padding: 4rem 1.5rem;
+}
+.cta-section h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  margin-bottom: 1rem;
+}
+.cta-section p {
+  color: rgba(245,240,235,0.65); max-width: 550px;
+  margin: 0 auto 2rem; font-size: 1.05rem;
+}
+.cta-btn {
+  display: inline-block; background: var(--clay);
+  color: white; text-decoration: none;
+  padding: 0.85rem 2rem; border-radius: 10px;
+  font-weight: 700; font-size: 1rem;
+  transition: background 0.2s, transform 0.1s;
+}
+.cta-btn:hover { background: var(--clay-light); transform: translateY(-1px); }
+
+/* ── Footer ─────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3.5rem; }
+  .hero-stats { gap: 1.5rem; }
+  section { padding: 3rem 1.25rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="#why">Why Minerva</a>
+      <a href="#process">Process</a>
+      <a href="#challenges">Challenges</a>
+      <a href="#essays">Essays</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#aid">Financial Aid</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1>Your Complete Guide to<br>Applying to <span>Minerva University</span></h1>
+    <p>Everything you need to know about the application process, from a current Minerva student. Step-by-step guidance, challenge preparation, essay tips, and an interactive checklist to keep you on track.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">7</span>
+        <span class="label">Cities in 4 Years</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">~20</span>
+        <span class="label">Students per Class</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">100%</span>
+        <span class="label">Seminar-Based Learning</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">0</span>
+        <span class="label">Standardized Tests Required</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Why Minerva ───────────────────────────────────── -->
+<section id="why">
+  <div class="container">
+    <span class="section-label">Understanding Minerva</span>
+    <h2 class="section-title">Why Minerva Is Different</h2>
+    <p class="section-subtitle">Before you apply, understand what makes Minerva unlike any other university. This isn't just a different school &mdash; it's a fundamentally different model of higher education.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon red">&#127758;</div>
+        <h3>Global Immersion, Not Study Abroad</h3>
+        <p>You don't visit other countries &mdash; you live in them. Over four years, you rotate through cities including San Francisco, Seoul, Hyderabad, Berlin, Buenos Aires, London, and Taipei. Each semester is a new city with real-world projects embedded in that context.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue">&#128172;</div>
+        <h3>Active Learning Forum</h3>
+        <p>There are zero lectures. Every class is a live, fully interactive seminar capped at ~20 students on Minerva's custom platform. Professors cold-call, run polls, facilitate debates, and give real-time feedback. You're expected to participate in every single class.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">&#129504;</div>
+        <h3>Habits of Mind & Foundational Concepts</h3>
+        <p>Minerva's curriculum is built around transferable thinking skills, not memorization. In your first year you learn ~120 "Habits of Mind" across four cornerstone courses: formal analyses, empirical analyses, complex systems, and multimodal communications.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple">&#127919;</div>
+        <h3>Admissions: Potential Over Privilege</h3>
+        <p>No SAT/ACT, no legacy preference, no "demonstrated interest." Minerva evaluates your intellectual curiosity, creative problem-solving, and capacity for growth. The application is designed so that your socioeconomic background cannot advantage or disadvantage you.</p>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>Current Student Perspective</h4>
+      <p>The biggest misconception applicants have is thinking Minerva is "just online school." It's not. You're physically together with your cohort in a new city every semester, taking classes together on the Forum, and doing location-based assignments. The Forum is the classroom &mdash; the city is the campus.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Application Process ───────────────────────────── -->
+<section id="process" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Application Process</span>
+    <h2 class="section-title">Step by Step: How to Apply</h2>
+    <p class="section-subtitle">Minerva's application is free and designed to be completed in stages. There is no application fee, and no standardized test scores are required.</p>
+
+    <div class="steps">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Create Your Account</h3>
+          <p>Go to <strong>apply.minerva.edu</strong> and create your applicant account. You'll use this to complete your application over time &mdash; you don't have to finish it in one sitting. Start early so you have time to reflect on your responses.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Personal Information & Academic History</h3>
+          <p>Fill in your background, schooling, and extracurricular activities. You'll self-report your grades &mdash; official transcripts are only needed after admission. There's no place to enter SAT/ACT scores because they're not considered.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Short-Answer Responses</h3>
+          <p>These are your chance to show who you are beyond academics. Minerva asks about your motivations, experiences, and how you think. Be genuine and specific &mdash; they read every word, and they can tell the difference between authentic reflection and polished performance.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Creative Challenges</h3>
+          <p>This is Minerva's signature. You'll complete timed, interactive challenges that test how you think, not what you know. These are designed to be novel &mdash; you cannot study for them in the traditional sense. They assess creative thinking, logical reasoning, and how you approach unfamiliar problems.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Submit & (Optionally) Interview</h3>
+          <p>Review everything, submit, and optionally sign up for an admissions interview. The interview is a genuine conversation, not a test. It's your chance to ask questions and for the admissions team to understand your thinking style in real time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>Timing Tip</h4>
+      <p>Apply in the earliest round you can. Minerva has rolling admissions with multiple rounds (typically Early Action in November, Regular rounds through Spring). Earlier rounds aren't "easier," but they give you more time to hear back and consider financial aid packages.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Challenge Preparation ─────────────────────────── -->
+<section id="challenges">
+  <div class="container">
+    <span class="section-label">Challenge Preparation</span>
+    <h2 class="section-title">How to Approach the Creative Challenges</h2>
+    <p class="section-subtitle">Minerva's challenges are unlike anything on a standardized test. You can't "prep" for them in the traditional sense, but you can develop the right mindset.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon red">&#128161;</div>
+        <h3>Think Process, Not Answer</h3>
+        <p>The challenges care about HOW you think, not whether you get the "right" answer. Show your reasoning. If you're unsure, explain your logic rather than guessing. Minerva values intellectual honesty over polish.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue">&#128337;</div>
+        <h3>Manage Your Time</h3>
+        <p>Challenges are timed. Don't panic &mdash; the time limits are designed to prevent overthinking, not to trick you. Read each prompt carefully once, formulate your approach, then execute. It's better to give a clear, concise answer than to ramble.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">&#129300;</div>
+        <h3>Embrace the Unfamiliar</h3>
+        <p>You WILL encounter problems unlike anything you've seen before. That's the point. Minerva wants to see how you handle novelty. Stay calm, break the problem into parts, and think out loud (or in writing). Your comfort with discomfort is what they're evaluating.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple">&#127912;</div>
+        <h3>Creative Doesn't Mean Artsy</h3>
+        <p>"Creative challenges" doesn't mean drawing or music. It means finding novel approaches to problems. Think divergent thinking: how many ways can you look at this? What assumptions can you question? What connections can you draw from different fields?</p>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>Practice Strategy</h4>
+      <p>While you can't study specific content, you CAN practice the skills. Try brain teasers, logic puzzles, lateral thinking exercises, or even improvisational games. Read about topics you know nothing about and try to reason through them. The goal is to become comfortable thinking in unfamiliar territory &mdash; not to memorize answers.</p>
+    </div>
+
+    <div class="insight-box">
+      <h4>Current Student Perspective</h4>
+      <p>When I did the challenges, I remember being thrown off by how different they were from any test I'd taken before. The best thing I did was just be honest about my thought process. I didn't try to sound smart &mdash; I just showed how I was actually thinking through each problem. That authenticity matters more than arriving at a "perfect" answer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Essay Workshop ────────────────────────────────── -->
+<section id="essays" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Essay Workshop</span>
+    <h2 class="section-title">Writing Responses That Stand Out</h2>
+    <p class="section-subtitle">Minerva reads thousands of applications. Here's how to write responses that are genuinely memorable &mdash; not because they're flashy, but because they're real.</p>
+
+    <div class="card-grid" style="margin-bottom: 2rem;">
+      <div class="card">
+        <h3>Be Specific, Not Grand</h3>
+        <p>"I want to change the world" tells them nothing. "I spent three months mapping water access points in my district because I noticed classmates missing school during dry season" tells them everything. Concrete details > abstract ambitions.</p>
+      </div>
+      <div class="card">
+        <h3>Show Growth, Not Perfection</h3>
+        <p>Minerva values learning over achievement. Write about something you struggled with, got wrong, or changed your mind about. How did you evolve? What did you learn about yourself? Vulnerability is strength here.</p>
+      </div>
+      <div class="card">
+        <h3>Connect to Minerva Specifically</h3>
+        <p>Don't write a generic "why this school" response. Research the Habits of Mind, the city rotations, the Active Learning Forum. Reference specific things that excite you. Show that you understand what you're signing up for and WHY this model fits you.</p>
+      </div>
+      <div class="card">
+        <h3>Your Voice, Not a Template</h3>
+        <p>Admissions officers can spot ChatGPT, essay coaches, and formulaic structures instantly. Write in your actual voice. If you're funny, be funny. If you're analytical, be analytical. The worst thing you can do is sound like every other applicant.</p>
+      </div>
+    </div>
+
+    <div class="brainstorm-area">
+      <h3 style="margin-bottom: 1rem;">Brainstorming Prompts</h3>
+      <p style="font-size: 0.9rem; color: var(--text2); margin-bottom: 1rem;">Use these prompts to discover stories and angles for your essays. Click through them and jot down whatever comes to mind &mdash; don't filter yourself.</p>
+      <div class="prompt-carousel" id="prompt-display">
+        <p id="prompt-text"></p>
+        <p class="prompt-hint" id="prompt-hint"></p>
+      </div>
+      <div class="prompt-nav">
+        <button onclick="prevPrompt()">Previous</button>
+        <span class="prompt-count" id="prompt-count"></span>
+        <button onclick="nextPrompt()">Next</button>
+      </div>
+      <textarea id="brainstorm-notes" placeholder="Jot down your thoughts, stories, memories... anything that comes to mind. This is your private brainstorming space &mdash; nothing is saved or sent anywhere."></textarea>
+      <p class="textarea-label">Your notes are saved in your browser only. Nothing leaves this page.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Checklist ──────────────────────────────────────── -->
+<section id="checklist">
+  <div class="container">
+    <span class="section-label">Application Tracker</span>
+    <h2 class="section-title">Interactive Application Checklist</h2>
+    <p class="section-subtitle">Track your progress through each component. Click items to mark them complete. Your progress is saved in your browser.</p>
+
+    <div class="card" style="padding: 2rem;">
+      <ul class="checklist" id="checklist-list">
+        <li onclick="toggleCheck(this)" data-id="c1"><div class="check-box"></div>Research Minerva's curriculum and Habits of Mind</li>
+        <li onclick="toggleCheck(this)" data-id="c2"><div class="check-box"></div>Create applicant account at apply.minerva.edu</li>
+        <li onclick="toggleCheck(this)" data-id="c3"><div class="check-box"></div>Fill in personal information and contact details</li>
+        <li onclick="toggleCheck(this)" data-id="c4"><div class="check-box"></div>Self-report academic history and grades</li>
+        <li onclick="toggleCheck(this)" data-id="c5"><div class="check-box"></div>List extracurricular activities and achievements</li>
+        <li onclick="toggleCheck(this)" data-id="c6"><div class="check-box"></div>Brainstorm ideas for short-answer responses</li>
+        <li onclick="toggleCheck(this)" data-id="c7"><div class="check-box"></div>Write first draft of short-answer responses</li>
+        <li onclick="toggleCheck(this)" data-id="c8"><div class="check-box"></div>Revise responses &mdash; have someone you trust read them</li>
+        <li onclick="toggleCheck(this)" data-id="c9"><div class="check-box"></div>Finalize short-answer responses</li>
+        <li onclick="toggleCheck(this)" data-id="c10"><div class="check-box"></div>Practice creative thinking exercises (puzzles, brain teasers)</li>
+        <li onclick="toggleCheck(this)" data-id="c11"><div class="check-box"></div>Complete the creative challenges (timed &mdash; find a quiet space)</li>
+        <li onclick="toggleCheck(this)" data-id="c12"><div class="check-box"></div>Review entire application for errors or gaps</li>
+        <li onclick="toggleCheck(this)" data-id="c13"><div class="check-box"></div>Submit your application</li>
+        <li onclick="toggleCheck(this)" data-id="c14"><div class="check-box"></div>Sign up for an admissions interview (optional but recommended)</li>
+        <li onclick="toggleCheck(this)" data-id="c15"><div class="check-box"></div>Prepare for interview &mdash; think about questions to ask THEM</li>
+        <li onclick="toggleCheck(this)" data-id="c16"><div class="check-box"></div>Explore financial aid options and scholarship deadlines</li>
+      </ul>
+      <div class="checklist-progress"><div class="checklist-progress-bar" id="progress-bar"></div></div>
+      <div class="checklist-count" id="progress-text">0 of 16 complete</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Financial Aid ─────────────────────────────────── -->
+<section id="aid" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Affordability</span>
+    <h2 class="section-title">Financial Aid at Minerva</h2>
+    <p class="section-subtitle">Minerva is committed to making education accessible. Here's what you need to know about funding your Minerva education.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon green">&#128176;</div>
+        <h3>Need-Based Aid</h3>
+        <p>Minerva provides generous need-based financial aid. Over 80% of students receive some form of aid. The financial aid application is separate from the admissions application &mdash; applying for aid does NOT affect your admissions decision.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue">&#127968;</div>
+        <h3>Lower Cost Structure</h3>
+        <p>Minerva's tuition is significantly lower than comparable U.S. institutions. There are no expensive campus facilities to maintain. Housing is arranged through residential partners in each city, and the total cost of attendance is designed to be more accessible.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon red">&#128196;</div>
+        <h3>External Scholarships</h3>
+        <p>You can apply for external scholarships and grants alongside Minerva's own aid. Many country-specific and international scholarship programs recognize Minerva. Start researching scholarships relevant to your background early.</p>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>Important</h4>
+      <p>Don't let cost stop you from applying. Minerva explicitly states that financial circumstances should never prevent a qualified student from attending. Apply first, discuss finances after admission. The financial aid team works with every admitted student to find a way to make it work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="container">
+    <span class="section-label">Frequently Asked Questions</span>
+    <h2 class="section-title">Common Questions, Honest Answers</h2>
+    <p class="section-subtitle">Questions applicants actually ask, answered from the perspective of a current Minerva student.</p>
+
+    <div id="faq-list">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Is Minerva a "real" university?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">Yes. Minerva University is accredited and grants bachelor's degrees. It was initially part of the Keck Graduate Institute (KGI) system and is now an independent, accredited institution. Graduates work at places like Google, McKinsey, NASA, and pursue graduate studies at Stanford, MIT, Oxford, etc. The degree is recognized worldwide.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Is it all online?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">No. The classes happen on a live video platform (the Active Learning Forum), but you physically live with your cohort in a different city each semester. You eat together, explore together, do projects in the city together. The Forum replaces the lecture hall, not the college experience. Think of it as: the classroom is digital, but the campus is the world.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">How hard is it to get in?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">Minerva is highly selective, with acceptance rates historically around 1-2%. But "selective" doesn't mean "elitist." The application is free, doesn't require standardized tests, and is designed to identify potential regardless of background. If you're intellectually curious and can demonstrate creative thinking, you have a real shot regardless of where you're from.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Can I study what I want?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">Minerva offers five concentrations: Arts & Humanities, Business, Computational Sciences, Natural Sciences, and Social Sciences. Your first year is a shared foundation (the "cornerstone" courses). From year two onward, you specialize. Many students double-concentrate. The curriculum emphasizes transferable skills that work across fields.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What if I don't speak multiple languages?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">All instruction is in English. You don't need to speak the local language of each rotation city, though many students pick up basics. Minerva provides support for navigating each city. Being multilingual is a plus but absolutely not a requirement.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Do I need amazing grades or test scores?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">You need to demonstrate academic capability, but Minerva doesn't use GPA cutoffs or standardized test scores. Strong grades help, but they're not the deciding factor. The creative challenges and your responses reveal more about your potential than any transcript. Many admitted students come from non-traditional educational backgrounds.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">What's the social life like?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">You live in shared housing with your cohort in every city. Your classmates become very close friends because you're literally navigating new cities together every semester. There's no traditional "campus life" with Greek life or football games, but there are student clubs, city exploration, and a tight-knit community. Most students describe Minerva as having the strongest community they've ever been part of.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">Should I use AI to write my application?<span class="faq-arrow">&#9660;</span></div>
+        <div class="faq-a">No. Minerva's admissions team can detect AI-generated writing, and using it undermines the entire point of the application &mdash; to understand how YOU think. Use AI to brainstorm, organize your thoughts, or check grammar if you want, but the ideas and voice must be genuinely yours. Authenticity is the single most important quality in your application.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────── -->
+<div class="cta-section">
+  <div class="container">
+    <h2>Ready to Start Your Application?</h2>
+    <p>The application is free, no standardized tests are required, and you can work on it at your own pace. The hardest part is clicking "start."</p>
+    <a href="https://apply.minerva.edu" target="_blank" class="cta-btn">Apply to Minerva</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student to help applicants navigate the process. Not an official Minerva University resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Brainstorming Prompts ──────────────────────────────
+const prompts = [
+  { text: "What's a problem in your community that most people have accepted as 'just the way things are'?", hint: "Minerva values people who question the status quo. Think about something you noticed that others overlooked." },
+  { text: "Describe a time you changed your mind about something important. What caused the shift?", hint: "This shows intellectual humility and growth — two things Minerva prizes above almost everything else." },
+  { text: "What's something you taught yourself, and why?", hint: "Self-directed learning is core to the Minerva experience. Show your curiosity and initiative." },
+  { text: "Tell a story about a failure that taught you something you couldn't have learned from success.", hint: "Minerva wants to see how you handle setbacks. The lesson matters more than the failure." },
+  { text: "If you could spend a year in any city in the world working on one project, what would it be and why?", hint: "This connects directly to Minerva's rotational model. Show how place shapes your thinking." },
+  { text: "What's an idea from one field that you've applied to a completely different field?", hint: "Interdisciplinary thinking is baked into Minerva's curriculum. Show you already think this way." },
+  { text: "Who has influenced how you think (not what you think), and how?", hint: "This reveals your intellectual influences and self-awareness about your own thinking process." },
+  { text: "What's a question you've been thinking about for a long time that you still can't fully answer?", hint: "Living with open questions shows intellectual maturity. Minerva doesn't expect you to have everything figured out." },
+  { text: "Describe a time you had to work with someone whose perspective was fundamentally different from yours.", hint: "At Minerva, you'll live and learn with people from 90+ countries. This shows you're ready for that." },
+  { text: "What would you do with four years of access to seven different cities and a cohort of diverse thinkers?", hint: "Be specific. Don't just say 'explore cultures.' What projects, research, or initiatives would you pursue?" },
+  { text: "What's something you're genuinely curious about that has nothing to do with your intended major?", hint: "Minerva values intellectual breadth. Your interests outside your main field reveal how you think." },
+  { text: "If you had to explain the most important thing you've learned in your life in under 60 seconds, what would you say?", hint: "Conciseness and clarity are skills Minerva develops. This is practice for being precise with ideas." },
+];
+
+let currentPrompt = 0;
+
+function showPrompt() {
+  document.getElementById('prompt-text').textContent = prompts[currentPrompt].text;
+  document.getElementById('prompt-hint').textContent = prompts[currentPrompt].hint;
+  document.getElementById('prompt-count').textContent = `${currentPrompt + 1} / ${prompts.length}`;
+}
+
+function nextPrompt() {
+  currentPrompt = (currentPrompt + 1) % prompts.length;
+  showPrompt();
+}
+
+function prevPrompt() {
+  currentPrompt = (currentPrompt - 1 + prompts.length) % prompts.length;
+  showPrompt();
+}
+
+showPrompt();
+
+// Save brainstorm notes to localStorage
+const notesArea = document.getElementById('brainstorm-notes');
+notesArea.value = localStorage.getItem('minerva-brainstorm') || '';
+notesArea.addEventListener('input', () => {
+  localStorage.setItem('minerva-brainstorm', notesArea.value);
+});
+
+// ── Checklist ───────────────────────────────────────────
+function loadChecklist() {
+  const saved = JSON.parse(localStorage.getItem('minerva-checklist') || '{}');
+  document.querySelectorAll('.checklist li').forEach(li => {
+    if (saved[li.dataset.id]) {
+      li.classList.add('checked');
+      li.querySelector('.check-box').textContent = '\u2713';
+    }
+  });
+  updateProgress();
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+  const box = li.querySelector('.check-box');
+  box.textContent = li.classList.contains('checked') ? '\u2713' : '';
+  saveChecklist();
+  updateProgress();
+}
+
+function saveChecklist() {
+  const data = {};
+  document.querySelectorAll('.checklist li').forEach(li => {
+    data[li.dataset.id] = li.classList.contains('checked');
+  });
+  localStorage.setItem('minerva-checklist', JSON.stringify(data));
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.checklist li').length;
+  const done = document.querySelectorAll('.checklist li.checked').length;
+  document.getElementById('progress-bar').style.width = (done / total * 100) + '%';
+  document.getElementById('progress-text').textContent = `${done} of ${total} complete`;
+}
+
+loadChecklist();
+
+// ── FAQ Accordion ───────────────────────────────────────
+function toggleFaq(item) {
+  item.classList.toggle('open');
+}
+
+// ── Smooth scroll for nav links ─────────────────────────
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
