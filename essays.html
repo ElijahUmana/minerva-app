@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Essay Builder | Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+  --yellow: #d97706;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active {
+  color: var(--bone); background: rgba(200,85,61,0.3);
+}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 4rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(200,85,61,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%);
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.15rem; color: rgba(245,240,235,0.75);
+  max-width: 650px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ── Section nav ───────────────────────────────────── */
+.section-nav {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  justify-content: center; margin-top: 2rem;
+}
+.section-nav a {
+  color: rgba(245,240,235,0.65); text-decoration: none;
+  font-size: 0.82rem; padding: 0.45rem 1rem; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: all 0.2s;
+}
+.section-nav a:hover {
+  color: var(--bone); background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* ── Sections ──────────────────────────────────────── */
+section { padding: 4.5rem 1.5rem; }
+.container { max-width: 900px; margin: 0 auto; }
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 1rem;
+  color: var(--obsidian); line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 650px; margin-bottom: 2.5rem; line-height: 1.6;
+}
+.alt-bg { background: var(--light-gray); }
+
+/* ── Prompt Cards ──────────────────────────────────── */
+.prompt-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; margin-bottom: 1.25rem;
+  overflow: hidden; transition: box-shadow 0.2s;
+}
+.prompt-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+.prompt-header {
+  padding: 1.25rem 1.5rem;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: space-between;
+  gap: 1rem; user-select: none;
+}
+.prompt-header:hover { background: rgba(0,0,0,0.01); }
+.prompt-theme {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--clay);
+  margin-bottom: 0.25rem;
+}
+.prompt-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--obsidian);
+  line-height: 1.4;
+}
+.prompt-chevron {
+  font-size: 1.2rem; color: var(--text2);
+  transition: transform 0.25s; flex-shrink: 0;
+}
+.prompt-card.open .prompt-chevron { transform: rotate(180deg); }
+.prompt-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.prompt-card.open .prompt-body {
+  max-height: 2000px;
+}
+.prompt-body-inner {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid var(--mid-gray);
+}
+.prompt-section {
+  margin-top: 1.25rem;
+}
+.prompt-section-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 0.4rem;
+}
+.prompt-section-label.decode { color: var(--blue); }
+.prompt-section-label.weak { color: #dc2626; }
+.prompt-section-label.strong { color: var(--green); }
+.prompt-section-label.elements { color: var(--clay); }
+.prompt-section p, .prompt-section li {
+  font-size: 0.9rem; color: var(--text2); line-height: 1.6;
+}
+.prompt-section ul {
+  list-style: none; padding: 0;
+}
+.prompt-section ul li {
+  padding: 0.3rem 0 0.3rem 1.25rem;
+  position: relative;
+}
+.prompt-section ul li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.75rem;
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.prompt-section.weak-section ul li::before { background: #dc2626; }
+.prompt-section.strong-section ul li::before { background: var(--green); }
+.prompt-section.elements-section ul li::before { background: var(--clay); }
+.prompt-quote {
+  font-style: italic; color: var(--text);
+  background: rgba(0,0,0,0.02); border-radius: 8px;
+  padding: 1rem 1.25rem; margin-top: 0.5rem;
+  border-left: 3px solid var(--mid-gray);
+  font-size: 0.92rem; line-height: 1.6;
+}
+
+/* ── Story Mining Wizard ───────────────────────────── */
+.wizard-progress {
+  display: flex; gap: 0; margin-bottom: 2rem;
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--mid-gray);
+}
+.wizard-step-indicator {
+  flex: 1; padding: 0.75rem 0.5rem;
+  text-align: center; font-size: 0.75rem; font-weight: 700;
+  color: var(--text2); background: var(--light-gray);
+  cursor: pointer; transition: all 0.2s;
+  border-right: 1px solid var(--mid-gray);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.wizard-step-indicator:last-child { border-right: none; }
+.wizard-step-indicator.active {
+  background: var(--clay); color: white;
+}
+.wizard-step-indicator.completed {
+  background: var(--green); color: white;
+}
+.wizard-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.wizard-panel.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.wizard-panel h3 {
+  font-size: 1.15rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.35rem;
+}
+.wizard-panel .wizard-desc {
+  font-size: 0.9rem; color: var(--text2); margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.moment-group {
+  margin-bottom: 1.25rem;
+}
+.moment-label {
+  font-size: 0.78rem; font-weight: 700; color: var(--clay);
+  margin-bottom: 0.35rem; text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.moment-input, .moment-textarea {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1px solid var(--mid-gray); border-radius: 8px;
+  font-family: inherit; font-size: 0.9rem;
+  color: var(--text); background: var(--white);
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+.moment-input:focus, .moment-textarea:focus {
+  outline: none; border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(200,85,61,0.1);
+}
+.moment-textarea { resize: vertical; min-height: 80px; }
+.belief-pair {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.belief-pair .moment-label { grid-column: 1 / -1; }
+.surprise-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.85rem 1rem; border-radius: 8px;
+  border: 1px solid var(--mid-gray); margin-bottom: 0.75rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.surprise-row:hover { background: rgba(0,0,0,0.02); }
+.surprise-row.selected {
+  border-color: var(--clay); background: rgba(200,85,61,0.04);
+}
+.surprise-check {
+  width: 20px; height: 20px; border: 2px solid var(--mid-gray);
+  border-radius: 5px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; color: white; transition: all 0.15s;
+}
+.surprise-row.selected .surprise-check {
+  background: var(--clay); border-color: var(--clay);
+}
+.surprise-text {
+  font-size: 0.9rem; color: var(--text);
+  font-style: italic;
+}
+.surprise-text.empty { color: var(--text2); font-style: normal; }
+.deepen-group {
+  margin-bottom: 1.5rem;
+}
+.deepen-group label {
+  display: block; font-size: 0.9rem; font-weight: 600;
+  color: var(--obsidian); margin-bottom: 0.4rem;
+}
+.wizard-nav {
+  display: flex; justify-content: space-between;
+  margin-top: 2rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--mid-gray);
+}
+.wizard-btn {
+  padding: 0.65rem 1.5rem; border-radius: 8px;
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; border: none;
+}
+.wizard-btn.secondary {
+  background: var(--light-gray); color: var(--text);
+  border: 1px solid var(--mid-gray);
+}
+.wizard-btn.secondary:hover { background: var(--mid-gray); }
+.wizard-btn.primary {
+  background: var(--clay); color: white;
+}
+.wizard-btn.primary:hover { background: var(--clay-light); }
+.wizard-btn:disabled {
+  opacity: 0.4; cursor: not-allowed;
+}
+
+/* ── Structure Builder ─────────────────────────────── */
+.type-selector {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem; margin-bottom: 2rem;
+}
+.type-btn {
+  padding: 1.25rem 1rem; border-radius: 10px;
+  border: 2px solid var(--mid-gray); background: var(--white);
+  cursor: pointer; text-align: center;
+  transition: all 0.2s; font-family: inherit;
+}
+.type-btn:hover {
+  border-color: var(--clay); background: rgba(200,85,61,0.02);
+}
+.type-btn.active {
+  border-color: var(--clay); background: rgba(200,85,61,0.06);
+}
+.type-btn .type-icon {
+  font-size: 1.5rem; margin-bottom: 0.4rem;
+}
+.type-btn .type-name {
+  font-size: 0.9rem; font-weight: 700; color: var(--obsidian);
+  display: block;
+}
+.type-btn .type-desc {
+  font-size: 0.75rem; color: var(--text2); margin-top: 0.2rem;
+  display: block;
+}
+.outline-area {
+  display: none;
+}
+.outline-area.active { display: block; }
+.outline-block {
+  margin-bottom: 1.5rem;
+}
+.outline-block-header {
+  display: flex; justify-content: space-between;
+  align-items: baseline; margin-bottom: 0.4rem;
+}
+.outline-block label {
+  font-size: 0.9rem; font-weight: 700; color: var(--obsidian);
+}
+.outline-block .hint {
+  font-size: 0.78rem; color: var(--text2); font-style: italic;
+}
+.outline-block textarea {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1px solid var(--mid-gray); border-radius: 8px;
+  font-family: inherit; font-size: 0.9rem;
+  color: var(--text); background: var(--white);
+  transition: border-color 0.2s; resize: vertical;
+  min-height: 80px; line-height: 1.6;
+}
+.outline-block textarea:focus {
+  outline: none; border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(200,85,61,0.1);
+}
+.word-count {
+  font-size: 0.75rem; color: var(--text2);
+  text-align: right; margin-top: 0.3rem;
+}
+.word-count.over { color: #dc2626; font-weight: 600; }
+.total-word-count {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 1rem 1.25rem;
+  background: var(--light-gray); border-radius: 10px;
+  margin-top: 1.5rem; border: 1px solid var(--mid-gray);
+}
+.total-word-count .label {
+  font-size: 0.9rem; font-weight: 700; color: var(--obsidian);
+}
+.total-word-count .count {
+  font-size: 1.1rem; font-weight: 800;
+}
+.total-word-count .count.ok { color: var(--green); }
+.total-word-count .count.warn { color: var(--yellow); }
+.total-word-count .count.over { color: #dc2626; }
+
+/* ── Balance Meter ─────────────────────────────────── */
+.balance-meter {
+  margin-top: 1.5rem; padding: 1.25rem;
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 10px;
+}
+.balance-meter h4 {
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--obsidian); margin-bottom: 1rem;
+}
+.balance-bar-container {
+  display: flex; height: 28px; border-radius: 6px;
+  overflow: hidden; background: var(--light-gray);
+  border: 1px solid var(--mid-gray);
+}
+.balance-segment {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; color: white;
+  transition: width 0.4s ease; min-width: 0;
+  overflow: hidden; white-space: nowrap;
+}
+.balance-segment.setup { background: #6366f1; }
+.balance-segment.story { background: var(--clay); }
+.balance-segment.insight { background: var(--green); }
+.balance-labels {
+  display: flex; justify-content: space-between;
+  margin-top: 0.5rem;
+}
+.balance-label {
+  font-size: 0.72rem; color: var(--text2);
+  display: flex; align-items: center; gap: 0.35rem;
+}
+.balance-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.balance-dot.setup { background: #6366f1; }
+.balance-dot.story { background: var(--clay); }
+.balance-dot.insight { background: var(--green); }
+.balance-feedback {
+  margin-top: 0.75rem; font-size: 0.82rem;
+  padding: 0.6rem 0.85rem; border-radius: 6px;
+  line-height: 1.5;
+}
+.balance-feedback.good {
+  background: rgba(5,150,105,0.08); color: #047857;
+}
+.balance-feedback.warn {
+  background: rgba(217,119,6,0.08); color: #b45309;
+}
+
+/* ── Review Checklist ──────────────────────────────── */
+.review-list { list-style: none; }
+.review-item {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  padding: 1rem 1.15rem; border-radius: 10px;
+  margin-bottom: 0.5rem; cursor: pointer;
+  transition: all 0.15s; font-size: 0.92rem;
+  border: 1px solid transparent;
+}
+.review-item:hover { background: rgba(0,0,0,0.02); }
+.review-item.checked {
+  color: var(--text2);
+  border-color: rgba(5,150,105,0.15);
+  background: rgba(5,150,105,0.03);
+}
+.review-check {
+  width: 24px; height: 24px; border: 2px solid var(--mid-gray);
+  border-radius: 7px; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: transparent; transition: all 0.15s;
+}
+.review-item.checked .review-check {
+  background: var(--green); border-color: var(--green); color: white;
+}
+.review-progress-bar {
+  margin-top: 1.5rem; background: var(--mid-gray); border-radius: 999px;
+  height: 10px; overflow: hidden;
+}
+.review-progress-fill {
+  height: 100%; background: var(--green); border-radius: 999px;
+  transition: width 0.35s ease; width: 0%;
+}
+.review-progress-text {
+  margin-top: 0.6rem; font-size: 0.88rem; color: var(--text2);
+  text-align: right; font-weight: 600;
+}
+.review-progress-text span { color: var(--green); }
+.review-remaining {
+  margin-top: 1rem; padding: 1rem 1.25rem;
+  background: rgba(217,119,6,0.06); border-radius: 8px;
+  border: 1px solid rgba(217,119,6,0.15);
+  font-size: 0.85rem; color: #92400e; line-height: 1.6;
+  display: none;
+}
+.review-remaining.visible { display: block; }
+
+/* ── Example Breakdowns ────────────────────────────── */
+.example-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.75rem;
+  margin-bottom: 1.25rem;
+}
+.example-badge {
+  display: inline-block; font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem; border-radius: 5px;
+  margin-bottom: 1rem;
+}
+.example-badge.detail { background: rgba(37,99,235,0.1); color: var(--blue); }
+.example-badge.vulnerability { background: rgba(200,85,61,0.1); color: var(--clay); }
+.example-badge.connection { background: rgba(5,150,105,0.1); color: var(--green); }
+.example-excerpt {
+  font-size: 1rem; font-style: italic; color: var(--text);
+  line-height: 1.7; padding: 1.25rem;
+  background: rgba(0,0,0,0.02); border-radius: 8px;
+  border-left: 3px solid var(--clay);
+  margin-bottom: 1rem;
+}
+.example-annotation {
+  font-size: 0.88rem; color: var(--text2); line-height: 1.65;
+  padding-left: 1rem; border-left: 2px solid var(--mid-gray);
+}
+.example-annotation strong {
+  color: var(--obsidian); font-weight: 700;
+}
+
+/* ── Utility ───────────────────────────────────────── */
+.save-indicator {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  background: var(--obsidian); color: var(--bone);
+  padding: 0.55rem 1rem; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 600;
+  opacity: 0; transform: translateY(10px);
+  transition: all 0.3s; z-index: 200;
+  pointer-events: none;
+}
+.save-indicator.visible {
+  opacity: 1; transform: translateY(0);
+}
+.tip-box {
+  background: linear-gradient(135deg, rgba(200,85,61,0.06), rgba(200,85,61,0.02));
+  border: 1px solid rgba(200,85,61,0.15);
+  border-left: 4px solid var(--clay);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.tip-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--clay);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.tip-box p { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3.5rem; }
+  section { padding: 3rem 1.25rem; }
+  .type-selector { grid-template-columns: 1fr; }
+  .belief-pair { grid-template-columns: 1fr; }
+  .section-nav { gap: 0.35rem; }
+  .section-nav a { font-size: 0.75rem; padding: 0.35rem 0.7rem; }
+  .wizard-step-indicator { font-size: 0.65rem; padding: 0.6rem 0.25rem; }
+  .balance-labels { flex-direction: column; gap: 0.25rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html">Guide</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="practice.html">Practice</a>
+      <a href="essays.html" class="active">Essays</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <h1>Essay <span>Builder</span></h1>
+  <p>Analyze prompts, mine your stories, build your structure, and self-review before you submit. Everything stays saved in your browser.</p>
+  <div class="section-nav">
+    <a href="#prompts">Prompt Analyzer</a>
+    <a href="#stories">Story Mining</a>
+    <a href="#structure">Structure Builder</a>
+    <a href="#review">Self-Review</a>
+    <a href="#examples">Example Breakdowns</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 1: ESSAY PROMPT ANALYZER
+     ══════════════════════════════════════════════════════ -->
+<section id="prompts">
+  <div class="container">
+    <div class="section-label">Section 1</div>
+    <h2 class="section-title">Essay Prompt Analyzer</h2>
+    <p class="section-subtitle">Minerva's essay prompts are deceptively simple. Click any prompt below to decode what the admissions team is really looking for, and learn what separates forgettable responses from compelling ones.</p>
+
+    <!-- Prompt 1: Motivation -->
+    <div class="prompt-card" data-prompt="motivation">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Motivation for Minerva</div>
+          <div class="prompt-title">Why are you drawn to Minerva University? What about our approach to education resonates with you?</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>Have you done genuine research into how Minerva works, or are you attracted to the surface-level appeal of "traveling the world"? They want to see that you understand the pedagogical model -- active learning, the Forum, Cornerstone courses, HCs -- and that it connects to something real in your own learning history.</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>Listing Minerva features like a brochure ("I love that you learn in 7 cities")</li>
+              <li>Generic praise that could apply to any innovative school</li>
+              <li>Focusing entirely on travel and the "experience" without mentioning the academic model</li>
+              <li>Name-dropping Cornerstone concepts without explaining why they matter to you personally</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Connect a specific Minerva feature to a concrete personal learning experience</li>
+              <li>Show evidence of genuine research (mentioning specific courses, the Forum structure, or HC methodology)</li>
+              <li>Demonstrate that you've identified a gap in traditional education that Minerva's model addresses for you specifically</li>
+              <li>Reflect on how you already learn in ways that align with active learning</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>A specific moment where traditional education failed you or where you thrived outside it</li>
+              <li>Evidence you understand what daily learning at Minerva actually looks like</li>
+              <li>Your own learning philosophy and why Minerva's model fits it</li>
+              <li>What you would contribute to the Minerva community, not just what you'd take from it</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt 2: Personal Challenge -->
+    <div class="prompt-card" data-prompt="challenge">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Personal Challenge</div>
+          <div class="prompt-title">Describe a significant challenge you've faced. How did you respond, and what did the experience teach you?</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>Minerva students live in a new city every semester, work in unfamiliar teams, and face ambiguity constantly. They want to know: when things got hard, did you crumble, cope, or grow? The emphasis is on the "how" and "what you learned" -- not on how dramatic the challenge was.</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>Choosing a challenge primarily because it sounds impressive (poverty, war, illness) without genuine personal reflection</li>
+              <li>Framing yourself as a pure hero who overcame everything alone</li>
+              <li>Describing the challenge at length but rushing through what you learned</li>
+              <li>Ending with a generic lesson like "I learned that hard work pays off"</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Show the internal struggle -- doubt, frustration, confusion -- not just the external events</li>
+              <li>Describe specific actions taken, not vague claims about resilience</li>
+              <li>Acknowledge mistakes or moments of failure within the larger challenge</li>
+              <li>Articulate a nuanced lesson that changed how they approach problems going forward</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>Concrete details that put the reader in the moment</li>
+              <li>Your emotional state -- what you felt, not just what you did</li>
+              <li>A turning point where your thinking or behavior shifted</li>
+              <li>Evidence that the lesson stuck: how you've applied it since</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt 3: Intellectual Curiosity -->
+    <div class="prompt-card" data-prompt="curiosity">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Intellectual Curiosity</div>
+          <div class="prompt-title">Tell us about a topic, idea, or question that captivates you. Why does it matter, and how have you explored it?</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>Minerva's curriculum demands students who are genuinely excited about ideas, not just grades. They want to see how your mind works when you're following your own curiosity -- where you go, how deep you dig, and whether you connect ideas across domains (which is central to the Cornerstone model).</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>Picking a topic because it sounds "smart" (quantum physics, AI) without genuine depth</li>
+              <li>Summarizing what you've learned about the topic without showing how you explored it</li>
+              <li>Treating this as a mini-research-paper instead of a personal intellectual journey</li>
+              <li>Failing to explain why you personally care -- what's at stake for you</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Show the origin of the curiosity -- a specific moment or question that triggered it</li>
+              <li>Trace the path of exploration: books, experiments, conversations, projects</li>
+              <li>Connect the topic to other fields or to personal experience in unexpected ways</li>
+              <li>Show that the exploration changed the applicant's thinking or led to more questions</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>The triggering question or moment that sparked your interest</li>
+              <li>Specific resources, people, or experiences that deepened your understanding</li>
+              <li>A connection between this topic and another domain (demonstrating interdisciplinary thinking)</li>
+              <li>An open question you still have -- showing the curiosity is ongoing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt 4: Community Impact -->
+    <div class="prompt-card" data-prompt="community">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Community Impact</div>
+          <div class="prompt-title">Describe a time you made a meaningful contribution to a community you belong to. What did you do, and what was the impact?</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>Minerva's residential model means you're living and learning in tight-knit cohorts across the world. They need students who actively build community, not just benefit from it. They care less about the scale of your impact and more about whether you identified a real need and took initiative without being asked.</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>Listing volunteer hours or club positions without describing what you actually did</li>
+              <li>Choosing a community service activity you did for a resume rather than out of genuine care</li>
+              <li>Focusing on what the community gave you rather than what you gave it</li>
+              <li>Claiming large-scale impact without evidence ("I changed the lives of hundreds")</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Define "community" in a personal and specific way (it doesn't have to be a nonprofit)</li>
+              <li>Show how you noticed a need that others overlooked</li>
+              <li>Describe the messy, iterative process of actually making something happen</li>
+              <li>Measure impact honestly, including what didn't work</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>Why this particular community matters to you personally</li>
+              <li>The specific gap or problem you identified</li>
+              <li>The concrete steps you took (not just that you "organized" or "led")</li>
+              <li>Honest reflection on what the experience taught you about working with people</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt 5: Global Perspective -->
+    <div class="prompt-card" data-prompt="global">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Global Perspective</div>
+          <div class="prompt-title">Describe an experience that broadened your understanding of the world or exposed you to a perspective very different from your own.</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>You'll be living in Seoul, Hyderabad, Berlin, Buenos Aires, London, Taipei, and San Francisco. They need to know you can genuinely engage with difference -- not just tolerate it, but learn from it. They're testing for cultural humility and the ability to question your own assumptions.</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>"I went on a trip abroad and realized we're all the same" -- flattening difference</li>
+              <li>Framing other cultures as exotic or treating people as learning props</li>
+              <li>Describing the experience without describing how it changed your thinking</li>
+              <li>Relying on travel when a local experience of difference could be more genuine</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Show a genuine moment of discomfort, confusion, or having an assumption challenged</li>
+              <li>Demonstrate that you listened and engaged rather than just observed</li>
+              <li>Articulate what specifically changed in your worldview (not just "I became more open-minded")</li>
+              <li>The experience doesn't have to involve travel -- encountering difference can happen anywhere</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>What you believed or assumed before the experience</li>
+              <li>The specific moment or interaction that disrupted that assumption</li>
+              <li>What you learned about the other perspective (show you actually understood it)</li>
+              <li>How this experience prepared you for living and learning across cultures at Minerva</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt 6: Creative Thinking -->
+    <div class="prompt-card" data-prompt="creative">
+      <div class="prompt-header" onclick="togglePrompt(this)">
+        <div>
+          <div class="prompt-theme">Creative Thinking</div>
+          <div class="prompt-title">Tell us about a time you approached a problem in an unconventional way. What was the problem, and what made your approach different?</div>
+        </div>
+        <span class="prompt-chevron">&#9660;</span>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-body-inner">
+          <div class="prompt-section">
+            <div class="prompt-section-label decode">What they're really asking</div>
+            <p>Minerva's curriculum explicitly teaches creative and critical thinking through the Habits of Mind and Foundational Concepts. They want students who naturally question default approaches. This isn't about being "artsy" -- it's about thinking flexibly, challenging constraints, and combining ideas from different domains.</p>
+          </div>
+          <div class="prompt-section weak-section">
+            <div class="prompt-section-label weak">Weak response patterns</div>
+            <ul>
+              <li>Describing something creative you made (art, music) without explaining the thinking process</li>
+              <li>Claiming an idea was unconventional when it was actually fairly standard</li>
+              <li>Focusing on the outcome without explaining why your approach was different and why you chose it</li>
+              <li>Being vague about the problem itself, making it hard to appreciate the creativity of the solution</li>
+            </ul>
+          </div>
+          <div class="prompt-section strong-section">
+            <div class="prompt-section-label strong">What strong responses do</div>
+            <ul>
+              <li>Clearly define the problem and the conventional approach others were taking</li>
+              <li>Explain the reasoning behind the unconventional approach (not just what, but why)</li>
+              <li>Show the process of getting to the creative solution, including dead ends</li>
+              <li>Reflect on what the experience taught about how they think and solve problems</li>
+            </ul>
+          </div>
+          <div class="prompt-section elements-section">
+            <div class="prompt-section-label elements">Key elements to include</div>
+            <ul>
+              <li>The constraint or assumption that others accepted but you questioned</li>
+              <li>Where your alternative approach came from (analogy from another field, a question, an observation)</li>
+              <li>The result -- including partial failures or unexpected outcomes</li>
+              <li>How this way of thinking connects to how you'd engage with Minerva's interdisciplinary curriculum</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 2: STORY MINING TOOL
+     ══════════════════════════════════════════════════════ -->
+<section id="stories" class="alt-bg">
+  <div class="container">
+    <div class="section-label">Section 2</div>
+    <h2 class="section-title">Story Mining Tool</h2>
+    <p class="section-subtitle">Your best essay material is already inside you. This guided wizard helps you surface it, step by step. Your progress is saved automatically.</p>
+
+    <div class="wizard-progress">
+      <div class="wizard-step-indicator active" onclick="goToWizardStep(0)">1. Moments</div>
+      <div class="wizard-step-indicator" onclick="goToWizardStep(1)">2. Beliefs</div>
+      <div class="wizard-step-indicator" onclick="goToWizardStep(2)">3. Surprise</div>
+      <div class="wizard-step-indicator" onclick="goToWizardStep(3)">4. Deepen</div>
+    </div>
+
+    <!-- Step 1: Five Moments -->
+    <div class="wizard-panel active" data-step="0">
+      <h3>List 5 moments that changed how you think</h3>
+      <p class="wizard-desc">These don't have to be dramatic. A conversation, a failure, a book, a realization at 2 AM -- anything that shifted your perspective. Write quickly and honestly; don't censor yourself.</p>
+      <div class="moment-group">
+        <div class="moment-label">Moment 1</div>
+        <input type="text" class="moment-input" id="moment-1" placeholder="e.g. The day I realized my debate coach was wrong about something fundamental" oninput="saveMining()">
+      </div>
+      <div class="moment-group">
+        <div class="moment-label">Moment 2</div>
+        <input type="text" class="moment-input" id="moment-2" placeholder="e.g. Failing a test I'd studied 40 hours for" oninput="saveMining()">
+      </div>
+      <div class="moment-group">
+        <div class="moment-label">Moment 3</div>
+        <input type="text" class="moment-input" id="moment-3" placeholder="e.g. A stranger's question that I couldn't answer" oninput="saveMining()">
+      </div>
+      <div class="moment-group">
+        <div class="moment-label">Moment 4</div>
+        <input type="text" class="moment-input" id="moment-4" placeholder="e.g. Moving to a place where nobody knew me" oninput="saveMining()">
+      </div>
+      <div class="moment-group">
+        <div class="moment-label">Moment 5</div>
+        <input type="text" class="moment-input" id="moment-5" placeholder="e.g. Building something that actually worked on the first try" oninput="saveMining()">
+      </div>
+      <div class="wizard-nav">
+        <div></div>
+        <button class="wizard-btn primary" onclick="goToWizardStep(1)">Next: Beliefs &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Before vs After -->
+    <div class="wizard-panel" data-step="1">
+      <h3>For each moment, what did you believe before vs. after?</h3>
+      <p class="wizard-desc">Growth happens at the boundary between old and new thinking. Identifying the shift is what makes a story compelling. If a moment didn't change a belief, that's fine -- leave it blank.</p>
+      <div id="beliefs-container"></div>
+      <div class="wizard-nav">
+        <button class="wizard-btn secondary" onclick="goToWizardStep(0)">&larr; Back</button>
+        <button class="wizard-btn primary" onclick="goToWizardStep(2)">Next: Surprise Test &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Surprise Test -->
+    <div class="wizard-panel" data-step="2">
+      <h3>Which of these would surprise someone who doesn't know you?</h3>
+      <p class="wizard-desc">The best essay stories reveal something unexpected about you. Select the moments that would make a stranger think "I wouldn't have guessed that about this person."</p>
+      <div id="surprise-container"></div>
+      <div class="wizard-nav">
+        <button class="wizard-btn secondary" onclick="goToWizardStep(1)">&larr; Back</button>
+        <button class="wizard-btn primary" onclick="goToWizardStep(3)">Next: Deepen Your Story &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Deepening Questions -->
+    <div class="wizard-panel" data-step="3">
+      <h3>Deepen your strongest story</h3>
+      <p class="wizard-desc" id="deepen-desc">Pick the moment you feel strongest about (ideally one you marked as surprising) and answer these questions. This is the raw material for your essay.</p>
+
+      <div id="story-selector" style="margin-bottom: 1.5rem;"></div>
+
+      <div class="deepen-group">
+        <label>What specifically happened?</label>
+        <textarea class="moment-textarea" id="deepen-what" placeholder="Set the scene. Where were you? Who was there? What triggered the moment?" oninput="saveMining()"></textarea>
+      </div>
+      <div class="deepen-group">
+        <label>How did you feel in the moment?</label>
+        <textarea class="moment-textarea" id="deepen-feel" placeholder="Be honest. Confused? Angry? Excited? Ashamed? The emotional truth is what makes readers connect." oninput="saveMining()"></textarea>
+      </div>
+      <div class="deepen-group">
+        <label>What did you do about it?</label>
+        <textarea class="moment-textarea" id="deepen-action" placeholder="Concrete actions, not vague claims. Did you research? Build something? Have a conversation? Change a habit?" oninput="saveMining()"></textarea>
+      </div>
+      <div class="deepen-group">
+        <label>What did you learn that you couldn't have learned any other way?</label>
+        <textarea class="moment-textarea" id="deepen-learn" placeholder="What's the lesson that only THIS experience could teach? Not a platitude -- something specific to you." oninput="saveMining()"></textarea>
+      </div>
+      <div class="deepen-group">
+        <label>How has this changed how you approach new situations?</label>
+        <textarea class="moment-textarea" id="deepen-apply" placeholder="Give a concrete example of how you've since applied this lesson. Show the growth was real and lasting." oninput="saveMining()"></textarea>
+      </div>
+      <div class="wizard-nav">
+        <button class="wizard-btn secondary" onclick="goToWizardStep(2)">&larr; Back</button>
+        <button class="wizard-btn primary" onclick="document.getElementById('structure').scrollIntoView({behavior:'smooth'})">Use This in Structure Builder &darr;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 3: ESSAY STRUCTURE BUILDER
+     ══════════════════════════════════════════════════════ -->
+<section id="structure">
+  <div class="container">
+    <div class="section-label">Section 3</div>
+    <h2 class="section-title">Essay Structure Builder</h2>
+    <p class="section-subtitle">Choose an essay type that fits your story, then fill in the outline. The balance meter shows whether you're spending your words where they matter most.</p>
+
+    <div class="type-selector">
+      <button class="type-btn active" data-type="narrative" onclick="selectEssayType('narrative')">
+        <div class="type-icon">&#9998;</div>
+        <span class="type-name">Narrative</span>
+        <span class="type-desc">Story-driven</span>
+      </button>
+      <button class="type-btn" data-type="reflective" onclick="selectEssayType('reflective')">
+        <div class="type-icon">&#128161;</div>
+        <span class="type-name">Reflective</span>
+        <span class="type-desc">Idea-driven</span>
+      </button>
+      <button class="type-btn" data-type="problem" onclick="selectEssayType('problem')">
+        <div class="type-icon">&#9881;</div>
+        <span class="type-name">Problem-Solving</span>
+        <span class="type-desc">Challenge-driven</span>
+      </button>
+    </div>
+
+    <!-- Narrative Outline -->
+    <div class="outline-area active" data-type="narrative">
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Hook / Opening Line</label>
+          <span class="hint">Drop the reader into the middle of the action</span>
+        </div>
+        <textarea placeholder="Start with a specific moment, image, or line of dialogue. Avoid starting with a question or a dictionary definition." oninput="updateStructure('narrative')" data-field="hook"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Context / Setup</label>
+          <span class="hint">Just enough background -- don't over-explain</span>
+        </div>
+        <textarea placeholder="Give the reader what they need to understand the story, but no more. 2-3 sentences is often enough." oninput="updateStructure('narrative')" data-field="context"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="story">
+        <div class="outline-block-header">
+          <label>Core Story</label>
+          <span class="hint">The main event -- show, don't tell</span>
+        </div>
+        <textarea placeholder="What happened? Use specific details, dialogue, and sensory language. Let the reader experience it with you." oninput="updateStructure('narrative')" data-field="core"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Turning Point / Key Insight</label>
+          <span class="hint">The moment everything shifted</span>
+        </div>
+        <textarea placeholder="What changed in how you saw things? This is the heart of the essay -- spend your best writing here." oninput="updateStructure('narrative')" data-field="turning"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Connection to Minerva</label>
+          <span class="hint">Organic, not forced</span>
+        </div>
+        <textarea placeholder="How does this story connect to why you belong at Minerva? Be specific about the program, not generic about 'global education.'" oninput="updateStructure('narrative')" data-field="minerva"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Closing</label>
+          <span class="hint">Land the plane -- resonate, don't summarize</span>
+        </div>
+        <textarea placeholder="End with an image, a question, or a forward-looking statement. Don't restate what you've already said." oninput="updateStructure('narrative')" data-field="closing"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+    </div>
+
+    <!-- Reflective Outline -->
+    <div class="outline-area" data-type="reflective">
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Hook / Opening Line</label>
+          <span class="hint">Start with the idea that grips you</span>
+        </div>
+        <textarea placeholder="Lead with the question, tension, or paradox that drives your reflection. Make the reader curious." oninput="updateStructure('reflective')" data-field="hook"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Context / Setup</label>
+          <span class="hint">Where this idea comes from in your life</span>
+        </div>
+        <textarea placeholder="Ground the reflection in your experience. Why does this idea matter to you personally, not just intellectually?" oninput="updateStructure('reflective')" data-field="context"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="story">
+        <div class="outline-block-header">
+          <label>Core Argument / Exploration</label>
+          <span class="hint">Develop the idea with depth and nuance</span>
+        </div>
+        <textarea placeholder="Build your thinking. Show how you've wrestled with the idea, considered different angles, and deepened your understanding." oninput="updateStructure('reflective')" data-field="core"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Turning Point / Key Insight</label>
+          <span class="hint">The realization that changed your framework</span>
+        </div>
+        <textarea placeholder="Where did your thinking shift? What do you understand now that you didn't before? Be precise." oninput="updateStructure('reflective')" data-field="turning"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Connection to Minerva</label>
+          <span class="hint">How this thinking connects to your Minerva journey</span>
+        </div>
+        <textarea placeholder="What about Minerva's model -- its curriculum, cities, community -- connects to the ideas you've been exploring?" oninput="updateStructure('reflective')" data-field="minerva"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Closing</label>
+          <span class="hint">Leave the reader thinking</span>
+        </div>
+        <textarea placeholder="End with a question that's still open, a tension you're still navigating, or a commitment you've made." oninput="updateStructure('reflective')" data-field="closing"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+    </div>
+
+    <!-- Problem-Solving Outline -->
+    <div class="outline-area" data-type="problem">
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Hook / Opening Line</label>
+          <span class="hint">Drop the reader into the problem</span>
+        </div>
+        <textarea placeholder="Start with the moment you encountered the problem. What was at stake? Why did it matter?" oninput="updateStructure('problem')" data-field="hook"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="setup">
+        <div class="outline-block-header">
+          <label>Context / Setup</label>
+          <span class="hint">Define the challenge clearly</span>
+        </div>
+        <textarea placeholder="What was the problem? Why was it hard? What had others tried? Set up the constraints you were working within." oninput="updateStructure('problem')" data-field="context"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="story">
+        <div class="outline-block-header">
+          <label>Core Story / Your Approach</label>
+          <span class="hint">Show your process, not just the solution</span>
+        </div>
+        <textarea placeholder="Walk through how you tackled it. Include dead ends and iterations -- the process reveals more about you than the result." oninput="updateStructure('problem')" data-field="core"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Turning Point / Key Insight</label>
+          <span class="hint">The breakthrough or the lesson from failure</span>
+        </div>
+        <textarea placeholder="What was the pivotal moment? Even if the problem wasn't fully solved, what did you learn about how to approach hard problems?" oninput="updateStructure('problem')" data-field="turning"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Connection to Minerva</label>
+          <span class="hint">How this problem-solving mindset fits Minerva</span>
+        </div>
+        <textarea placeholder="Connect your approach to Minerva's emphasis on applied learning, interdisciplinary thinking, or real-world problem solving." oninput="updateStructure('problem')" data-field="minerva"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+      <div class="outline-block" data-category="insight">
+        <div class="outline-block-header">
+          <label>Closing</label>
+          <span class="hint">What's next -- where does this lead?</span>
+        </div>
+        <textarea placeholder="End with where this problem-solving drive is taking you next. What's the bigger question you're now pursuing?" oninput="updateStructure('problem')" data-field="closing"></textarea>
+        <div class="word-count">0 words</div>
+      </div>
+    </div>
+
+    <div class="total-word-count">
+      <span class="label">Total word count</span>
+      <span class="count ok" id="total-words">0 words</span>
+    </div>
+
+    <div class="balance-meter" id="balance-meter">
+      <h4>Balance Meter</h4>
+      <div class="balance-bar-container">
+        <div class="balance-segment setup" id="bal-setup" style="width:33.3%">Setup</div>
+        <div class="balance-segment story" id="bal-story" style="width:33.3%">Story</div>
+        <div class="balance-segment insight" id="bal-insight" style="width:33.4%">Insight</div>
+      </div>
+      <div class="balance-labels">
+        <span class="balance-label"><span class="balance-dot setup"></span> Setup / Context</span>
+        <span class="balance-label"><span class="balance-dot story"></span> Core Story</span>
+        <span class="balance-label"><span class="balance-dot insight"></span> Insight / Reflection</span>
+      </div>
+      <div class="balance-feedback good" id="balance-feedback">
+        Write in the sections above to see your word distribution. Aim for roughly 20% setup, 35% story, and 45% insight and reflection.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 4: SELF-REVIEW CHECKLIST
+     ══════════════════════════════════════════════════════ -->
+<section id="review" class="alt-bg">
+  <div class="container">
+    <div class="section-label">Section 4</div>
+    <h2 class="section-title">Self-Review Checklist</h2>
+    <p class="section-subtitle">Before you submit, run your essay through this checklist. Be honest with yourself -- every unchecked item is an area to improve.</p>
+
+    <ul class="review-list" id="review-list">
+      <li class="review-item" onclick="toggleReview(this)" data-idx="0">
+        <span class="review-check">&#10003;</span>
+        <span>Is my opening specific and engaging (not generic)?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="1">
+        <span class="review-check">&#10003;</span>
+        <span>Do I show growth or change?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="2">
+        <span class="review-check">&#10003;</span>
+        <span>Is this authentically MY voice?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="3">
+        <span class="review-check">&#10003;</span>
+        <span>Would this essay only work for ME (not any applicant)?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="4">
+        <span class="review-check">&#10003;</span>
+        <span>Do I connect to Minerva specifically (not just "global education")?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="5">
+        <span class="review-check">&#10003;</span>
+        <span>Am I under the word limit?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="6">
+        <span class="review-check">&#10003;</span>
+        <span>Have I avoided cliches ("passion," "changed my life," "think outside the box")?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="7">
+        <span class="review-check">&#10003;</span>
+        <span>Did I show, not tell (specific scenes rather than abstract claims)?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="8">
+        <span class="review-check">&#10003;</span>
+        <span>Is there a clear "so what" -- what did I learn?</span>
+      </li>
+      <li class="review-item" onclick="toggleReview(this)" data-idx="9">
+        <span class="review-check">&#10003;</span>
+        <span>Would I be proud to read this aloud?</span>
+      </li>
+    </ul>
+
+    <div class="review-progress-bar">
+      <div class="review-progress-fill" id="review-fill"></div>
+    </div>
+    <div class="review-progress-text" id="review-text">
+      <span>0</span> of 10 checked (0%)
+    </div>
+
+    <div class="review-remaining" id="review-remaining"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 5: EXAMPLE ESSAY BREAKDOWNS
+     ══════════════════════════════════════════════════════ -->
+<section id="examples">
+  <div class="container">
+    <div class="section-label">Section 5</div>
+    <h2 class="section-title">Example Essay Breakdowns</h2>
+    <p class="section-subtitle">Three annotated excerpts showing specific techniques that make Minerva essays work. Study the technique, not the topic.</p>
+
+    <!-- Example 1: Specific Detail -->
+    <div class="example-card">
+      <span class="example-badge detail">Technique: Specific Detail</span>
+      <div class="example-excerpt">
+        "The fluorescent light in room 3B buzzed at exactly the frequency that made my left eye twitch. I'd been staring at the same equation for forty minutes -- not because I couldn't solve it, but because the answer contradicted everything my textbook said. My teacher had already moved on. I hadn't."
+      </div>
+      <div class="example-annotation">
+        <strong>Why it works:</strong> Instead of saying "I was curious and persistent," the writer drops you into a physical moment. The buzzing light, the twitching eye, the forty minutes, the contradiction -- these details make the scene real. The last two sentences ("My teacher had already moved on. I hadn't.") reveal character without ever stating it directly. The reader draws their own conclusion about this person's intellectual drive, which is far more convincing than a self-description.
+      </div>
+    </div>
+
+    <!-- Example 2: Vulnerability -->
+    <div class="example-card">
+      <span class="example-badge vulnerability">Technique: Vulnerability</span>
+      <div class="example-excerpt">
+        "I spent three months building a community garden program, mapped the plots, recruited volunteers, wrote a grant proposal -- and then nobody came to the launch. I sat on a folding chair next to forty empty seats and pretended to check my phone so the venue manager wouldn't see me cry."
+      </div>
+      <div class="example-annotation">
+        <strong>Why it works:</strong> Most applicants would skip this part or spin it immediately into a success story. This writer sits in the failure. The "pretending to check my phone" detail is painfully specific and universally recognizable -- every reader has done some version of this. By showing the low point without rushing to redemption, the writer earns the reader's trust. Whatever growth comes next will feel genuine because we saw the real cost of the setback.
+      </div>
+    </div>
+
+    <!-- Example 3: Unexpected Connection -->
+    <div class="example-card">
+      <span class="example-badge connection">Technique: Unexpected Connection</span>
+      <div class="example-excerpt">
+        "I understood urban planning the day I learned to cook Ethiopian food. My neighbor Almaz showed me how injera has to ferment for three days -- you can't rush it. The best neighborhoods work the same way. You can't drop a park into a community and call it development. Things need time to become part of the fabric."
+      </div>
+      <div class="example-annotation">
+        <strong>Why it works:</strong> This is interdisciplinary thinking in action -- exactly what Minerva's Cornerstone curriculum is designed to develop. The writer takes two seemingly unrelated domains (cooking and urban planning) and finds a genuine structural parallel. It doesn't feel forced because the connection arose from a real experience with a real person. This signals that the writer naturally thinks across boundaries, which is the core intellectual disposition Minerva selects for.
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>How to apply these techniques</h4>
+      <p>Notice that none of these excerpts are about impressive accomplishments. They're about specific moments rendered with honesty and precision. When you revise your essay, ask yourself: could I make this more specific? Could I let the reader see what happened instead of telling them what it meant?</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<!-- ── Save Indicator ────────────────────────────────── -->
+<div class="save-indicator" id="save-indicator">Saved</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'minerva-essay-builder';
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  showSaveIndicator();
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  el.classList.add('visible');
+  clearTimeout(el._timeout);
+  el._timeout = setTimeout(() => el.classList.remove('visible'), 1500);
+}
+
+// ══════════════════════════════════════════════════════════
+// PROMPT ANALYZER
+// ══════════════════════════════════════════════════════════
+
+function togglePrompt(header) {
+  const card = header.closest('.prompt-card');
+  card.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// STORY MINING WIZARD
+// ══════════════════════════════════════════════════════════
+
+let currentWizardStep = 0;
+
+function goToWizardStep(step) {
+  // Validate: can't go past step 1 without at least one moment
+  if (step > 0) {
+    const moments = getMoments();
+    if (moments.filter(m => m.trim()).length === 0) {
+      return; // don't advance if no moments entered
+    }
+  }
+
+  currentWizardStep = step;
+
+  // Update indicators
+  document.querySelectorAll('.wizard-step-indicator').forEach((ind, i) => {
+    ind.classList.remove('active', 'completed');
+    if (i === step) ind.classList.add('active');
+    else if (i < step) ind.classList.add('completed');
+  });
+
+  // Show correct panel
+  document.querySelectorAll('.wizard-panel').forEach((panel, i) => {
+    panel.classList.toggle('active', i === step);
+  });
+
+  // Populate step-specific content
+  if (step === 1) populateBeliefs();
+  if (step === 2) populateSurprise();
+  if (step === 3) populateDeepen();
+
+  saveMining();
+}
+
+function getMoments() {
+  return [1,2,3,4,5].map(i => document.getElementById('moment-' + i).value);
+}
+
+function populateBeliefs() {
+  const moments = getMoments();
+  const container = document.getElementById('beliefs-container');
+  const data = loadData();
+  const beliefs = data.beliefs || {};
+  container.innerHTML = '';
+
+  moments.forEach((m, i) => {
+    if (!m.trim()) return;
+    const div = document.createElement('div');
+    div.className = 'belief-pair';
+    div.innerHTML = `
+      <div class="moment-label">Moment ${i + 1}: ${escapeHtml(m)}</div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:0.3rem;">I believed before...</div>
+        <input type="text" class="moment-input" data-belief-before="${i}" placeholder="What I thought was true" value="${escapeHtml(beliefs['before-' + i] || '')}" oninput="saveMining()">
+      </div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:0.3rem;">I believe now...</div>
+        <input type="text" class="moment-input" data-belief-after="${i}" placeholder="What I now understand" value="${escapeHtml(beliefs['after-' + i] || '')}" oninput="saveMining()">
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function populateSurprise() {
+  const moments = getMoments();
+  const container = document.getElementById('surprise-container');
+  const data = loadData();
+  const surprises = data.surprises || [];
+  container.innerHTML = '';
+
+  moments.forEach((m, i) => {
+    if (!m.trim()) return;
+    const selected = surprises.includes(i);
+    const div = document.createElement('div');
+    div.className = 'surprise-row' + (selected ? ' selected' : '');
+    div.setAttribute('data-idx', i);
+    div.onclick = function() {
+      this.classList.toggle('selected');
+      saveMining();
+    };
+    div.innerHTML = `
+      <span class="surprise-check">&#10003;</span>
+      <span class="surprise-text">${escapeHtml(m)}</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function populateDeepen() {
+  const moments = getMoments();
+  const data = loadData();
+  const selector = document.getElementById('story-selector');
+
+  // Build story selector dropdown
+  const filled = moments.map((m, i) => ({text: m, idx: i})).filter(x => x.text.trim());
+  if (filled.length === 0) {
+    selector.innerHTML = '<p style="font-size:0.9rem;color:var(--text2);">Go back to Step 1 and enter some moments first.</p>';
+    return;
+  }
+
+  let html = '<select class="moment-input" id="story-pick" onchange="saveMining()" style="max-width:100%;">';
+  filled.forEach(f => {
+    const sel = (data.selectedStory === f.idx) ? ' selected' : '';
+    html += `<option value="${f.idx}"${sel}>Moment ${f.idx + 1}: ${escapeHtml(f.text)}</option>`;
+  });
+  html += '</select>';
+  selector.innerHTML = html;
+
+  // Load deepening answers
+  const deepen = data.deepen || {};
+  ['what', 'feel', 'action', 'learn', 'apply'].forEach(key => {
+    const el = document.getElementById('deepen-' + key);
+    if (el) el.value = deepen[key] || '';
+  });
+}
+
+function saveMining() {
+  const data = loadData();
+
+  // Moments
+  data.moments = getMoments();
+
+  // Beliefs
+  data.beliefs = data.beliefs || {};
+  document.querySelectorAll('[data-belief-before]').forEach(el => {
+    data.beliefs['before-' + el.dataset.beliefBefore] = el.value;
+  });
+  document.querySelectorAll('[data-belief-after]').forEach(el => {
+    data.beliefs['after-' + el.dataset.beliefAfter] = el.value;
+  });
+
+  // Surprises
+  data.surprises = [];
+  document.querySelectorAll('.surprise-row.selected').forEach(el => {
+    data.surprises.push(parseInt(el.dataset.idx));
+  });
+
+  // Selected story
+  const pick = document.getElementById('story-pick');
+  if (pick) data.selectedStory = parseInt(pick.value);
+
+  // Deepen
+  data.deepen = {};
+  ['what', 'feel', 'action', 'learn', 'apply'].forEach(key => {
+    const el = document.getElementById('deepen-' + key);
+    if (el) data.deepen[key] = el.value;
+  });
+
+  data.wizardStep = currentWizardStep;
+  saveData(data);
+}
+
+// ══════════════════════════════════════════════════════════
+// STRUCTURE BUILDER
+// ══════════════════════════════════════════════════════════
+
+function selectEssayType(type) {
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === type);
+  });
+  document.querySelectorAll('.outline-area').forEach(area => {
+    area.classList.toggle('active', area.dataset.type === type);
+  });
+
+  const data = loadData();
+  data.essayType = type;
+  saveData(data);
+
+  updateStructure(type);
+}
+
+function countWords(text) {
+  if (!text || !text.trim()) return 0;
+  return text.trim().split(/\s+/).length;
+}
+
+function updateStructure(type) {
+  const area = document.querySelector(`.outline-area[data-type="${type}"]`);
+  if (!area) return;
+
+  const data = loadData();
+  data.structure = data.structure || {};
+  data.structure[type] = data.structure[type] || {};
+
+  let totalWords = 0;
+  let setupWords = 0;
+  let storyWords = 0;
+  let insightWords = 0;
+
+  area.querySelectorAll('.outline-block').forEach(block => {
+    const textarea = block.querySelector('textarea');
+    const wordCountEl = block.querySelector('.word-count');
+    const field = textarea.dataset.field;
+    const category = block.dataset.category;
+    const wc = countWords(textarea.value);
+
+    data.structure[type][field] = textarea.value;
+
+    wordCountEl.textContent = wc + ' word' + (wc !== 1 ? 's' : '');
+    totalWords += wc;
+
+    if (category === 'setup') setupWords += wc;
+    else if (category === 'story') storyWords += wc;
+    else if (category === 'insight') insightWords += wc;
+  });
+
+  // Total word count
+  const totalEl = document.getElementById('total-words');
+  totalEl.textContent = totalWords + ' words';
+  totalEl.className = 'count';
+  if (totalWords > 500) totalEl.classList.add('over');
+  else if (totalWords > 400) totalEl.classList.add('warn');
+  else totalEl.classList.add('ok');
+
+  // Balance meter
+  updateBalance(setupWords, storyWords, insightWords, totalWords);
+
+  saveData(data);
+}
+
+function updateBalance(setup, story, insight, total) {
+  const setupEl = document.getElementById('bal-setup');
+  const storyEl = document.getElementById('bal-story');
+  const insightEl = document.getElementById('bal-insight');
+  const feedbackEl = document.getElementById('balance-feedback');
+
+  if (total === 0) {
+    setupEl.style.width = '33.3%';
+    storyEl.style.width = '33.3%';
+    insightEl.style.width = '33.4%';
+    setupEl.textContent = 'Setup';
+    storyEl.textContent = 'Story';
+    insightEl.textContent = 'Insight';
+    feedbackEl.className = 'balance-feedback good';
+    feedbackEl.textContent = 'Write in the sections above to see your word distribution. Aim for roughly 20% setup, 35% story, and 45% insight and reflection.';
+    return;
+  }
+
+  const setupPct = Math.round((setup / total) * 100);
+  const storyPct = Math.round((story / total) * 100);
+  const insightPct = 100 - setupPct - storyPct;
+
+  setupEl.style.width = Math.max(setupPct, 2) + '%';
+  storyEl.style.width = Math.max(storyPct, 2) + '%';
+  insightEl.style.width = Math.max(insightPct, 2) + '%';
+
+  setupEl.textContent = setupPct > 10 ? setupPct + '%' : '';
+  storyEl.textContent = storyPct > 10 ? storyPct + '%' : '';
+  insightEl.textContent = insightPct > 10 ? insightPct + '%' : '';
+
+  // Feedback
+  let feedback = '';
+  let feedbackClass = 'good';
+
+  if (setupPct > 40) {
+    feedback = 'You\'re spending too much of your essay on setup and context. Readers don\'t need a full backstory -- get to the substance faster. Cut your setup down to 15-25% and redistribute those words to insight and reflection.';
+    feedbackClass = 'warn';
+  } else if (insightPct < 25 && total > 50) {
+    feedback = 'Your insight and reflection sections are thin. This is where the admissions reader learns who you are -- the "so what" of your essay. Consider cutting some narrative and spending more words on what you learned and how it connects to Minerva.';
+    feedbackClass = 'warn';
+  } else if (storyPct < 15 && total > 50) {
+    feedback = 'Your core story section is very short. Without enough concrete detail and narrative, your essay can read as abstract. Add specific scenes, dialogue, or sensory details to bring the story to life.';
+    feedbackClass = 'warn';
+  } else if (total > 50) {
+    feedback = 'Your balance looks solid. Setup is concise, the story has substance, and you\'re dedicating real space to insight and reflection. Keep refining the quality of each section.';
+    feedbackClass = 'good';
+  } else {
+    feedback = 'Keep writing. You need more content before the balance meter can give meaningful feedback.';
+    feedbackClass = 'good';
+  }
+
+  feedbackEl.className = 'balance-feedback ' + feedbackClass;
+  feedbackEl.textContent = feedback;
+}
+
+// ══════════════════════════════════════════════════════════
+// SELF-REVIEW CHECKLIST
+// ══════════════════════════════════════════════════════════
+
+function toggleReview(item) {
+  item.classList.toggle('checked');
+  updateReviewProgress();
+  saveReview();
+}
+
+function updateReviewProgress() {
+  const items = document.querySelectorAll('.review-item');
+  const checked = document.querySelectorAll('.review-item.checked');
+  const total = items.length;
+  const done = checked.length;
+  const pct = Math.round((done / total) * 100);
+
+  document.getElementById('review-fill').style.width = pct + '%';
+  document.getElementById('review-text').innerHTML =
+    '<span>' + done + '</span> of ' + total + ' checked (' + pct + '%)';
+
+  // Show remaining items
+  const remainingEl = document.getElementById('review-remaining');
+  if (done > 0 && done < total) {
+    const unchecked = [];
+    items.forEach(item => {
+      if (!item.classList.contains('checked')) {
+        unchecked.push(item.querySelector('span:last-child').textContent);
+      }
+    });
+    remainingEl.innerHTML = '<strong>Areas to revisit:</strong> ' + unchecked.join(' / ');
+    remainingEl.classList.add('visible');
+  } else {
+    remainingEl.classList.remove('visible');
+  }
+}
+
+function saveReview() {
+  const data = loadData();
+  data.review = [];
+  document.querySelectorAll('.review-item').forEach((item, i) => {
+    if (item.classList.contains('checked')) data.review.push(i);
+  });
+  saveData(data);
+}
+
+// ══════════════════════════════════════════════════════════
+// RESTORE STATE ON LOAD
+// ══════════════════════════════════════════════════════════
+
+function restoreState() {
+  const data = loadData();
+
+  // Restore moments
+  if (data.moments) {
+    data.moments.forEach((m, i) => {
+      const el = document.getElementById('moment-' + (i + 1));
+      if (el) el.value = m;
+    });
+  }
+
+  // Restore wizard step
+  if (typeof data.wizardStep === 'number') {
+    goToWizardStep(data.wizardStep);
+  }
+
+  // Restore essay type
+  if (data.essayType) {
+    selectEssayType(data.essayType);
+  }
+
+  // Restore structure content
+  if (data.structure) {
+    Object.keys(data.structure).forEach(type => {
+      const area = document.querySelector(`.outline-area[data-type="${type}"]`);
+      if (!area) return;
+      const fields = data.structure[type];
+      Object.keys(fields).forEach(field => {
+        const textarea = area.querySelector(`textarea[data-field="${field}"]`);
+        if (textarea) textarea.value = fields[field];
+      });
+    });
+    // Trigger update for active type
+    const activeType = data.essayType || 'narrative';
+    updateStructure(activeType);
+  }
+
+  // Restore review checklist
+  if (data.review) {
+    document.querySelectorAll('.review-item').forEach((item, i) => {
+      if (data.review.includes(i)) item.classList.add('checked');
+    });
+    updateReviewProgress();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════════════════
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', restoreState);
+</script>
+
+</body>
+</html>

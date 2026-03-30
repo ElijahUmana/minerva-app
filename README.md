@@ -1,28 +1,61 @@
 # Minerva Application Companion
 
-A comprehensive web application to support prospective students in applying to Minerva University. Built by a current Minerva student to provide insider perspective and practical guidance.
+A comprehensive, multi-page web application to support prospective students in applying to Minerva University. Built by a current Minerva student with insider perspective and practical, actionable guidance across every stage of the application process.
 
-## Features
+**Live App: [https://elijahumana.github.io/minerva-app](https://elijahumana.github.io/minerva-app)**
 
-- **Why Minerva** — clear explanation of what makes Minerva different from traditional universities
-- **Step-by-Step Application Guide** — walk through every stage of the application process
-- **Challenge Preparation** — strategies and mindset tips for Minerva's creative challenges
-- **Essay Workshop** — writing tips, 12 brainstorming prompts with hints, and a private brainstorming area (notes saved locally)
-- **Interactive Checklist** — 16-item application tracker with progress bar (saved in browser)
-- **Financial Aid Guide** — how aid works at Minerva, and why cost shouldn't stop you from applying
-- **FAQ** — honest answers to common questions from a current student's perspective
+## Pages & Features
+
+### [Application Guide](https://elijahumana.github.io/minerva-app/) (index.html)
+- What makes Minerva different (global immersion, Active Learning Forum, Habits of Mind, admissions philosophy)
+- Step-by-step application walkthrough (5 stages with detailed guidance)
+- Challenge preparation strategies with current student perspectives
+- Interactive brainstorming prompts (12 prompts with hints)
+- 16-item interactive application checklist with progress bar
+- Financial aid breakdown (need-based aid, cost structure, external scholarships)
+- 8 FAQ questions answered from a student perspective
+
+### [Application Timeline](https://elijahumana.github.io/minerva-app/timeline.html)
+- Visual interactive timeline showing all application rounds (EA I, EA II, RD I, RD II)
+- Live countdown timer for each round deadline
+- Month-by-month preparation calendar (6 months before through post-submission)
+- Round-by-round advantages and tips
+
+### [Practice Challenges](https://elijahumana.github.io/minerva-app/practice.html)
+- **Pattern Recognition** — 8 increasingly difficult number sequence puzzles with explanations
+- **Lateral Thinking** — 6 classic puzzles with self-assessment tracking
+- **Creative Problem Solving** — 4 timed open-ended problems (3-min timer) with sample strong responses
+- **Data Interpretation** — 3 data table scenarios with analysis questions
+- **Argument Analysis** — 4 substantive arguments to identify claims, evidence, and assumptions
+- Progress tracker across all 5 challenge types
+
+### [Essay Builder](https://elijahumana.github.io/minerva-app/essays.html)
+- **Prompt Analyzer** — 6 common Minerva essay themes decoded (what they're really asking, weak vs. strong patterns)
+- **Story Mining Tool** — 4-step guided brainstorming wizard to discover your stories
+- **Structure Builder** — fillable essay outlines for narrative, reflective, and problem-solving styles with word counts and balance meter
+- **Self-Review Checklist** — 10-item quality criteria with progress tracking
+- **Example Breakdowns** — 3 annotated excerpts showing specific techniques
+
+### [Readiness Simulator](https://elijahumana.github.io/minerva-app/simulator.html)
+- 5-step interactive self-assessment (20 questions across academic, creative, global, communication, motivation)
+- Results dashboard with overall score, category breakdowns, and circular progress indicator
+- Personalized strengths, areas to develop, and specific action items per category
+- Prioritized action plan based on weakest areas
+
+### [Resources](https://elijahumana.github.io/minerva-app/resources.html)
+- Official Minerva links and application portal
+- Student life insights with city rotation descriptions (7 cities)
+- Academic preparation resources (books, courses, creative thinking tools)
+- Community and support (social media, ambassadors, student groups)
+- Section for parents and guardians
+- Searchable/filterable resource grid
 
 ## Tech Stack
 
-- Vanilla HTML5, CSS3, JavaScript
-- No frameworks, no build step, no dependencies
-- Responsive design (mobile and desktop)
-- All data stays in the user's browser (localStorage)
+- Vanilla HTML5, CSS3, JavaScript (no frameworks, no dependencies)
+- Responsive design across all pages
+- All user data persists in localStorage (checklist progress, essay drafts, simulator results, practice scores)
 - Deployed via GitHub Pages
-
-## Live App
-
-[https://elijahumana.github.io/minerva-app](https://elijahumana.github.io/minerva-app)
 
 ## AI Disclosure
 

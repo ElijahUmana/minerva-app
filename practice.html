@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Challenges | Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+  --yellow: #d97706;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active { color: var(--bone); background: rgba(200,85,61,0.35); }
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 3.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(200,85,61,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%);
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.1rem; color: rgba(245,240,235,0.75);
+  max-width: 620px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ── Container ─────────────────────────────────────── */
+.container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── Progress Overview ─────────────────────────────── */
+.progress-overview {
+  padding: 2.5rem 0 1rem;
+}
+.progress-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem;
+}
+.progress-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 10px; padding: 1rem; text-align: center;
+  transition: all 0.2s; cursor: pointer;
+}
+.progress-card:hover { border-color: #d1d5db; transform: translateY(-1px); }
+.progress-card .p-icon { font-size: 1.3rem; margin-bottom: 0.35rem; }
+.progress-card .p-label {
+  font-size: 0.72rem; font-weight: 600; color: var(--text);
+  line-height: 1.3; margin-bottom: 0.4rem;
+}
+.progress-card .p-status {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; padding: 0.15rem 0.5rem; border-radius: 10px;
+  display: inline-block;
+}
+.p-status.not-started { background: var(--mid-gray); color: var(--text2); }
+.p-status.in-progress { background: rgba(217,119,6,0.12); color: var(--yellow); }
+.p-status.completed { background: rgba(5,150,105,0.12); color: var(--green); }
+.progress-summary {
+  text-align: center; margin-top: 1.25rem;
+}
+.progress-bar-outer {
+  width: 100%; height: 8px; background: var(--mid-gray);
+  border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;
+}
+.progress-bar-inner {
+  height: 100%; background: linear-gradient(90deg, var(--clay), var(--green));
+  border-radius: 4px; transition: width 0.5s ease; width: 0%;
+}
+.progress-label-text {
+  font-size: 0.82rem; color: var(--text2); font-weight: 500;
+}
+
+/* ── Challenge Sections ────────────────────────────── */
+.challenges-area { padding: 1.5rem 0 3rem; }
+
+.challenge-block {
+  border: 1px solid var(--mid-gray); border-radius: 14px;
+  margin-bottom: 1rem; overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.challenge-block:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+
+.challenge-header {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.25rem 1.5rem; cursor: pointer;
+  background: var(--white); transition: background 0.15s;
+  user-select: none;
+}
+.challenge-header:hover { background: var(--light-gray); }
+.ch-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.ch-icon.red { background: rgba(200,85,61,0.1); }
+.ch-icon.blue { background: rgba(37,99,235,0.1); }
+.ch-icon.green { background: rgba(5,150,105,0.1); }
+.ch-icon.purple { background: rgba(124,58,237,0.1); }
+.ch-icon.yellow { background: rgba(217,119,6,0.1); }
+.ch-info { flex: 1; }
+.ch-info h3 {
+  font-size: 1rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.15rem;
+}
+.ch-info p { font-size: 0.82rem; color: var(--text2); line-height: 1.4; }
+.ch-meta {
+  display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+}
+.ch-badge {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; padding: 0.2rem 0.6rem; border-radius: 10px;
+}
+.ch-badge.not-started { background: var(--mid-gray); color: var(--text2); }
+.ch-badge.in-progress { background: rgba(217,119,6,0.12); color: var(--yellow); }
+.ch-badge.completed { background: rgba(5,150,105,0.12); color: var(--green); }
+.ch-arrow {
+  font-size: 1rem; color: var(--text2); transition: transform 0.2s;
+}
+.challenge-block.open .ch-arrow { transform: rotate(180deg); }
+
+.challenge-body {
+  display: none; padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid var(--mid-gray);
+  animation: fadeSlide 0.3s ease;
+}
+.challenge-block.open .challenge-body { display: block; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Shared Challenge Styles ──────────────────────── */
+.q-card {
+  background: var(--light-gray); border: 1px solid var(--mid-gray);
+  border-radius: 10px; padding: 1.25rem; margin-top: 1rem;
+}
+.q-card.answered { border-color: rgba(5,150,105,0.3); background: rgba(5,150,105,0.03); }
+.q-card.wrong { border-color: rgba(200,85,61,0.3); background: rgba(200,85,61,0.03); }
+.q-number {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--clay); margin-bottom: 0.5rem;
+}
+.q-text {
+  font-size: 0.95rem; font-weight: 600; color: var(--text);
+  margin-bottom: 1rem; line-height: 1.5;
+}
+.q-sequence {
+  display: flex; align-items: center; gap: 0.5rem;
+  flex-wrap: wrap; margin-bottom: 1rem;
+  font-size: 1.1rem; font-weight: 700; color: var(--obsidian);
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+.q-sequence .blank {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 48px; height: 38px; border: 2px dashed var(--clay);
+  border-radius: 8px; color: var(--clay); font-weight: 800;
+  background: rgba(200,85,61,0.06);
+}
+.q-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+}
+.q-option {
+  padding: 0.6rem 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; cursor: pointer; font-size: 0.88rem;
+  font-weight: 500; background: var(--white);
+  transition: all 0.15s; text-align: center;
+}
+.q-option:hover:not(.disabled) {
+  border-color: var(--clay); background: rgba(200,85,61,0.04);
+}
+.q-option.selected { border-color: var(--clay); background: rgba(200,85,61,0.08); color: var(--clay); font-weight: 600; }
+.q-option.correct { border-color: var(--green); background: rgba(5,150,105,0.1); color: var(--green); }
+.q-option.incorrect { border-color: var(--clay-dark); background: rgba(200,85,61,0.1); color: var(--clay-dark); opacity: 0.7; }
+.q-option.disabled { cursor: default; opacity: 0.85; }
+
+.q-explanation {
+  margin-top: 0.75rem; padding: 0.85rem 1rem;
+  border-radius: 8px; font-size: 0.85rem; line-height: 1.5;
+  display: none;
+}
+.q-explanation.show { display: block; }
+.q-explanation.correct-exp {
+  background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.2);
+  color: #065f46;
+}
+.q-explanation.incorrect-exp {
+  background: rgba(200,85,61,0.08); border: 1px solid rgba(200,85,61,0.2);
+  color: #7c2d12;
+}
+.q-explanation strong { font-weight: 700; }
+
+/* Score display */
+.score-display {
+  text-align: center; padding: 1.5rem; margin-top: 1rem;
+  background: var(--light-gray); border-radius: 12px;
+  border: 1px solid var(--mid-gray); display: none;
+}
+.score-display.show { display: block; }
+.score-big {
+  font-size: 2.5rem; font-weight: 800; color: var(--clay);
+}
+.score-label { font-size: 0.85rem; color: var(--text2); margin-top: 0.25rem; }
+.score-message { font-size: 0.9rem; color: var(--text); margin-top: 0.5rem; font-weight: 500; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 1.25rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--clay); color: white;
+}
+.btn-primary:hover { background: var(--clay-dark); }
+.btn-secondary {
+  background: var(--white); color: var(--text);
+  border: 1px solid var(--mid-gray);
+}
+.btn-secondary:hover { border-color: #d1d5db; background: var(--light-gray); }
+.btn-small { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
+.btn-reset {
+  background: transparent; color: var(--text2); border: 1px solid var(--mid-gray);
+}
+.btn-reset:hover { color: var(--clay); border-color: var(--clay); }
+
+/* ── Lateral Thinking ─────────────────────────────── */
+.lt-puzzle { margin-top: 1rem; }
+.lt-puzzle-text {
+  font-size: 1.05rem; font-weight: 600; color: var(--obsidian);
+  padding: 1rem 1.25rem; background: var(--light-gray);
+  border-radius: 10px; border: 1px solid var(--mid-gray);
+  line-height: 1.5; margin-bottom: 1rem;
+}
+.lt-input {
+  width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; font-size: 0.9rem; font-family: inherit;
+  resize: vertical; min-height: 70px; line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.lt-input:focus { outline: none; border-color: var(--clay); }
+.lt-controls {
+  display: flex; gap: 0.5rem; margin-top: 0.75rem; align-items: center;
+  flex-wrap: wrap;
+}
+.lt-answer {
+  margin-top: 0.75rem; padding: 1rem 1.25rem;
+  background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.15);
+  border-radius: 10px; display: none;
+}
+.lt-answer.show { display: block; }
+.lt-answer-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--blue); margin-bottom: 0.35rem;
+}
+.lt-answer-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+.lt-self-rate {
+  display: flex; gap: 0.4rem; margin-top: 0.75rem;
+  padding-top: 0.75rem; border-top: 1px solid rgba(37,99,235,0.15);
+}
+.lt-self-rate span {
+  font-size: 0.78rem; font-weight: 600; color: var(--text2);
+  margin-right: 0.25rem; align-self: center;
+}
+.rate-btn {
+  padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.75rem;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--mid-gray);
+  background: var(--white); transition: all 0.15s;
+}
+.rate-btn:hover { border-color: #d1d5db; }
+.rate-btn.selected-got { border-color: var(--green); background: rgba(5,150,105,0.1); color: var(--green); }
+.rate-btn.selected-close { border-color: var(--yellow); background: rgba(217,119,6,0.1); color: var(--yellow); }
+.rate-btn.selected-missed { border-color: var(--clay); background: rgba(200,85,61,0.1); color: var(--clay); }
+.lt-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--mid-gray);
+}
+.lt-progress {
+  font-size: 0.82rem; color: var(--text2); font-weight: 500;
+}
+
+/* ── Creative Problem Solving ─────────────────────── */
+.cp-problem { margin-top: 1rem; }
+.cp-prompt {
+  font-size: 1rem; font-weight: 600; color: var(--obsidian);
+  padding: 1.25rem; background: var(--light-gray);
+  border-radius: 10px; border: 1px solid var(--mid-gray);
+  line-height: 1.5; margin-bottom: 1rem;
+}
+.cp-timer-bar {
+  display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;
+}
+.cp-timer {
+  font-size: 1.3rem; font-weight: 800; font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--clay); min-width: 60px;
+}
+.cp-timer.warning { color: var(--yellow); }
+.cp-timer.critical { color: var(--clay-dark); animation: pulse 1s infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.cp-timer-track {
+  flex: 1; height: 6px; background: var(--mid-gray);
+  border-radius: 3px; overflow: hidden;
+}
+.cp-timer-fill {
+  height: 100%; background: var(--clay); border-radius: 3px;
+  transition: width 1s linear;
+}
+.cp-textarea {
+  width: 100%; padding: 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 10px; font-size: 0.9rem; font-family: inherit;
+  resize: vertical; min-height: 140px; line-height: 1.6;
+  transition: border-color 0.2s;
+}
+.cp-textarea:focus { outline: none; border-color: var(--clay); }
+.cp-textarea:disabled { background: var(--light-gray); cursor: default; }
+.cp-evaluation {
+  margin-top: 1rem; padding: 1.25rem;
+  background: rgba(5,150,105,0.04); border: 1px solid rgba(5,150,105,0.15);
+  border-radius: 10px; display: none;
+}
+.cp-evaluation.show { display: block; }
+.cp-eval-title {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--green); margin-bottom: 0.75rem;
+}
+.cp-criteria { list-style: none; margin-bottom: 1rem; }
+.cp-criteria li {
+  font-size: 0.85rem; color: var(--text); padding: 0.3rem 0;
+  padding-left: 1.25rem; position: relative; line-height: 1.5;
+}
+.cp-criteria li::before {
+  content: '\2713'; position: absolute; left: 0; color: var(--green); font-weight: 700;
+}
+.cp-sample-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--blue); margin-bottom: 0.4rem;
+}
+.cp-sample-text {
+  font-size: 0.85rem; color: var(--text); line-height: 1.6;
+  padding: 0.75rem 1rem; background: rgba(37,99,235,0.05);
+  border-radius: 8px; border: 1px solid rgba(37,99,235,0.1);
+}
+.cp-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--mid-gray);
+}
+
+/* ── Data Interpretation ──────────────────────────── */
+.di-scenario { margin-top: 1rem; }
+.di-context {
+  font-size: 0.92rem; color: var(--text); line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.di-table-wrap {
+  overflow-x: auto; margin-bottom: 1.25rem;
+  border-radius: 10px; border: 1px solid var(--mid-gray);
+}
+.di-table {
+  width: 100%; border-collapse: collapse; font-size: 0.82rem;
+}
+.di-table th {
+  background: var(--obsidian); color: var(--bone);
+  padding: 0.6rem 0.85rem; text-align: left; font-weight: 600;
+  white-space: nowrap;
+}
+.di-table td {
+  padding: 0.55rem 0.85rem; border-bottom: 1px solid var(--mid-gray);
+}
+.di-table tr:last-child td { border-bottom: none; }
+.di-table tr:nth-child(even) { background: var(--light-gray); }
+.di-question {
+  margin-bottom: 1rem; padding: 1rem 1.25rem;
+  background: var(--light-gray); border-radius: 10px;
+  border: 1px solid var(--mid-gray);
+}
+.di-question.answered { border-color: rgba(5,150,105,0.3); }
+.di-q-text {
+  font-size: 0.9rem; font-weight: 600; color: var(--text);
+  margin-bottom: 0.75rem; line-height: 1.4;
+}
+.di-q-type {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--blue); margin-bottom: 0.4rem;
+}
+.di-options { display: flex; flex-direction: column; gap: 0.35rem; }
+.di-opt {
+  padding: 0.5rem 0.85rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+  background: var(--white); transition: all 0.15s;
+}
+.di-opt:hover:not(.disabled) { border-color: var(--clay); }
+.di-opt.selected { border-color: var(--clay); background: rgba(200,85,61,0.06); }
+.di-opt.correct { border-color: var(--green); background: rgba(5,150,105,0.1); color: var(--green); }
+.di-opt.incorrect { border-color: var(--clay-dark); background: rgba(200,85,61,0.1); opacity: 0.7; }
+.di-opt.disabled { cursor: default; }
+.di-short-input {
+  width: 100%; padding: 0.6rem 0.85rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; font-size: 0.88rem; font-family: inherit;
+  transition: border-color 0.2s;
+}
+.di-short-input:focus { outline: none; border-color: var(--clay); }
+.di-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--mid-gray);
+}
+
+/* ── Argument Analysis ────────────────────────────── */
+.aa-argument { margin-top: 1rem; }
+.aa-passage {
+  font-size: 0.92rem; color: var(--text); line-height: 1.65;
+  padding: 1.25rem; background: var(--light-gray);
+  border-radius: 10px; border: 1px solid var(--mid-gray);
+  margin-bottom: 1.25rem;
+}
+.aa-passage em { font-style: italic; }
+.aa-form-group { margin-bottom: 1rem; }
+.aa-label {
+  font-size: 0.82rem; font-weight: 700; color: var(--text);
+  margin-bottom: 0.4rem; display: block;
+}
+.aa-select {
+  width: 100%; padding: 0.6rem 0.85rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; font-size: 0.85rem; font-family: inherit;
+  background: var(--white); cursor: pointer; appearance: auto;
+}
+.aa-select:focus { outline: none; border-color: var(--clay); }
+.aa-text-input {
+  width: 100%; padding: 0.6rem 0.85rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; font-size: 0.85rem; font-family: inherit;
+  resize: vertical; min-height: 60px; line-height: 1.5;
+}
+.aa-text-input:focus { outline: none; border-color: var(--clay); }
+.aa-feedback {
+  margin-top: 0.75rem; padding: 1rem 1.25rem;
+  background: rgba(37,99,235,0.05); border: 1px solid rgba(37,99,235,0.15);
+  border-radius: 10px; display: none;
+  font-size: 0.85rem; line-height: 1.5; color: var(--text);
+}
+.aa-feedback.show { display: block; }
+.aa-feedback strong { color: var(--blue); }
+.aa-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--mid-gray);
+}
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3rem; }
+  .container { padding: 0 1.25rem; }
+  .progress-grid { grid-template-columns: repeat(3, 1fr); }
+  .q-options { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .progress-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html">Guide</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="practice.html" class="active">Practice</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Practice <span>Challenges</span></h1>
+  <p>Five interactive exercises that mirror the thinking Minerva's application actually tests. Work through them at your own pace.</p>
+</div>
+
+<div class="container">
+
+<!-- ── Progress Overview ─────────────────────────────── -->
+<div class="progress-overview">
+  <div class="progress-grid" id="progressGrid">
+    <div class="progress-card" onclick="scrollToChallenge(0)">
+      <div class="p-icon">&#9670;</div>
+      <div class="p-label">Pattern Recognition</div>
+      <div class="p-status not-started" id="pStatus0">Not Started</div>
+    </div>
+    <div class="progress-card" onclick="scrollToChallenge(1)">
+      <div class="p-icon">&#128161;</div>
+      <div class="p-label">Lateral Thinking</div>
+      <div class="p-status not-started" id="pStatus1">Not Started</div>
+    </div>
+    <div class="progress-card" onclick="scrollToChallenge(2)">
+      <div class="p-icon">&#9997;</div>
+      <div class="p-label">Creative Problem Solving</div>
+      <div class="p-status not-started" id="pStatus2">Not Started</div>
+    </div>
+    <div class="progress-card" onclick="scrollToChallenge(3)">
+      <div class="p-icon">&#128202;</div>
+      <div class="p-label">Data Interpretation</div>
+      <div class="p-status not-started" id="pStatus3">Not Started</div>
+    </div>
+    <div class="progress-card" onclick="scrollToChallenge(4)">
+      <div class="p-icon">&#9878;</div>
+      <div class="p-label">Argument Analysis</div>
+      <div class="p-status not-started" id="pStatus4">Not Started</div>
+    </div>
+  </div>
+  <div class="progress-summary">
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="overallBar"></div>
+    </div>
+    <div class="progress-label-text" id="overallLabel">0 of 5 challenges completed</div>
+  </div>
+</div>
+
+<!-- ── Challenges ────────────────────────────────────── -->
+<div class="challenges-area">
+
+<!-- ═══════════ CHALLENGE 1: PATTERN RECOGNITION ═══════════ -->
+<div class="challenge-block" id="challenge0">
+  <div class="challenge-header" onclick="toggleChallenge(0)">
+    <div class="ch-icon red">&#9670;</div>
+    <div class="ch-info">
+      <h3>Challenge 1: Pattern Recognition</h3>
+      <p>Identify the missing element in 8 increasingly difficult sequences. Covers numeric, spatial, and logical patterns.</p>
+    </div>
+    <div class="ch-meta">
+      <span class="ch-badge not-started" id="chBadge0">Not Started</span>
+      <span class="ch-arrow">&#9662;</span>
+    </div>
+  </div>
+  <div class="challenge-body" id="chBody0"></div>
+</div>
+
+<!-- ═══════════ CHALLENGE 2: LATERAL THINKING ═══════════ -->
+<div class="challenge-block" id="challenge1">
+  <div class="challenge-header" onclick="toggleChallenge(1)">
+    <div class="ch-icon blue">&#128161;</div>
+    <div class="ch-info">
+      <h3>Challenge 2: Lateral Thinking</h3>
+      <p>6 classic lateral thinking puzzles. Write your answer, reveal the solution, then honestly rate how you did.</p>
+    </div>
+    <div class="ch-meta">
+      <span class="ch-badge not-started" id="chBadge1">Not Started</span>
+      <span class="ch-arrow">&#9662;</span>
+    </div>
+  </div>
+  <div class="challenge-body" id="chBody1"></div>
+</div>
+
+<!-- ═══════════ CHALLENGE 3: CREATIVE PROBLEM SOLVING ═══════════ -->
+<div class="challenge-block" id="challenge2">
+  <div class="challenge-header" onclick="toggleChallenge(2)">
+    <div class="ch-icon green">&#9997;</div>
+    <div class="ch-info">
+      <h3>Challenge 3: Creative Problem Solving</h3>
+      <p>4 open-ended problems with a 3-minute timer. After time expires, compare your response against evaluation criteria and sample answers.</p>
+    </div>
+    <div class="ch-meta">
+      <span class="ch-badge not-started" id="chBadge2">Not Started</span>
+      <span class="ch-arrow">&#9662;</span>
+    </div>
+  </div>
+  <div class="challenge-body" id="chBody2"></div>
+</div>
+
+<!-- ═══════════ CHALLENGE 4: DATA INTERPRETATION ═══════════ -->
+<div class="challenge-block" id="challenge3">
+  <div class="challenge-header" onclick="toggleChallenge(3)">
+    <div class="ch-icon purple">&#128202;</div>
+    <div class="ch-info">
+      <h3>Challenge 4: Data Interpretation</h3>
+      <p>Analyze 3 data sets. Draw conclusions, spot anomalies, and identify what additional information you'd need.</p>
+    </div>
+    <div class="ch-meta">
+      <span class="ch-badge not-started" id="chBadge3">Not Started</span>
+      <span class="ch-arrow">&#9662;</span>
+    </div>
+  </div>
+  <div class="challenge-body" id="chBody3"></div>
+</div>
+
+<!-- ═══════════ CHALLENGE 5: ARGUMENT ANALYSIS ═══════════ -->
+<div class="challenge-block" id="challenge4">
+  <div class="challenge-header" onclick="toggleChallenge(4)">
+    <div class="ch-icon yellow">&#9878;</div>
+    <div class="ch-info">
+      <h3>Challenge 5: Argument Analysis</h3>
+      <p>Dissect 4 arguments. Identify claims, evidence, assumptions, and suggest improvements.</p>
+    </div>
+    <div class="ch-meta">
+      <span class="ch-badge not-started" id="chBadge4">Not Started</span>
+      <span class="ch-arrow">&#9662;</span>
+    </div>
+  </div>
+  <div class="challenge-body" id="chBody4"></div>
+</div>
+
+</div><!-- .challenges-area -->
+</div><!-- .container -->
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'minerva-practice-v2';
+
+// ── Pattern Recognition Data ──
+const patternQuestions = [
+  {
+    sequence: ['2', '6', '18', '54', '?'],
+    options: ['108', '162', '148', '216'],
+    answer: 1,
+    explanation: 'Each number is multiplied by 3. 2 \u00d7 3 = 6, 6 \u00d7 3 = 18, 18 \u00d7 3 = 54, 54 \u00d7 3 = 162.'
+  },
+  {
+    sequence: ['1', '1', '2', '3', '5', '8', '?'],
+    options: ['11', '13', '12', '10'],
+    answer: 1,
+    explanation: 'Fibonacci sequence: each number is the sum of the two before it. 5 + 8 = 13.'
+  },
+  {
+    sequence: ['3', '5', '9', '15', '23', '?'],
+    options: ['31', '33', '29', '35'],
+    answer: 1,
+    explanation: 'Differences increase by 2 each time: +2, +4, +6, +8, +10. So 23 + 10 = 33.'
+  },
+  {
+    sequence: ['1', '4', '9', '16', '25', '?'],
+    options: ['30', '36', '49', '32'],
+    answer: 1,
+    explanation: 'Perfect squares: 1\u00b2, 2\u00b2, 3\u00b2, 4\u00b2, 5\u00b2, 6\u00b2 = 36.'
+  },
+  {
+    sequence: ['2', '3', '5', '7', '11', '13', '?'],
+    options: ['15', '17', '19', '14'],
+    answer: 1,
+    explanation: 'Prime numbers in order. The next prime after 13 is 17.'
+  },
+  {
+    sequence: ['1', '8', '27', '64', '?'],
+    options: ['100', '125', '81', '216'],
+    answer: 1,
+    explanation: 'Perfect cubes: 1\u00b3, 2\u00b3, 3\u00b3, 4\u00b3, 5\u00b3 = 125.'
+  },
+  {
+    sequence: ['0', '1', '1', '2', '4', '7', '13', '?'],
+    options: ['20', '24', '19', '26'],
+    answer: 1,
+    explanation: 'Tribonacci sequence: each number is the sum of the three preceding numbers. 4 + 7 + 13 = 24.'
+  },
+  {
+    sequence: ['2', '5', '11', '23', '47', '?'],
+    options: ['94', '95', '93', '96'],
+    answer: 1,
+    explanation: 'Each number is doubled then increased by 1. 47 \u00d7 2 + 1 = 95. The pattern: n \u00d7 2 + 1.'
+  }
+];
+
+// Shuffle options but track answer
+patternQuestions.forEach(q => {
+  const correctVal = q.options[q.answer];
+  for (let i = q.options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+  }
+  q.answer = q.options.indexOf(correctVal);
+});
+
+// ── Lateral Thinking Data ──
+const lateralPuzzles = [
+  {
+    puzzle: 'A man pushes his car to a hotel and loses his fortune. What happened?',
+    answer: 'He\u2019s playing Monopoly. He landed on a property with a hotel and had to pay rent he couldn\u2019t afford.',
+    hint: 'Think beyond the literal meaning of every word.'
+  },
+  {
+    puzzle: 'A woman shoots her husband, holds him under water for 5 minutes, then hangs him. 30 minutes later, they go out for dinner together. How?',
+    answer: 'She took a photograph of him. She "shot" the photo, developed it in water (darkroom processing), and hung the photo to dry.',
+    hint: 'The words have multiple meanings.'
+  },
+  {
+    puzzle: 'A man is found dead in a field. Next to him is an unopened package. There are no other people or animals nearby. How did he die?',
+    answer: 'His parachute failed to open. The unopened package is his parachute pack.',
+    hint: 'How did the man get to the field?'
+  },
+  {
+    puzzle: 'Two fathers and two sons go fishing. They each catch exactly one fish, yet only three fish are caught in total. How is this possible?',
+    answer: 'There are only three people: a grandfather, his son, and his grandson. The son is both a father and a son, so "two fathers and two sons" describes three people.',
+    hint: 'One person can hold two roles simultaneously.'
+  },
+  {
+    puzzle: 'A man walks into a bar and asks the bartender for a glass of water. The bartender pulls out a gun and points it at him. The man says "thank you" and leaves. Why?',
+    answer: 'The man had hiccups. He asked for water to cure them, but the bartender had a better idea\u2014the shock of having a gun pointed at him cured the hiccups instantly.',
+    hint: 'Why would someone want water urgently but accept a scare instead?'
+  },
+  {
+    puzzle: 'There are 6 eggs in a basket. Six people each take one egg, yet one egg remains in the basket. How?',
+    answer: 'The sixth person took the basket with the last egg still in it. They took the egg, but the egg remained in the basket because the basket went with them.',
+    hint: 'Re-read: "take one egg" vs "one egg remains in the basket." Can both be true at the same time?'
+  }
+];
+
+// ── Creative Problem Solving Data ──
+const creativeProblems = [
+  {
+    prompt: 'Design a new use for a common paperclip that could meaningfully help someone in a developing country. Describe the use, the problem it solves, who benefits, and why a paperclip is actually suited to this (don\u2019t just say "you could bend it into something").',
+    criteria: [
+      'Identifies a specific, real problem faced by people in developing regions',
+      'The proposed use is genuinely feasible with a standard paperclip',
+      'Explains WHY this person can\u2019t easily solve the problem another way',
+      'Shows awareness of context (cost, availability, cultural factors)',
+      'Goes beyond the obvious (not just "use it as a tool")'
+    ],
+    sampleResponse: 'A paperclip can be bent into a SIM card ejector tool and distributed at mobile banking enrollment stations in rural areas. In Sub-Saharan Africa, mobile banking (M-Pesa, etc.) is the primary financial system for hundreds of millions of people, but switching SIM cards between shared phones is common in households that can only afford one device. The official ejector tools are rarely available outside urban phone stores. A supply of paperclips at enrollment stations lets community banking agents help new users set up accounts on shared devices immediately, removing a small but real friction point that delays financial inclusion. The paperclip is ideal because it\u2019s the exact right diameter, costs fractions of a cent, and is already mass-produced globally.'
+  },
+  {
+    prompt: 'You have $100 and 24 hours to create the most positive impact possible in your local community. Describe your plan step by step. Be specific about what you\u2019d buy, who you\u2019d involve, and how you\u2019d measure whether it worked.',
+    criteria: [
+      'Plan is specific and actionable (not vague platitudes)',
+      'Budget allocation is realistic and itemized',
+      'Leverages multiplier effects (involves others, creates ongoing impact)',
+      'Includes a concrete way to measure success',
+      'Considers potential obstacles and addresses them'
+    ],
+    sampleResponse: 'Spend $30 on printed flyers and $70 on bulk supplies (trash bags, gloves, snacks, water) to organize a neighborhood cleanup blitz targeting the three most littered blocks. Post on Nextdoor and local Facebook groups the night before (free), asking residents to meet at 9am. The key multiplier: partner with one local business (coffee shop) to offer participants a free coffee\u2014the shop benefits from foot traffic and goodwill. Assign before/after photo documentation to measure visible change. Track participant count and pounds of trash collected. The real lasting impact: create a recurring monthly cleanup group chat from the participants, so the $100 seeds an ongoing community habit, not just one day of effort.'
+  },
+  {
+    prompt: 'A city has a bridge that is structurally sound but is the site of frequent accidents because drivers consistently misjudge its width. The city cannot widen the bridge or add barriers due to historical preservation laws. Propose three different solutions, each using a different discipline (e.g., psychology, technology, urban design).',
+    criteria: [
+      'Proposes exactly three distinct solutions from different fields',
+      'Each solution addresses the root cause (width misjudgment), not just symptoms',
+      'Solutions respect the constraint (no widening, no barriers)',
+      'Demonstrates understanding of the relevant discipline\u2019s principles',
+      'At least one solution is non-obvious or creative'
+    ],
+    sampleResponse: 'Psychology: Paint graduated chevron markings on the road approach that narrow progressively, creating a forced-perspective illusion that makes drivers instinctively slow down and center their vehicles\u2014this exploits the perceptual phenomenon where converging lines trigger deceleration. Technology: Install low-cost ultrasonic sensors on each side of the bridge that project a real-time green/amber/red LED strip showing drivers exactly how much clearance they have on each side, similar to parking garage systems. Urban design: Re-route the approach road to create a gentle S-curve 50 meters before the bridge, forcing drivers to naturally reduce speed and align their vehicles with the bridge center\u2014this is a standard traffic calming technique that doesn\u2019t require touching the bridge structure itself.'
+  },
+  {
+    prompt: 'A small island nation of 50,000 people is about to get internet access for the first time. The government has asked you to advise them on a policy for introducing the internet to minimize harm while maximizing benefit. What are your top 3 policy recommendations, and what tradeoffs does each one involve?',
+    criteria: [
+      'Recommendations are specific policies, not vague goals',
+      'Each policy has a clearly stated tradeoff or downside',
+      'Shows understanding of both benefits and risks of internet access',
+      'Considers the unique context of a small island nation',
+      'Addresses at least two of: education, economy, culture, health, governance'
+    ],
+    sampleResponse: 'Policy 1: Digital literacy requirement before unrestricted access. Launch a 6-month period where internet is available only at community centers staffed with trained guides, giving citizens structured exposure before home access rolls out. Tradeoff: delays economic benefits of full connectivity and may frustrate tech-savvy younger residents. Policy 2: Local content mandate. Require ISPs to host and prioritize a local-language platform for government services, local news, and cultural archives before international social media is accessible. Tradeoff: could be seen as censorship if not time-limited; requires upfront government investment in content creation. Policy 3: Data sovereignty law. Pass legislation before day one that all citizen data must be stored on-island or in a jurisdiction the nation has a treaty with, preventing foreign platforms from extracting data without consent. Tradeoff: may deter some international companies from serving the market, limiting access to global services initially.'
+  }
+];
+
+// ── Data Interpretation Data ──
+const dataScenarios = [
+  {
+    title: 'Teaching Methods Comparison',
+    context: 'A school district tested three teaching methods across 4 schools over one semester. Each school used all three methods with different student groups. The table below shows average test score improvements (percentage points) from pre-test to post-test.',
+    headers: ['School', 'Traditional Lecture', 'Flipped Classroom', 'Project-Based', 'Avg Class Size'],
+    rows: [
+      ['Lincoln High', '+8', '+15', '+22', '28'],
+      ['Washington Academy', '+12', '+14', '+11', '18'],
+      ['Jefferson Middle', '+5', '+18', '+24', '32'],
+      ['Roosevelt Prep', '+14', '+13', '+19', '15']
+    ],
+    questions: [
+      {
+        type: 'mc',
+        text: 'Which teaching method shows the MOST consistent improvement across all schools?',
+        options: ['Traditional Lecture', 'Flipped Classroom', 'Project-Based', 'All are equally consistent'],
+        answer: 1,
+        explanation: 'Flipped Classroom scores range from +13 to +18 (spread of 5 points). Traditional ranges from +5 to +14 (spread of 9) and Project-Based from +11 to +24 (spread of 13). The flipped classroom has the smallest variance, making it the most consistent.'
+      },
+      {
+        type: 'mc',
+        text: 'Washington Academy is the only school where Project-Based learning did NOT outperform Traditional Lecture. What variable in the data might explain this?',
+        options: ['Test difficulty differences', 'Class size\u2014Washington has the second smallest classes', 'The school name', 'Washington had the lowest overall scores'],
+        answer: 1,
+        explanation: 'Washington Academy has a class size of 18 (second smallest). Smaller classes may already provide the individualized attention that Project-Based learning facilitates in larger classes, reducing its comparative advantage. Roosevelt (15 students) also shows a smaller Project-Based advantage compared to Lincoln (28) and Jefferson (32).'
+      },
+      {
+        type: 'short',
+        text: 'Name one critical piece of information NOT in this table that you would need before recommending a method district-wide.',
+        sampleAnswer: 'Strong answers include: student demographics/prior achievement levels in each group (selection bias), teacher experience/training with each method, subject area (these results might not generalize), cost of implementation, student satisfaction/engagement metrics, or whether groups were randomly assigned.'
+      }
+    ]
+  },
+  {
+    title: 'City Population Growth',
+    context: 'The table below shows population data for five mid-sized cities over 20 years. One city shows a pattern that should raise questions.',
+    headers: ['City', '2000', '2005', '2010', '2015', '2020', '% Change (2000\u20132020)'],
+    rows: [
+      ['Ashford', '82,000', '89,000', '95,000', '102,000', '110,000', '+34.1%'],
+      ['Belmont', '120,000', '115,000', '108,000', '98,000', '91,000', '-24.2%'],
+      ['Cedar Falls', '45,000', '51,000', '58,000', '67,000', '142,000', '+215.6%'],
+      ['Dunmore', '200,000', '205,000', '212,000', '218,000', '225,000', '+12.5%'],
+      ['Eastwick', '73,000', '77,000', '80,000', '83,000', '86,000', '+17.8%']
+    ],
+    questions: [
+      {
+        type: 'mc',
+        text: 'Which city\u2019s data contains an anomaly that warrants investigation?',
+        options: ['Ashford', 'Belmont', 'Cedar Falls', 'Dunmore'],
+        answer: 2,
+        explanation: 'Cedar Falls grew steadily from 45,000 to 67,000 over 15 years (roughly +7,000 every 5 years), then suddenly jumped to 142,000 in 5 years\u2014a 112% increase in a single period. This is wildly inconsistent with its prior growth rate and demands investigation (data error? annexation of surrounding areas? a massive new employer?).'
+      },
+      {
+        type: 'mc',
+        text: 'Belmont\u2019s consistent decline most likely indicates which of the following?',
+        options: ['A one-time disaster', 'Structural economic decline (e.g., industry closure)', 'Seasonal population fluctuation', 'Data collection errors'],
+        answer: 1,
+        explanation: 'The decline is steady and consistent across all four periods (not sudden, which would suggest a disaster; not fluctuating, which would suggest seasonal effects). A gradual, sustained population loss is the classic pattern of structural economic decline\u2014typically a major employer leaving or an industry collapsing.'
+      },
+      {
+        type: 'short',
+        text: 'If you were a policy analyst for Dunmore, what would concern you about the city\u2019s data even though it shows growth?',
+        sampleAnswer: 'Dunmore\u2019s growth rate is only 12.5% over 20 years (about 0.6% annually), which is below the U.S. national average (~15-17% over the same period). For a city of 200,000, this stagnation could signal that the city is losing relative competitiveness. Additionally, the growth is perfectly linear (+5,000 to +7,000 each period), which could mean the data is estimated/interpolated rather than from actual censuses.'
+      }
+    ]
+  },
+  {
+    title: 'Startup Funding vs. Survival',
+    context: 'A venture capital firm analyzed its portfolio of 200 startups funded between 2015\u20132019, categorizing them by initial funding amount and tracking which survived to 2024.',
+    headers: ['Funding Range', 'Number Funded', 'Survived to 2024', 'Survival Rate', 'Avg Revenue at Exit/2024'],
+    rows: [
+      ['Under $500K', '60', '12', '20%', '$1.2M'],
+      ['$500K \u2013 $2M', '80', '28', '35%', '$4.8M'],
+      ['$2M \u2013 $5M', '40', '18', '45%', '$8.1M'],
+      ['Over $5M', '20', '14', '70%', '$22.4M']
+    ],
+    questions: [
+      {
+        type: 'mc',
+        text: 'A naive reading of this data might conclude "more funding causes higher survival." What is the most important reason this conclusion could be wrong?',
+        options: [
+          'The sample size is too small',
+          'Selection bias\u2014companies that received more funding were likely stronger to begin with',
+          'The data doesn\u2019t include failed VC firms',
+          'Revenue is not a good metric'
+        ],
+        answer: 1,
+        explanation: 'The companies that received $5M+ likely had stronger teams, better market traction, or more defensible technology\u2014that\u2019s WHY they got more funding. The funding amount is correlated with pre-existing quality, so the higher survival rate may reflect the quality of the companies, not the effect of the money itself. This is classic selection bias / confounding.'
+      },
+      {
+        type: 'mc',
+        text: 'Which funding tier delivered the best return on investment for the VC firm, assuming equal ownership stakes?',
+        options: ['Under $500K', '$500K \u2013 $2M', '$2M \u2013 $5M', 'Over $5M'],
+        answer: 0,
+        explanation: 'Return on investment considers both the cost and the revenue generated. Under $500K: 12 survivors \u00d7 $1.2M = $14.4M revenue from at most $30M invested (60 \u00d7 $500K max). $500K\u2013$2M: 28 \u00d7 $4.8M = $134.4M from up to $160M. $2M\u2013$5M: 18 \u00d7 $8.1M = $145.8M from up to $200M. Over $5M: 14 \u00d7 $22.4M = $313.6M from at most $100M+. Actually, the Over $5M tier likely delivers the best absolute ROI. BUT the question says "assuming equal ownership stakes"\u2014so the answer depends on interpretation. The Under $500K tier has the lowest capital at risk per bet and produces survivors, making it the most capital-efficient. This question is deliberately tricky to test whether you examine assumptions.'
+      },
+      {
+        type: 'short',
+        text: 'What single additional data point would most change your interpretation of this table?',
+        sampleAnswer: 'The strongest answer: knowing the TOTAL capital deployed per tier (not just per-company range) to calculate actual ROI. Other strong answers: the stage/maturity of each company when funded (were the $5M+ companies already generating revenue?), the industry breakdown per tier, or whether the VC firm had board seats/active involvement in higher-funded companies (which would confound funding amount with mentorship/support).'
+      }
+    ]
+  }
+];
+
+// ── Argument Analysis Data ──
+const argumentData = [
+  {
+    passage: 'Standardized testing should be eliminated from college admissions. Studies show that SAT scores correlate more strongly with family income than with college GPA. Furthermore, many top universities have gone test-optional and have not seen a decline in student quality. The testing industry generates over $2 billion annually, creating a financial incentive to perpetuate these exams regardless of their value.',
+    claims: [
+      'Standardized testing should be eliminated from admissions',
+      'Family income correlates with SAT scores',
+      'Test-optional policies don\u2019t reduce student quality',
+      'The testing industry has financial incentives to continue'
+    ],
+    mainClaim: 0,
+    evidence: [
+      'SAT-income correlation studies',
+      'Test-optional university outcomes',
+      'Testing industry revenue ($2B)',
+      'College GPA comparison data'
+    ],
+    strongestEvidence: 1,
+    assumptions: [
+      'That correlation between income and scores means the test is unfair',
+      'That "student quality" at test-optional schools can be accurately measured in the short term',
+      'That universities would not replace tests with equally problematic criteria',
+      'That the testing industry\u2019s financial motive invalidates the test\u2019s utility'
+    ],
+    weakestAssumption: 1,
+    feedback: 'The main claim is that standardized testing should be eliminated. The strongest evidence is the test-optional university outcomes because it provides real-world data. The weakest assumption is that "student quality" hasn\u2019t declined at test-optional schools\u2014this is hard to measure in the short term, may take years to appear in outcomes, and "quality" itself is poorly defined. To strengthen the argument, you\u2019d need longitudinal data (5\u201310 years) tracking graduation rates, career outcomes, and academic performance at test-optional vs. test-required institutions, controlling for other admission criteria changes.'
+  },
+  {
+    passage: 'Remote work is more productive than office work and should become the default for knowledge workers. A Stanford study found that remote workers were 13% more productive than their in-office counterparts. Companies like GitLab and Automattic have operated fully remotely for over a decade with great success. Additionally, remote work eliminates commuting, saving employees an average of 40 minutes per day that can be redirected to work or rest.',
+    claims: [
+      'Remote work should be the default for knowledge workers',
+      'Remote workers are 13% more productive',
+      'Fully remote companies have been successful',
+      'Eliminating commutes saves productive time'
+    ],
+    mainClaim: 0,
+    evidence: [
+      'Stanford productivity study (13%)',
+      'GitLab/Automattic case studies',
+      'Commute time savings (40 min/day)',
+      'Knowledge worker classification'
+    ],
+    strongestEvidence: 0,
+    assumptions: [
+      'That productivity measured in the study generalizes to all knowledge work',
+      'That GitLab and Automattic\u2019s success is due to remote work rather than other factors',
+      'That saved commute time actually becomes productive time',
+      'That productivity is the only metric that matters for choosing work arrangements'
+    ],
+    weakestAssumption: 2,
+    feedback: 'The main claim is that remote work should be the default. The strongest evidence is the Stanford study because it\u2019s quantitative and controlled. The weakest assumption is that saved commute time becomes productive time\u2014research actually shows most people use saved commute time for leisure, not work, which undermines one of the three supporting points. To strengthen the argument, address what remote work loses (spontaneous collaboration, mentorship, culture) and argue those can be replicated remotely, rather than ignoring them entirely.'
+  },
+  {
+    passage: 'Social media use among teenagers should be restricted by law to users aged 16 and above. Research published in JAMA Pediatrics found that adolescents who spend more than 3 hours daily on social media have double the risk of depression and anxiety. The developing adolescent brain is particularly vulnerable to the dopamine-driven feedback loops these platforms are designed to exploit. Countries like France have already passed laws restricting social media for minors, setting a precedent.',
+    claims: [
+      'Social media should be legally restricted to 16+',
+      'Heavy social media use doubles depression/anxiety risk',
+      'Adolescent brains are especially vulnerable to platform design',
+      'Other countries have set legal precedent'
+    ],
+    mainClaim: 0,
+    evidence: [
+      'JAMA Pediatrics study on depression risk',
+      'Neuroscience of adolescent brain development',
+      'France\u2019s existing legislation',
+      'Platform design analysis (dopamine loops)'
+    ],
+    strongestEvidence: 0,
+    assumptions: [
+      'That correlation between use and depression indicates causation',
+      'That age 16 is the right threshold (vs. 14, 18, etc.)',
+      'That legal restrictions can be effectively enforced on digital platforms',
+      'That restricting access won\u2019t push teens to less regulated alternatives'
+    ],
+    weakestAssumption: 2,
+    feedback: 'The main claim is that social media should be restricted to 16+. The JAMA study is the strongest evidence because it\u2019s peer-reviewed and quantitative. The weakest assumption is enforceability\u2014age verification online is notoriously difficult (kids routinely bypass age gates), and France\u2019s law has already faced enforcement challenges. If the restriction can\u2019t be enforced, the entire argument collapses regardless of how strong the health evidence is. To strengthen: propose a specific enforcement mechanism and cite evidence it works.'
+  },
+  {
+    passage: 'Universities should replace traditional four-year degree programs with modular, stackable credentials that students can earn at their own pace. The average student loan debt in the US is now $37,000, and 43% of graduates are underemployed (working jobs that don\u2019t require a degree). Employers increasingly value skills over credentials\u2014Google, Apple, and IBM no longer require degrees for many positions. A modular system would let students pay only for what they need and enter the workforce faster.',
+    claims: [
+      'Universities should adopt modular credentials instead of 4-year degrees',
+      'Student debt averaging $37K is a crisis',
+      'Underemployment of graduates shows degrees aren\u2019t working',
+      'Major employers are dropping degree requirements'
+    ],
+    mainClaim: 0,
+    evidence: [
+      'Average student loan debt ($37K)',
+      '43% graduate underemployment rate',
+      'Google/Apple/IBM dropping degree requirements',
+      'Modular pricing advantage'
+    ],
+    strongestEvidence: 1,
+    assumptions: [
+      'That underemployment is caused by the degree structure rather than economic conditions',
+      'That a few tech companies\u2019 hiring practices represent a broader employer trend',
+      'That students can effectively choose which modules they need without guidance',
+      'That the non-career benefits of a 4-year degree (critical thinking, social development, breadth) are dispensable'
+    ],
+    weakestAssumption: 1,
+    feedback: 'The main claim is replacing degrees with modular credentials. The strongest evidence is the 43% underemployment rate because it directly challenges the value proposition of the current system. The weakest assumption is that a handful of tech companies represent a broader trend\u2014Google, Apple, and IBM are extreme outliers with unique hiring resources. Most employers, especially in regulated fields (law, medicine, engineering, education), still require and legally mandate degrees. Citing 3 companies out of millions is cherry-picking. To strengthen: cite broad survey data of employer attitudes across industries, not just tech unicorns.'
+  }
+];
+
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return {
+    pattern: { answers: {}, score: null },
+    lateral: { current: 0, responses: {}, ratings: {} },
+    creative: { current: 0, responses: {}, timers: {}, completed: {} },
+    data: { current: 0, mcAnswers: {}, shortAnswers: {}, revealed: {} },
+    argument: { current: 0, answers: {}, revealed: {} }
+  };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+
+// ═══════════════════════════════════════════════════════
+// PROGRESS TRACKING
+// ═══════════════════════════════════════════════════════
+
+function getChallengeStatus(idx) {
+  switch(idx) {
+    case 0: {
+      const answered = Object.keys(state.pattern.answers).length;
+      if (answered === 0) return 'not-started';
+      if (answered >= patternQuestions.length) return 'completed';
+      return 'in-progress';
+    }
+    case 1: {
+      const rated = Object.keys(state.lateral.ratings).length;
+      if (rated === 0) return 'not-started';
+      if (rated >= lateralPuzzles.length) return 'completed';
+      return 'in-progress';
+    }
+    case 2: {
+      const done = Object.keys(state.creative.completed).length;
+      if (done === 0) return 'not-started';
+      if (done >= creativeProblems.length) return 'completed';
+      return 'in-progress';
+    }
+    case 3: {
+      const revealed = Object.keys(state.data.revealed).length;
+      if (revealed === 0) return 'not-started';
+      if (revealed >= dataScenarios.length) return 'completed';
+      return 'in-progress';
+    }
+    case 4: {
+      const revealed = Object.keys(state.argument.revealed).length;
+      if (revealed === 0) return 'not-started';
+      if (revealed >= argumentData.length) return 'completed';
+      return 'in-progress';
+    }
+  }
+  return 'not-started';
+}
+
+function updateProgress() {
+  const labels = { 'not-started': 'Not Started', 'in-progress': 'In Progress', 'completed': 'Completed' };
+  let completed = 0;
+  for (let i = 0; i < 5; i++) {
+    const s = getChallengeStatus(i);
+    if (s === 'completed') completed++;
+    // Progress cards
+    const pEl = document.getElementById('pStatus' + i);
+    if (pEl) { pEl.className = 'p-status ' + s; pEl.textContent = labels[s]; }
+    // Challenge badges
+    const bEl = document.getElementById('chBadge' + i);
+    if (bEl) { bEl.className = 'ch-badge ' + s; bEl.textContent = labels[s]; }
+  }
+  const bar = document.getElementById('overallBar');
+  const label = document.getElementById('overallLabel');
+  if (bar) bar.style.width = (completed / 5 * 100) + '%';
+  if (label) label.textContent = completed + ' of 5 challenges completed';
+}
+
+function scrollToChallenge(idx) {
+  const el = document.getElementById('challenge' + idx);
+  if (!el) return;
+  const block = el;
+  if (!block.classList.contains('open')) toggleChallenge(idx);
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+
+// ═══════════════════════════════════════════════════════
+// COLLAPSE / EXPAND
+// ═══════════════════════════════════════════════════════
+
+function toggleChallenge(idx) {
+  const block = document.getElementById('challenge' + idx);
+  const isOpen = block.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.challenge-block').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    block.classList.add('open');
+    // Render content on first open
+    const body = document.getElementById('chBody' + idx);
+    if (!body.dataset.rendered) {
+      renderChallenge(idx);
+      body.dataset.rendered = '1';
+    }
+  }
+}
+
+function renderChallenge(idx) {
+  switch(idx) {
+    case 0: renderPatternRecognition(); break;
+    case 1: renderLateralThinking(); break;
+    case 2: renderCreativeProblemSolving(); break;
+    case 3: renderDataInterpretation(); break;
+    case 4: renderArgumentAnalysis(); break;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE 1: PATTERN RECOGNITION
+// ═══════════════════════════════════════════════════════
+
+function renderPatternRecognition() {
+  const body = document.getElementById('chBody0');
+  let html = '';
+  patternQuestions.forEach((q, i) => {
+    const answered = state.pattern.answers[i] !== undefined;
+    const isCorrect = answered && state.pattern.answers[i] === q.answer;
+    html += '<div class="q-card' + (answered ? (isCorrect ? ' answered' : ' wrong') : '') + '" id="pq' + i + '">';
+    html += '<div class="q-number">Question ' + (i + 1) + ' of ' + patternQuestions.length + '</div>';
+    html += '<div class="q-text">Find the missing number in this sequence:</div>';
+    html += '<div class="q-sequence">';
+    q.sequence.forEach(s => {
+      if (s === '?') {
+        html += '<span class="blank">?</span>';
+      } else {
+        html += '<span>' + s + '</span>';
+        if (q.sequence.indexOf(s) < q.sequence.length - 1) html += '<span style="color:var(--text2);font-weight:400">,</span>';
+      }
+    });
+    html += '</div>';
+    html += '<div class="q-options">';
+    q.options.forEach((opt, j) => {
+      let cls = 'q-option';
+      if (answered) {
+        cls += ' disabled';
+        if (j === q.answer) cls += ' correct';
+        else if (state.pattern.answers[i] === j) cls += ' incorrect';
+      }
+      html += '<div class="' + cls + '" onclick="selectPatternAnswer(' + i + ',' + j + ')">' + opt + '</div>';
+    });
+    html += '</div>';
+    html += '<div class="q-explanation ' + (answered ? (isCorrect ? 'correct-exp show' : 'incorrect-exp show') : '') + '" id="pqExp' + i + '">';
+    html += '<strong>' + (isCorrect ? 'Correct!' : 'Incorrect.') + '</strong> ' + q.explanation;
+    html += '</div>';
+    html += '</div>';
+  });
+  // Score display
+  const totalAnswered = Object.keys(state.pattern.answers).length;
+  const showScore = totalAnswered >= patternQuestions.length;
+  let score = 0;
+  if (showScore) {
+    patternQuestions.forEach((q, i) => { if (state.pattern.answers[i] === q.answer) score++; });
+  }
+  html += '<div class="score-display' + (showScore ? ' show' : '') + '" id="patternScore">';
+  html += '<div class="score-big">' + score + '/' + patternQuestions.length + '</div>';
+  html += '<div class="score-label">Pattern Recognition Score</div>';
+  html += '<div class="score-message">' + getPatternMessage(score) + '</div>';
+  html += '</div>';
+  html += '<div style="margin-top:1rem;text-align:right;"><button class="btn btn-reset btn-small" onclick="resetPattern()">Reset Challenge</button></div>';
+  body.innerHTML = html;
+}
+
+function selectPatternAnswer(qIdx, optIdx) {
+  if (state.pattern.answers[qIdx] !== undefined) return;
+  state.pattern.answers[qIdx] = optIdx;
+  saveState();
+  // Re-render
+  renderPatternRecognition();
+  updateProgress();
+  // Check if all answered
+  if (Object.keys(state.pattern.answers).length >= patternQuestions.length) {
+    let score = 0;
+    patternQuestions.forEach((q, i) => { if (state.pattern.answers[i] === q.answer) score++; });
+    state.pattern.score = score;
+    saveState();
+    const scoreEl = document.getElementById('patternScore');
+    if (scoreEl) {
+      scoreEl.querySelector('.score-big').textContent = score + '/' + patternQuestions.length;
+      scoreEl.querySelector('.score-message').textContent = getPatternMessage(score);
+      scoreEl.classList.add('show');
+    }
+  }
+}
+
+function getPatternMessage(score) {
+  if (score >= 7) return 'Excellent pattern recognition. You spot structure quickly.';
+  if (score >= 5) return 'Solid performance. Review the harder sequences to sharpen your eye.';
+  if (score >= 3) return 'Decent start. Practice looking for the relationship between consecutive terms.';
+  return 'Keep practicing. Try writing out the differences between each term.';
+}
+
+function resetPattern() {
+  state.pattern = { answers: {}, score: null };
+  saveState();
+  // Re-shuffle options
+  patternQuestions.forEach(q => {
+    const correctVal = q.options[q.answer];
+    for (let i = q.options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
+    }
+    q.answer = q.options.indexOf(correctVal);
+  });
+  renderPatternRecognition();
+  updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE 2: LATERAL THINKING
+// ═══════════════════════════════════════════════════════
+
+function renderLateralThinking() {
+  const body = document.getElementById('chBody1');
+  const idx = state.lateral.current;
+  const p = lateralPuzzles[idx];
+  const response = state.lateral.responses[idx] || '';
+  const rating = state.lateral.ratings[idx];
+  const revealed = rating !== undefined || (state.lateral.responses[idx] !== undefined && document.querySelector('#ltAnswer' + idx + '.show'));
+
+  let html = '';
+  html += '<div class="lt-puzzle">';
+  html += '<div class="q-number">Puzzle ' + (idx + 1) + ' of ' + lateralPuzzles.length + '</div>';
+  html += '<div class="lt-puzzle-text">' + p.puzzle + '</div>';
+  html += '<textarea class="lt-input" id="ltInput' + idx + '" placeholder="Type your answer before revealing the solution..." oninput="saveLateralResponse(' + idx + ')">' + response + '</textarea>';
+  html += '<div class="lt-controls">';
+  html += '<button class="btn btn-primary btn-small" onclick="revealLateral(' + idx + ')" id="ltRevealBtn' + idx + '">Reveal Answer</button>';
+  html += '<span style="font-size:0.78rem;color:var(--text2);margin-left:0.5rem;">Hint: ' + p.hint + '</span>';
+  html += '</div>';
+
+  html += '<div class="lt-answer' + (rating !== undefined ? ' show' : '') + '" id="ltAnswer' + idx + '">';
+  html += '<div class="lt-answer-label">Answer</div>';
+  html += '<div class="lt-answer-text">' + p.answer + '</div>';
+  html += '<div class="lt-self-rate">';
+  html += '<span>How\u2019d you do?</span>';
+  html += '<button class="rate-btn' + (rating === 'got' ? ' selected-got' : '') + '" onclick="rateLateral(' + idx + ',\'got\')">Got It</button>';
+  html += '<button class="rate-btn' + (rating === 'close' ? ' selected-close' : '') + '" onclick="rateLateral(' + idx + ',\'close\')">Close</button>';
+  html += '<button class="rate-btn' + (rating === 'missed' ? ' selected-missed' : '') + '" onclick="rateLateral(' + idx + ',\'missed\')">Missed It</button>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Navigation
+  html += '<div class="lt-nav">';
+  html += '<button class="btn btn-secondary btn-small" onclick="navLateral(-1)"' + (idx === 0 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Previous</button>';
+  html += '<span class="lt-progress">' + (idx + 1) + ' / ' + lateralPuzzles.length + '</span>';
+  html += '<button class="btn btn-secondary btn-small" onclick="navLateral(1)"' + (idx >= lateralPuzzles.length - 1 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Next</button>';
+  html += '</div>';
+
+  // Summary
+  const totalRated = Object.keys(state.lateral.ratings).length;
+  if (totalRated >= lateralPuzzles.length) {
+    const got = Object.values(state.lateral.ratings).filter(r => r === 'got').length;
+    const close = Object.values(state.lateral.ratings).filter(r => r === 'close').length;
+    const missed = Object.values(state.lateral.ratings).filter(r => r === 'missed').length;
+    html += '<div class="score-display show" style="margin-top:1rem;">';
+    html += '<div class="score-big">' + got + '/' + lateralPuzzles.length + '</div>';
+    html += '<div class="score-label">Puzzles Solved</div>';
+    html += '<div class="score-message">' + got + ' got it, ' + close + ' close, ' + missed + ' missed</div>';
+    html += '</div>';
+  }
+
+  html += '<div style="margin-top:1rem;text-align:right;"><button class="btn btn-reset btn-small" onclick="resetLateral()">Reset Challenge</button></div>';
+  body.innerHTML = html;
+}
+
+function saveLateralResponse(idx) {
+  const input = document.getElementById('ltInput' + idx);
+  if (input) {
+    state.lateral.responses[idx] = input.value;
+    saveState();
+  }
+}
+
+function revealLateral(idx) {
+  const el = document.getElementById('ltAnswer' + idx);
+  if (el) el.classList.add('show');
+}
+
+function rateLateral(idx, rating) {
+  state.lateral.ratings[idx] = rating;
+  saveState();
+  renderLateralThinking();
+  updateProgress();
+}
+
+function navLateral(dir) {
+  const newIdx = state.lateral.current + dir;
+  if (newIdx < 0 || newIdx >= lateralPuzzles.length) return;
+  state.lateral.current = newIdx;
+  saveState();
+  renderLateralThinking();
+}
+
+function resetLateral() {
+  state.lateral = { current: 0, responses: {}, ratings: {} };
+  saveState();
+  renderLateralThinking();
+  updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE 3: CREATIVE PROBLEM SOLVING
+// ═══════════════════════════════════════════════════════
+
+let activeTimers = {};
+
+function renderCreativeProblemSolving() {
+  const body = document.getElementById('chBody2');
+  const idx = state.creative.current;
+  const p = creativeProblems[idx];
+  const response = state.creative.responses[idx] || '';
+  const isCompleted = state.creative.completed[idx];
+  const timerState = state.creative.timers[idx] || { remaining: 180, started: false };
+
+  let html = '';
+  html += '<div class="cp-problem">';
+  html += '<div class="q-number">Problem ' + (idx + 1) + ' of ' + creativeProblems.length + '</div>';
+  html += '<div class="cp-prompt">' + p.prompt + '</div>';
+
+  // Timer
+  const mins = Math.floor(timerState.remaining / 60);
+  const secs = timerState.remaining % 60;
+  const timerClass = timerState.remaining <= 30 ? ' critical' : timerState.remaining <= 60 ? ' warning' : '';
+  const pct = (timerState.remaining / 180) * 100;
+
+  html += '<div class="cp-timer-bar">';
+  html += '<div class="cp-timer' + timerClass + '" id="cpTimerDisplay' + idx + '">' + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0') + '</div>';
+  html += '<div class="cp-timer-track"><div class="cp-timer-fill" id="cpTimerFill' + idx + '" style="width:' + pct + '%"></div></div>';
+  if (!timerState.started && !isCompleted) {
+    html += '<button class="btn btn-primary btn-small" onclick="startCreativeTimer(' + idx + ')">Start Timer</button>';
+  }
+  html += '</div>';
+
+  html += '<textarea class="cp-textarea" id="cpTextarea' + idx + '" placeholder="Start typing your response once you begin the timer..." oninput="saveCreativeResponse(' + idx + ')"' + (isCompleted ? ' disabled' : '') + (!timerState.started && !isCompleted ? ' disabled' : '') + '>' + response + '</textarea>';
+
+  if (timerState.started && !isCompleted) {
+    html += '<div style="margin-top:0.5rem;text-align:right;"><button class="btn btn-secondary btn-small" onclick="finishCreativeEarly(' + idx + ')">Finish Early</button></div>';
+  }
+
+  // Evaluation
+  html += '<div class="cp-evaluation' + (isCompleted ? ' show' : '') + '" id="cpEval' + idx + '">';
+  html += '<div class="cp-eval-title">Evaluation Criteria</div>';
+  html += '<ul class="cp-criteria">';
+  p.criteria.forEach(c => { html += '<li>' + c + '</li>'; });
+  html += '</ul>';
+  html += '<div class="cp-sample-label">Sample Strong Response</div>';
+  html += '<div class="cp-sample-text">' + p.sampleResponse + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Navigation
+  html += '<div class="cp-nav">';
+  html += '<button class="btn btn-secondary btn-small" onclick="navCreative(-1)"' + (idx === 0 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Previous</button>';
+  html += '<span class="lt-progress">' + (idx + 1) + ' / ' + creativeProblems.length + '</span>';
+  html += '<button class="btn btn-secondary btn-small" onclick="navCreative(1)"' + (idx >= creativeProblems.length - 1 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Next</button>';
+  html += '</div>';
+
+  html += '<div style="margin-top:1rem;text-align:right;"><button class="btn btn-reset btn-small" onclick="resetCreative()">Reset Challenge</button></div>';
+  body.innerHTML = html;
+}
+
+function startCreativeTimer(idx) {
+  state.creative.timers[idx] = { remaining: 180, started: true };
+  saveState();
+  renderCreativeProblemSolving();
+
+  // Clear any existing timer
+  if (activeTimers[idx]) clearInterval(activeTimers[idx]);
+
+  activeTimers[idx] = setInterval(() => {
+    if (!state.creative.timers[idx] || state.creative.completed[idx]) {
+      clearInterval(activeTimers[idx]);
+      return;
+    }
+    state.creative.timers[idx].remaining--;
+    const r = state.creative.timers[idx].remaining;
+    const display = document.getElementById('cpTimerDisplay' + idx);
+    const fill = document.getElementById('cpTimerFill' + idx);
+    if (display) {
+      const m = Math.floor(r / 60);
+      const s = r % 60;
+      display.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      display.className = 'cp-timer' + (r <= 30 ? ' critical' : r <= 60 ? ' warning' : '');
+    }
+    if (fill) fill.style.width = (r / 180 * 100) + '%';
+
+    if (r <= 0) {
+      clearInterval(activeTimers[idx]);
+      finishCreative(idx);
+    }
+    saveState();
+  }, 1000);
+}
+
+function saveCreativeResponse(idx) {
+  const ta = document.getElementById('cpTextarea' + idx);
+  if (ta) {
+    state.creative.responses[idx] = ta.value;
+    saveState();
+  }
+}
+
+function finishCreativeEarly(idx) {
+  if (activeTimers[idx]) clearInterval(activeTimers[idx]);
+  finishCreative(idx);
+}
+
+function finishCreative(idx) {
+  state.creative.completed[idx] = true;
+  saveState();
+  renderCreativeProblemSolving();
+  updateProgress();
+}
+
+function navCreative(dir) {
+  const newIdx = state.creative.current + dir;
+  if (newIdx < 0 || newIdx >= creativeProblems.length) return;
+  state.creative.current = newIdx;
+  saveState();
+  renderCreativeProblemSolving();
+}
+
+function resetCreative() {
+  Object.values(activeTimers).forEach(t => clearInterval(t));
+  activeTimers = {};
+  state.creative = { current: 0, responses: {}, timers: {}, completed: {} };
+  saveState();
+  renderCreativeProblemSolving();
+  updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE 4: DATA INTERPRETATION
+// ═══════════════════════════════════════════════════════
+
+function renderDataInterpretation() {
+  const body = document.getElementById('chBody3');
+  const idx = state.data.current;
+  const scenario = dataScenarios[idx];
+  const isRevealed = state.data.revealed[idx];
+
+  let html = '';
+  html += '<div class="di-scenario">';
+  html += '<div class="q-number">Scenario ' + (idx + 1) + ' of ' + dataScenarios.length + ' \u2014 ' + scenario.title + '</div>';
+  html += '<div class="di-context">' + scenario.context + '</div>';
+
+  // Table
+  html += '<div class="di-table-wrap"><table class="di-table"><thead><tr>';
+  scenario.headers.forEach(h => { html += '<th>' + h + '</th>'; });
+  html += '</tr></thead><tbody>';
+  scenario.rows.forEach(row => {
+    html += '<tr>';
+    row.forEach(cell => { html += '<td>' + cell + '</td>'; });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // Questions
+  scenario.questions.forEach((q, qi) => {
+    const qKey = idx + '-' + qi;
+    html += '<div class="di-question' + (state.data.mcAnswers[qKey] !== undefined || state.data.shortAnswers[qKey] ? ' answered' : '') + '">';
+    html += '<div class="di-q-type">' + (q.type === 'mc' ? 'Multiple Choice' : 'Short Answer') + '</div>';
+    html += '<div class="di-q-text">' + q.text + '</div>';
+
+    if (q.type === 'mc') {
+      html += '<div class="di-options">';
+      q.options.forEach((opt, oi) => {
+        const answered = state.data.mcAnswers[qKey] !== undefined;
+        let cls = 'di-opt';
+        if (answered) {
+          cls += ' disabled';
+          if (oi === q.answer) cls += ' correct';
+          else if (state.data.mcAnswers[qKey] === oi) cls += ' incorrect';
+        }
+        html += '<div class="' + cls + '" onclick="selectDataAnswer(\'' + qKey + '\',' + oi + ',' + q.answer + ')">' + opt + '</div>';
+      });
+      html += '</div>';
+      if (state.data.mcAnswers[qKey] !== undefined) {
+        const correct = state.data.mcAnswers[qKey] === q.answer;
+        html += '<div class="q-explanation ' + (correct ? 'correct-exp' : 'incorrect-exp') + ' show"><strong>' + (correct ? 'Correct!' : 'Incorrect.') + '</strong> ' + q.explanation + '</div>';
+      }
+    } else {
+      html += '<textarea class="di-short-input" id="diShort' + qKey + '" placeholder="Type your answer..." oninput="saveDataShortAnswer(\'' + qKey + '\')" style="min-height:60px;resize:vertical;font-family:inherit;line-height:1.5;padding:0.6rem 0.85rem">' + (state.data.shortAnswers[qKey] || '') + '</textarea>';
+      if (isRevealed) {
+        html += '<div class="q-explanation correct-exp show" style="margin-top:0.5rem;"><strong>Sample strong answer:</strong> ' + q.sampleAnswer + '</div>';
+      }
+    }
+    html += '</div>';
+  });
+
+  if (!isRevealed) {
+    html += '<div style="margin-top:1rem;"><button class="btn btn-primary btn-small" onclick="revealDataAnswers(' + idx + ')">Reveal Short Answer Feedback</button></div>';
+  }
+  html += '</div>';
+
+  // Navigation
+  html += '<div class="di-nav">';
+  html += '<button class="btn btn-secondary btn-small" onclick="navData(-1)"' + (idx === 0 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Previous</button>';
+  html += '<span class="lt-progress">' + (idx + 1) + ' / ' + dataScenarios.length + '</span>';
+  html += '<button class="btn btn-secondary btn-small" onclick="navData(1)"' + (idx >= dataScenarios.length - 1 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Next</button>';
+  html += '</div>';
+
+  html += '<div style="margin-top:1rem;text-align:right;"><button class="btn btn-reset btn-small" onclick="resetData()">Reset Challenge</button></div>';
+  body.innerHTML = html;
+}
+
+function selectDataAnswer(qKey, selected, correct) {
+  if (state.data.mcAnswers[qKey] !== undefined) return;
+  state.data.mcAnswers[qKey] = selected;
+  saveState();
+  renderDataInterpretation();
+  updateProgress();
+}
+
+function saveDataShortAnswer(qKey) {
+  const el = document.getElementById('diShort' + qKey);
+  if (el) {
+    state.data.shortAnswers[qKey] = el.value;
+    saveState();
+  }
+}
+
+function revealDataAnswers(idx) {
+  state.data.revealed[idx] = true;
+  saveState();
+  renderDataInterpretation();
+  updateProgress();
+}
+
+function navData(dir) {
+  const newIdx = state.data.current + dir;
+  if (newIdx < 0 || newIdx >= dataScenarios.length) return;
+  state.data.current = newIdx;
+  saveState();
+  renderDataInterpretation();
+}
+
+function resetData() {
+  state.data = { current: 0, mcAnswers: {}, shortAnswers: {}, revealed: {} };
+  saveState();
+  renderDataInterpretation();
+  updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// CHALLENGE 5: ARGUMENT ANALYSIS
+// ═══════════════════════════════════════════════════════
+
+function renderArgumentAnalysis() {
+  const body = document.getElementById('chBody4');
+  const idx = state.argument.current;
+  const arg = argumentData[idx];
+  const answers = state.argument.answers[idx] || {};
+  const isRevealed = state.argument.revealed[idx];
+
+  let html = '';
+  html += '<div class="aa-argument">';
+  html += '<div class="q-number">Argument ' + (idx + 1) + ' of ' + argumentData.length + '</div>';
+  html += '<div class="aa-passage">' + arg.passage + '</div>';
+
+  // Main Claim
+  html += '<div class="aa-form-group">';
+  html += '<label class="aa-label">1. What is the main claim?</label>';
+  html += '<select class="aa-select" id="aaClaim' + idx + '" onchange="saveArgAnswer(' + idx + ',\'claim\')" ' + (isRevealed ? 'disabled' : '') + '>';
+  html += '<option value="">Select the main claim...</option>';
+  arg.claims.forEach((c, i) => {
+    html += '<option value="' + i + '"' + (answers.claim == i ? ' selected' : '') + '>' + c + '</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // Strongest Evidence
+  html += '<div class="aa-form-group">';
+  html += '<label class="aa-label">2. What is the strongest piece of evidence?</label>';
+  html += '<select class="aa-select" id="aaEvidence' + idx + '" onchange="saveArgAnswer(' + idx + ',\'evidence\')" ' + (isRevealed ? 'disabled' : '') + '>';
+  html += '<option value="">Select the strongest evidence...</option>';
+  arg.evidence.forEach((e, i) => {
+    html += '<option value="' + i + '"' + (answers.evidence == i ? ' selected' : '') + '>' + e + '</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // Weakest Assumption
+  html += '<div class="aa-form-group">';
+  html += '<label class="aa-label">3. What is the weakest assumption?</label>';
+  html += '<select class="aa-select" id="aaAssumption' + idx + '" onchange="saveArgAnswer(' + idx + ',\'assumption\')" ' + (isRevealed ? 'disabled' : '') + '>';
+  html += '<option value="">Select the weakest assumption...</option>';
+  arg.assumptions.forEach((a, i) => {
+    html += '<option value="' + i + '"' + (answers.assumption == i ? ' selected' : '') + '>' + a + '</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // Strengthen
+  html += '<div class="aa-form-group">';
+  html += '<label class="aa-label">4. Suggest one way to strengthen this argument:</label>';
+  html += '<textarea class="aa-text-input" id="aaStrengthen' + idx + '" placeholder="How could this argument be made more convincing?" oninput="saveArgAnswer(' + idx + ',\'strengthen\')" ' + (isRevealed ? 'disabled' : '') + '>' + (answers.strengthen || '') + '</textarea>';
+  html += '</div>';
+
+  if (!isRevealed) {
+    html += '<button class="btn btn-primary btn-small" onclick="revealArgFeedback(' + idx + ')">Check My Analysis</button>';
+  }
+
+  // Feedback
+  html += '<div class="aa-feedback' + (isRevealed ? ' show' : '') + '" id="aaFeedback' + idx + '">';
+  if (isRevealed) {
+    let score = 0;
+    if (parseInt(answers.claim) === arg.mainClaim) score++;
+    if (parseInt(answers.evidence) === arg.strongestEvidence) score++;
+    if (parseInt(answers.assumption) === arg.weakestAssumption) score++;
+    html += '<div style="font-weight:700;margin-bottom:0.5rem;color:var(--blue);">Your Analysis: ' + score + '/3 selections correct</div>';
+    html += '<p>' + arg.feedback + '</p>';
+  }
+  html += '</div>';
+  html += '</div>';
+
+  // Navigation
+  html += '<div class="aa-nav">';
+  html += '<button class="btn btn-secondary btn-small" onclick="navArgument(-1)"' + (idx === 0 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Previous</button>';
+  html += '<span class="lt-progress">' + (idx + 1) + ' / ' + argumentData.length + '</span>';
+  html += '<button class="btn btn-secondary btn-small" onclick="navArgument(1)"' + (idx >= argumentData.length - 1 ? ' disabled style="opacity:0.4;cursor:default"' : '') + '>Next</button>';
+  html += '</div>';
+
+  html += '<div style="margin-top:1rem;text-align:right;"><button class="btn btn-reset btn-small" onclick="resetArgument()">Reset Challenge</button></div>';
+  body.innerHTML = html;
+}
+
+function saveArgAnswer(idx, field) {
+  if (!state.argument.answers[idx]) state.argument.answers[idx] = {};
+  if (field === 'strengthen') {
+    const el = document.getElementById('aaStrengthen' + idx);
+    if (el) state.argument.answers[idx][field] = el.value;
+  } else {
+    const el = document.getElementById('aa' + field.charAt(0).toUpperCase() + field.slice(1) + idx);
+    if (el) state.argument.answers[idx][field] = el.value;
+  }
+  saveState();
+}
+
+function revealArgFeedback(idx) {
+  state.argument.revealed[idx] = true;
+  saveState();
+  renderArgumentAnalysis();
+  updateProgress();
+}
+
+function navArgument(dir) {
+  const newIdx = state.argument.current + dir;
+  if (newIdx < 0 || newIdx >= argumentData.length) return;
+  state.argument.current = newIdx;
+  saveState();
+  renderArgumentAnalysis();
+}
+
+function resetArgument() {
+  state.argument = { current: 0, answers: {}, revealed: {} };
+  saveState();
+  renderArgumentAnalysis();
+  updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+
+updateProgress();
+</script>
+</body>
+</html>
