@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Readiness Simulator - Minerva Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active { color: var(--bone); background: rgba(200,85,61,0.35); }
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 3.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero h1 {
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.1rem; color: rgba(245,240,235,0.75);
+  max-width: 620px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ── Container ─────────────────────────────────────── */
+.container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── Progress Bar (top) ────────────────────────────── */
+.progress-container {
+  padding: 2.5rem 0 1.5rem;
+}
+.progress-steps {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0;
+  position: relative;
+}
+.progress-step {
+  display: flex; flex-direction: column; align-items: center;
+  position: relative; z-index: 1; flex: 0 0 auto;
+}
+.progress-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--mid-gray); border: 3px solid var(--mid-gray);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; color: var(--text2);
+  transition: all 0.3s;
+}
+.progress-dot.active {
+  background: var(--clay); border-color: var(--clay); color: white;
+}
+.progress-dot.completed {
+  background: var(--green); border-color: var(--green); color: white;
+}
+.progress-label {
+  font-size: 0.68rem; color: var(--text2); margin-top: 0.4rem;
+  white-space: nowrap; font-weight: 500;
+  transition: color 0.3s;
+}
+.progress-step.is-active .progress-label,
+.progress-step.is-completed .progress-label { color: var(--text); font-weight: 600; }
+.progress-connector {
+  height: 3px; width: 60px; background: var(--mid-gray);
+  margin: 0 -1px; margin-bottom: 1.2rem;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+.progress-connector.filled { background: var(--green); }
+
+.progress-bar-simple {
+  width: 100%; height: 6px; background: var(--mid-gray);
+  border-radius: 3px; margin-top: 1.5rem; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--clay), var(--clay-light));
+  border-radius: 3px; transition: width 0.4s ease;
+}
+.progress-text {
+  text-align: center; font-size: 0.82rem; color: var(--text2);
+  margin-top: 0.5rem; font-weight: 500;
+}
+
+/* ── Wizard ────────────────────────────────────────── */
+.wizard-section {
+  padding: 2rem 0 4rem;
+  min-height: 50vh;
+}
+.step-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.step-panel.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-header {
+  margin-bottom: 2rem;
+}
+.step-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.4rem;
+}
+.step-title {
+  font-size: 1.5rem; font-weight: 800; color: var(--obsidian);
+  letter-spacing: -0.02em; margin-bottom: 0.5rem;
+}
+.step-subtitle {
+  font-size: 0.95rem; color: var(--text2); line-height: 1.6;
+}
+
+/* ── Question Cards ────────────────────────────────── */
+.question {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s;
+}
+.question:hover { border-color: #d1d5db; }
+.question.answered { border-color: rgba(5,150,105,0.3); background: rgba(5,150,105,0.02); }
+.question-label {
+  font-size: 0.95rem; font-weight: 600; color: var(--text);
+  margin-bottom: 1rem; line-height: 1.5;
+}
+
+/* ── Slider ────────────────────────────────────────── */
+.slider-container {
+  padding: 0.25rem 0;
+}
+.slider-labels {
+  display: flex; justify-content: space-between;
+  font-size: 0.75rem; color: var(--text2); margin-bottom: 0.6rem;
+}
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 8px;
+  background: var(--mid-gray); border-radius: 4px; outline: none;
+  transition: background 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 24px; height: 24px;
+  background: var(--clay); border-radius: 50%; cursor: pointer;
+  border: 3px solid var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px;
+  background: var(--clay); border-radius: 50%; cursor: pointer;
+  border: 3px solid var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.slider-value {
+  text-align: center; font-size: 0.85rem; font-weight: 600;
+  color: var(--clay); margin-top: 0.5rem;
+}
+
+/* ── Radio Options ─────────────────────────────────── */
+.option-group {
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.option-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.75rem 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s;
+  font-size: 0.9rem; color: var(--text); line-height: 1.5;
+}
+.option-item:hover { border-color: var(--clay); background: rgba(200,85,61,0.03); }
+.option-item.selected {
+  border-color: var(--clay); background: rgba(200,85,61,0.06);
+  font-weight: 500;
+}
+.option-radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--mid-gray); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; margin-top: 1px;
+}
+.option-item.selected .option-radio {
+  border-color: var(--clay); background: var(--clay);
+}
+.option-item.selected .option-radio::after {
+  content: ''; width: 8px; height: 8px; background: white;
+  border-radius: 50%;
+}
+
+/* ── Checkbox Options ──────────────────────────────── */
+.checkbox-group {
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.checkbox-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.75rem 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s;
+  font-size: 0.9rem; color: var(--text); line-height: 1.5;
+}
+.checkbox-item:hover { border-color: var(--clay); background: rgba(200,85,61,0.03); }
+.checkbox-item.selected {
+  border-color: var(--clay); background: rgba(200,85,61,0.06);
+  font-weight: 500;
+}
+.checkbox-box {
+  width: 20px; height: 20px; border-radius: 5px;
+  border: 2px solid var(--mid-gray); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; margin-top: 1px;
+  font-size: 0.7rem; color: white;
+}
+.checkbox-item.selected .checkbox-box {
+  border-color: var(--clay); background: var(--clay);
+}
+
+/* ── Navigation Buttons ────────────────────────────── */
+.wizard-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 2.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--mid-gray);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.5rem; border-radius: 10px;
+  font-size: 0.92rem; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; border: none; font-family: inherit;
+}
+.btn-back {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--mid-gray);
+}
+.btn-back:hover { background: var(--light-gray); color: var(--text); }
+.btn-next {
+  background: var(--clay); color: white;
+}
+.btn-next:hover { background: var(--clay-light); transform: translateY(-1px); }
+.btn-next:disabled {
+  background: var(--mid-gray); color: var(--text2);
+  cursor: not-allowed; transform: none;
+}
+.btn-results {
+  background: var(--green); color: white;
+}
+.btn-results:hover { background: #047857; transform: translateY(-1px); }
+.btn-reset {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--mid-gray);
+  padding: 0.6rem 1.2rem; font-size: 0.85rem;
+}
+.btn-reset:hover { background: rgba(200,85,61,0.06); color: var(--clay); border-color: var(--clay); }
+
+/* ── Results Dashboard ─────────────────────────────── */
+.results-panel { display: none; }
+.results-panel.active { display: block; animation: fadeIn 0.4s ease; }
+
+.score-hero {
+  text-align: center; padding: 2.5rem 0;
+}
+.circular-score {
+  position: relative; width: 180px; height: 180px;
+  margin: 0 auto 1.5rem;
+}
+.circular-score svg { transform: rotate(-90deg); }
+.circular-score .bg { fill: none; stroke: var(--mid-gray); stroke-width: 10; }
+.circular-score .fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+.score-number {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 2.8rem; font-weight: 800; color: var(--obsidian);
+}
+.score-number small { font-size: 1.2rem; font-weight: 600; color: var(--text2); }
+.score-label {
+  font-size: 1.1rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.3rem;
+}
+.score-description {
+  font-size: 0.95rem; color: var(--text2); max-width: 480px;
+  margin: 0 auto; line-height: 1.6;
+}
+
+.category-breakdown {
+  margin: 2rem 0;
+}
+.category-breakdown h3 {
+  font-size: 1.15rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 1.25rem;
+}
+.category-bar-item {
+  margin-bottom: 1.25rem;
+}
+.category-bar-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+.category-bar-name {
+  font-size: 0.9rem; font-weight: 600; color: var(--text);
+}
+.category-bar-score {
+  font-size: 0.85rem; font-weight: 700;
+}
+.category-bar-track {
+  height: 10px; background: var(--mid-gray); border-radius: 5px;
+  overflow: hidden;
+}
+.category-bar-fill {
+  height: 100%; border-radius: 5px; transition: width 0.8s ease;
+}
+
+.detail-cards {
+  margin: 2.5rem 0;
+}
+.detail-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem;
+}
+.detail-card-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.detail-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.detail-card-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--obsidian);
+}
+.detail-card-score {
+  font-size: 0.8rem; font-weight: 600; margin-left: auto;
+  padding: 0.2rem 0.6rem; border-radius: 20px;
+}
+
+.detail-section {
+  margin-bottom: 1rem;
+}
+.detail-section:last-child { margin-bottom: 0; }
+.detail-section-title {
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 0.4rem;
+}
+.detail-section-title.strengths { color: var(--green); }
+.detail-section-title.develop { color: var(--blue); }
+.detail-section-title.tips { color: var(--clay); }
+.detail-section ul {
+  list-style: none; padding: 0;
+}
+.detail-section li {
+  font-size: 0.88rem; color: var(--text2); line-height: 1.6;
+  padding: 0.2rem 0 0.2rem 1.2rem; position: relative;
+}
+.detail-section li::before {
+  content: ''; position: absolute; left: 0; top: 0.65rem;
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.detail-section.strengths li::before { background: var(--green); }
+.detail-section.develop li::before { background: var(--blue); }
+.detail-section.tips li::before { background: var(--clay); }
+
+.action-plan {
+  background: linear-gradient(135deg, rgba(200,85,61,0.06), rgba(200,85,61,0.02));
+  border: 1px solid rgba(200,85,61,0.15);
+  border-left: 4px solid var(--clay);
+  border-radius: 0 12px 12px 0;
+  padding: 1.5rem; margin: 2.5rem 0;
+}
+.action-plan h3 {
+  font-size: 1.05rem; font-weight: 700; color: var(--clay);
+  margin-bottom: 1rem;
+}
+.action-plan ol {
+  padding-left: 1.25rem;
+}
+.action-plan li {
+  font-size: 0.9rem; color: var(--text); line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+.action-plan li strong { color: var(--obsidian); }
+
+.results-footer {
+  text-align: center; padding: 2rem 0;
+  border-top: 1px solid var(--mid-gray);
+  margin-top: 1rem;
+}
+.results-footer p {
+  font-size: 0.88rem; color: var(--text2); margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* ── Start Screen ──────────────────────────────────── */
+.start-screen {
+  text-align: center; padding: 3rem 0;
+}
+.start-screen h2 {
+  font-size: 1.5rem; font-weight: 800; color: var(--obsidian);
+  margin-bottom: 0.75rem;
+}
+.start-screen p {
+  font-size: 0.95rem; color: var(--text2); max-width: 520px;
+  margin: 0 auto 1.5rem; line-height: 1.6;
+}
+.start-features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin: 2rem 0; text-align: left;
+}
+.start-feature {
+  padding: 1rem; border: 1px solid var(--mid-gray);
+  border-radius: 10px; background: var(--light-gray);
+}
+.start-feature .icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.start-feature h4 {
+  font-size: 0.88rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.25rem;
+}
+.start-feature p {
+  font-size: 0.8rem; color: var(--text2); margin: 0; line-height: 1.5;
+}
+.resume-notice {
+  background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.15);
+  border-radius: 10px; padding: 1rem 1.5rem; margin: 1.5rem auto;
+  max-width: 420px; font-size: 0.88rem; color: var(--blue);
+  font-weight: 500; display: none;
+}
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3rem; }
+  .container { padding: 0 1.25rem; }
+  .progress-connector { width: 30px; }
+  .progress-dot { width: 30px; height: 30px; font-size: 0.7rem; }
+  .progress-label { font-size: 0.6rem; }
+  .start-features { grid-template-columns: 1fr; }
+  .wizard-nav { flex-wrap: wrap; gap: 0.75rem; }
+  .btn { flex: 1; justify-content: center; min-width: 120px; }
+  .circular-score { width: 150px; height: 150px; }
+  .score-number { font-size: 2.2rem; }
+}
+@media (max-width: 480px) {
+  .progress-label { display: none; }
+  .progress-connector { width: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html#why">Why Minerva</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#challenges">Challenges</a>
+      <a href="index.html#essays">Essays</a>
+      <a href="index.html#checklist">Checklist</a>
+      <a href="index.html#aid">Financial Aid</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="simulator.html" class="active">Simulator</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>Application <span>Readiness Simulator</span></h1>
+  <p>A reflective self-assessment to help you understand where you stand and what to work on before applying to Minerva.</p>
+</section>
+
+<div class="container">
+
+<!-- ── Start Screen ────────────────────────────────── -->
+<div id="start-screen" class="start-screen">
+  <h2>How ready are you for Minerva?</h2>
+  <p>This is not a quiz with right or wrong answers. It is a reflective tool that helps you honestly assess your strengths and identify areas to develop before you apply.</p>
+  <div class="start-features">
+    <div class="start-feature">
+      <div class="icon">&#128203;</div>
+      <h4>5 Categories</h4>
+      <p>Academic, creative thinking, global readiness, communication, and motivation.</p>
+    </div>
+    <div class="start-feature">
+      <div class="icon">&#9201;</div>
+      <h4>10-15 Minutes</h4>
+      <p>Answer honestly. There are no wrong answers, only reflection.</p>
+    </div>
+    <div class="start-feature">
+      <div class="icon">&#128202;</div>
+      <h4>Detailed Results</h4>
+      <p>Personalized feedback with specific action items for each category.</p>
+    </div>
+  </div>
+  <div id="resume-notice" class="resume-notice">
+    You have saved progress. Pick up where you left off or start fresh.
+  </div>
+  <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+    <button class="btn btn-next" onclick="startAssessment(false)">Begin Assessment</button>
+    <button id="resume-btn" class="btn btn-back" onclick="startAssessment(true)" style="display:none;">Resume Progress</button>
+    <button id="restart-btn" class="btn btn-reset" onclick="resetAll()" style="display:none;">Start Fresh</button>
+  </div>
+</div>
+
+<!-- ── Progress Bar ────────────────────────────────── -->
+<div id="progress-area" class="progress-container" style="display:none;">
+  <div class="progress-steps">
+    <div class="progress-step" data-step="0">
+      <div class="progress-dot">1</div>
+      <div class="progress-label">Academic</div>
+    </div>
+    <div class="progress-connector"></div>
+    <div class="progress-step" data-step="1">
+      <div class="progress-dot">2</div>
+      <div class="progress-label">Thinking</div>
+    </div>
+    <div class="progress-connector"></div>
+    <div class="progress-step" data-step="2">
+      <div class="progress-dot">3</div>
+      <div class="progress-label">Global</div>
+    </div>
+    <div class="progress-connector"></div>
+    <div class="progress-step" data-step="3">
+      <div class="progress-dot">4</div>
+      <div class="progress-label">Communication</div>
+    </div>
+    <div class="progress-connector"></div>
+    <div class="progress-step" data-step="4">
+      <div class="progress-dot">5</div>
+      <div class="progress-label">Motivation</div>
+    </div>
+  </div>
+  <div class="progress-bar-simple">
+    <div id="progress-fill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+  <div id="progress-text-display" class="progress-text">Step 1 of 5</div>
+</div>
+
+<!-- ── Wizard Steps ────────────────────────────────── -->
+<div class="wizard-section">
+
+<!-- Step 1: Academic Foundation -->
+<div class="step-panel" data-step="0">
+  <div class="step-header">
+    <div class="step-label">Step 1 of 5</div>
+    <div class="step-title">Academic Foundation</div>
+    <div class="step-subtitle">Minerva's curriculum is rigorous and demands active engagement. This section assesses your relationship with academic work.</div>
+  </div>
+
+  <div class="question" data-qid="acad_rigor">
+    <div class="question-label">How comfortable are you with rigorous, challenging academic work?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Not comfortable</span><span>Very comfortable</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="acad_rigor" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-acad_rigor">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="acad_self_learn">
+    <div class="question-label">How many hours per week do you currently spend on self-directed learning (outside of required schoolwork)?</div>
+    <div class="option-group" data-qid="acad_self_learn">
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Less than 1 hour</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>1-3 hours</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>3-7 hours</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>7-15 hours</div>
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>15+ hours</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="acad_challenge">
+    <div class="question-label">Have you taken the most challenging courses available to you (AP, IB, honors, or equivalent)?</div>
+    <div class="option-group" data-qid="acad_challenge">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Yes, in every subject I could</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>In some subjects, but not all</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>No, I have generally taken standard-level courses</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="acad_difficulty">
+    <div class="question-label">When you encounter an academic subject you find genuinely difficult, what do you typically do?</div>
+    <div class="option-group" data-qid="acad_difficulty">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Seek out additional resources and keep working until I understand it deeply</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Ask teachers or peers for help and persist through it</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Put in more effort but sometimes settle for surface-level understanding</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Try harder for a while but eventually move on if it does not click</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Accept it is not my strength and focus on what I am good at</div>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-back" onclick="goToStart()">Back</button>
+    <button class="btn btn-next" onclick="nextStep()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 2: Creative & Critical Thinking -->
+<div class="step-panel" data-step="1">
+  <div class="step-header">
+    <div class="step-label">Step 2 of 5</div>
+    <div class="step-title">Creative &amp; Critical Thinking</div>
+    <div class="step-subtitle">Minerva's pedagogy centers on applying concepts to novel problems. This section explores how you approach ambiguity and unconventional challenges.</div>
+  </div>
+
+  <div class="question" data-qid="think_problem">
+    <div class="question-label">When you encounter a problem with no clear solution, what is your first instinct?</div>
+    <div class="option-group" data-qid="think_problem">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Break it into smaller parts and experiment with different approaches</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Research how others have approached similar problems</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Think about it for a while and try one approach I think might work</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Ask someone more experienced for guidance first</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Feel stuck and unsure how to proceed without clear directions</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="think_ambiguity">
+    <div class="question-label">How comfortable are you operating in situations with ambiguity and no single right answer?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Very uncomfortable</span><span>Thrive in ambiguity</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="think_ambiguity" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-think_ambiguity">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="think_interdisciplinary">
+    <div class="question-label">How would you describe your experience with interdisciplinary thinking (connecting ideas across different fields)?</div>
+    <div class="option-group" data-qid="think_interdisciplinary">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>I regularly draw connections between unrelated fields and it shapes how I think</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>I enjoy finding connections when they come up but do not actively seek them</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>I can see connections when pointed out but do not naturally think this way</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>I tend to think within one field at a time</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>I prefer to focus deeply on one subject rather than connecting across fields</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="think_assumptions">
+    <div class="question-label">How often do you question assumptions, including your own?</div>
+    <div class="option-group" data-qid="think_assumptions">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Constantly. I regularly challenge my own beliefs and seek out opposing views.</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Often. I try to examine my assumptions when making important decisions.</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Sometimes. I question things when something feels off but not habitually.</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Rarely. I generally trust my initial judgment.</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Almost never. I prefer to rely on established ways of thinking.</div>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-back" onclick="prevStep()">Back</button>
+    <button class="btn btn-next" onclick="nextStep()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 3: Global Readiness -->
+<div class="step-panel" data-step="2">
+  <div class="step-header">
+    <div class="step-label">Step 3 of 5</div>
+    <div class="step-title">Global Readiness</div>
+    <div class="step-subtitle">You will live in seven different cities across four years and learn alongside people from over 90 countries. This section explores your readiness for that.</div>
+  </div>
+
+  <div class="question" data-qid="global_experience">
+    <div class="question-label">Have you lived in or spent significant time in a culture different from your own?</div>
+    <div class="option-group" data-qid="global_experience">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Yes, I have lived in a different country or culture for an extended period</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>I have traveled internationally and spent meaningful time in other cultures</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>I have some exposure through my community or short trips</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Limited exposure, but I am very interested in experiencing other cultures</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>No significant exposure to other cultures yet</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="global_adapt">
+    <div class="question-label">How comfortable are you with adapting to entirely new environments (new city, new people, new routines)?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Very uncomfortable</span><span>Highly adaptable</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="global_adapt" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-global_adapt">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="global_perspectives">
+    <div class="question-label">Rate your genuine interest in understanding perspectives fundamentally different from your own.</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Not interested</span><span>Deeply interested</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="global_perspectives" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-global_perspectives">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="global_change">
+    <div class="question-label">How would you describe your relationship with change and uncertainty?</div>
+    <div class="option-group" data-qid="global_change">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>I actively seek out change and find it energizing</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>I handle change well and adapt quickly, even if it is initially uncomfortable</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>I can manage change but prefer some stability and predictability</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>I find change stressful but can get through it with support</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>I strongly prefer stability and routine; change is very difficult for me</div>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-back" onclick="prevStep()">Back</button>
+    <button class="btn btn-next" onclick="nextStep()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 4: Communication & Collaboration -->
+<div class="step-panel" data-step="3">
+  <div class="step-header">
+    <div class="step-label">Step 4 of 5</div>
+    <div class="step-title">Communication &amp; Collaboration</div>
+    <div class="step-subtitle">Every Minerva class is a small, active seminar. You cannot hide in the back row. This section assesses how you engage with others and express ideas.</div>
+  </div>
+
+  <div class="question" data-qid="comm_discussion">
+    <div class="question-label">How comfortable are you participating actively in small group discussions (not just listening)?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Very uncomfortable</span><span>Completely at ease</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="comm_discussion" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-comm_discussion">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="comm_disagree">
+    <div class="question-label">When someone strongly disagrees with you in a discussion, what do you typically do?</div>
+    <div class="option-group" data-qid="comm_disagree">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Engage with their reasoning, ask questions, and genuinely consider changing my view</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Listen carefully and try to understand their perspective, even if I ultimately disagree</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Defend my position but try to stay respectful</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Feel uncomfortable and tend to disengage or avoid the conflict</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Take it personally and find it hard to separate the argument from the person</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="comm_articulate">
+    <div class="question-label">How would you rate your ability to articulate complex ideas clearly and concisely?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Struggle to express ideas</span><span>Strong communicator</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="comm_articulate" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-comm_articulate">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="comm_teams">
+    <div class="question-label">Describe your experience working in diverse teams (people with different backgrounds, skills, or perspectives).</div>
+    <div class="option-group" data-qid="comm_teams">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Extensive experience; I actively seek diverse collaboration and it improves my work</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Good experience; I have worked in diverse settings and value different perspectives</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Some experience; I have worked in teams but they were not very diverse</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Limited experience; most of my collaboration has been with similar peers</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Very little team experience; I mostly work independently</div>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-back" onclick="prevStep()">Back</button>
+    <button class="btn btn-next" onclick="nextStep()">Continue</button>
+  </div>
+</div>
+
+<!-- Step 5: Motivation & Fit -->
+<div class="step-panel" data-step="4">
+  <div class="step-header">
+    <div class="step-label">Step 5 of 5</div>
+    <div class="step-title">Motivation &amp; Fit</div>
+    <div class="step-subtitle">Minerva is not the right fit for everyone, and that is okay. This section helps you reflect on why Minerva specifically, and whether it aligns with what you want.</div>
+  </div>
+
+  <div class="question" data-qid="motiv_why">
+    <div class="question-label">Why are you interested in Minerva specifically? (Select all that apply)</div>
+    <div class="checkbox-group" data-qid="motiv_why">
+      <div class="checkbox-item" data-value="global" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>Living in multiple cities around the world</div>
+      <div class="checkbox-item" data-value="pedagogy" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>The active learning pedagogy (no lectures)</div>
+      <div class="checkbox-item" data-value="diversity" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>The highly international, diverse student body</div>
+      <div class="checkbox-item" data-value="rigor" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>The academic rigor and intellectual challenge</div>
+      <div class="checkbox-item" data-value="career" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>Career outcomes and practical skills focus</div>
+      <div class="checkbox-item" data-value="cost" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>The financial aid and relative affordability</div>
+      <div class="checkbox-item" data-value="small" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>Small class sizes and close-knit community</div>
+      <div class="checkbox-item" data-value="different" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div>It is fundamentally different from traditional universities</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="motiv_cities">
+    <div class="question-label">What excites you most about the rotational city model?</div>
+    <div class="option-group" data-qid="motiv_cities">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>The chance to build genuine connections with each place and apply learning in different contexts</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Experiencing different cultures and expanding my worldview</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Traveling and seeing new places, though the constant moving seems challenging</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>I am interested but somewhat anxious about the logistics and lack of stability</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>I am not very excited about it; I would prefer a traditional campus experience</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="motiv_self">
+    <div class="question-label">How self-motivated would you say you are when there is no external pressure (deadlines, grades, expectations)?</div>
+    <div class="slider-container">
+      <div class="slider-labels"><span>Need external structure</span><span>Deeply self-driven</span></div>
+      <input type="range" min="1" max="5" value="3" data-qid="motiv_self" oninput="handleSlider(this)">
+      <div class="slider-value" id="sv-motiv_self">3 - Moderate</div>
+    </div>
+  </div>
+
+  <div class="question" data-qid="motiv_goal">
+    <div class="question-label">What is your primary goal for your university education?</div>
+    <div class="option-group" data-qid="motiv_goal">
+      <div class="option-item" data-value="5" onclick="selectOption(this)"><div class="option-radio"></div>Develop transferable thinking skills and the ability to learn anything independently</div>
+      <div class="option-item" data-value="4" onclick="selectOption(this)"><div class="option-radio"></div>Grow as a person, build a global network, and prepare for meaningful work</div>
+      <div class="option-item" data-value="3" onclick="selectOption(this)"><div class="option-radio"></div>Get a strong education that leads to good career opportunities</div>
+      <div class="option-item" data-value="2" onclick="selectOption(this)"><div class="option-radio"></div>Earn a degree in a specific field I am passionate about</div>
+      <div class="option-item" data-value="1" onclick="selectOption(this)"><div class="option-radio"></div>Get a credential that will help me get a well-paying job</div>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-back" onclick="prevStep()">Back</button>
+    <button class="btn btn-results" onclick="showResults()">See My Results</button>
+  </div>
+</div>
+
+<!-- ── Results Panel ───────────────────────────────── -->
+<div id="results-panel" class="results-panel">
+  <div class="score-hero">
+    <div class="circular-score">
+      <svg width="100%" height="100%" viewBox="0 0 200 200">
+        <circle class="bg" cx="100" cy="100" r="85" />
+        <circle id="score-circle" class="fill" cx="100" cy="100" r="85"
+                stroke-dasharray="534" stroke-dashoffset="534" />
+      </svg>
+      <div class="score-number" id="score-display">0<small>%</small></div>
+    </div>
+    <div class="score-label" id="score-tier"></div>
+    <div class="score-description" id="score-desc"></div>
+  </div>
+
+  <div class="category-breakdown">
+    <h3>Breakdown by Category</h3>
+    <div id="category-bars"></div>
+  </div>
+
+  <div class="detail-cards" id="detail-cards"></div>
+
+  <div class="action-plan" id="action-plan">
+    <h3>What to Focus on Before Applying</h3>
+    <ol id="action-items"></ol>
+  </div>
+
+  <div class="results-footer">
+    <p>This assessment reflects your self-perception today. Your readiness can change significantly with deliberate effort. Minerva values growth and potential as much as where you stand right now.</p>
+    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+      <button class="btn btn-next" onclick="resetAll()">Retake Assessment</button>
+      <a href="index.html" class="btn btn-back" style="text-decoration:none;">Back to Guide</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- .wizard-section -->
+</div><!-- .container -->
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Data & State ──────────────────────────────────────
+const STORAGE_KEY = 'minerva-simulator';
+let currentStep = 0;
+let answers = {};
+
+const SLIDER_LABELS = {
+  1: '1 - Low',
+  2: '2 - Below Average',
+  3: '3 - Moderate',
+  4: '4 - Strong',
+  5: '5 - Very Strong'
+};
+
+const CATEGORIES = [
+  {
+    key: 'academic',
+    name: 'Academic Foundation',
+    icon: '\u{1F4DA}',
+    color: 'var(--clay)',
+    bgColor: 'rgba(200,85,61,0.1)',
+    questions: ['acad_rigor', 'acad_self_learn', 'acad_challenge', 'acad_difficulty'],
+    feedback: {
+      high: {
+        strengths: [
+          'Strong academic work ethic and comfort with challenge',
+          'Active self-directed learner who goes beyond requirements',
+          'Resilient approach to difficult material'
+        ],
+        develop: [
+          'Continue seeking out the hardest problems in your areas of interest',
+          'Start building a portfolio of self-driven projects or research'
+        ],
+        tips: [
+          'In your application, show specific examples of intellectual initiative, not just grades',
+          'Minerva does not look at standardized test scores, so focus your energy on demonstrating genuine curiosity'
+        ]
+      },
+      mid: {
+        strengths: [
+          'Solid academic baseline with room to stretch further',
+          'Some experience with self-directed learning'
+        ],
+        develop: [
+          'Push yourself into harder material: take the advanced course, read the difficult book, tackle the proof',
+          'Build a daily self-learning habit, even 30 minutes of deliberate practice outside school',
+          'When you hit difficulty, practice sitting with discomfort instead of switching to easier tasks'
+        ],
+        tips: [
+          'Start a learning project now that has nothing to do with school. Pick something hard and document your process.',
+          'Minerva classes require preparation before every session. Build that habit now.'
+        ]
+      },
+      low: {
+        strengths: [
+          'Self-awareness about your current academic habits is itself a strength',
+          'Recognizing areas for growth is the first step to meaningful change'
+        ],
+        develop: [
+          'Develop a structured self-study routine. Start with 30 minutes daily and increase gradually.',
+          'Challenge yourself in at least one subject: take the harder course, join a study group, find a mentor.',
+          'Shift your relationship with difficulty. Struggling means you are learning; avoiding struggle means you are not growing.'
+        ],
+        tips: [
+          'Minerva looks for intellectual curiosity over polished transcripts. Start demonstrating that curiosity now.',
+          'Read widely outside your comfort zone: philosophy, science, history, economics. Breadth matters at Minerva.',
+          'Before applying, have at least one sustained self-learning project you can point to as evidence of initiative.'
+        ]
+      }
+    }
+  },
+  {
+    key: 'thinking',
+    name: 'Creative & Critical Thinking',
+    icon: '\u{1F4A1}',
+    color: 'var(--blue)',
+    bgColor: 'rgba(37,99,235,0.1)',
+    questions: ['think_problem', 'think_ambiguity', 'think_interdisciplinary', 'think_assumptions'],
+    feedback: {
+      high: {
+        strengths: [
+          'Strong comfort with ambiguity and unstructured problems',
+          'Natural interdisciplinary thinker who draws connections across fields',
+          'Healthy skepticism and willingness to question assumptions, including your own'
+        ],
+        develop: [
+          'Practice articulating your thinking process, not just your conclusions',
+          'Seek out problems in domains you know nothing about'
+        ],
+        tips: [
+          'Minerva\'s admissions challenges test exactly this: creative problem-solving under ambiguity. You are well-positioned.',
+          'In essays, show HOW you think, not just WHAT you have accomplished. Walk through your reasoning.'
+        ]
+      },
+      mid: {
+        strengths: [
+          'Growing comfort with non-obvious problems',
+          'Some ability to think across disciplines'
+        ],
+        develop: [
+          'Practice solving problems where there is no single right answer. Debate, case studies, and design challenges all build this muscle.',
+          'Actively look for connections between things you are studying. How does a concept from biology relate to economics? How does art relate to engineering?',
+          'Start a habit of questioning one thing you believe every week. Write down why you believe it and what evidence might change your mind.'
+        ],
+        tips: [
+          'When preparing for Minerva\'s challenges, resist the urge to find the "right" answer. They want to see your thinking process.',
+          'Read about mental models and frameworks from different fields. Charlie Munger\'s "latticework of mental models" is a good starting point.'
+        ]
+      },
+      low: {
+        strengths: [
+          'Awareness that creative thinking is a skill worth developing',
+          'Willingness to assess yourself honestly in this area'
+        ],
+        develop: [
+          'Start small: when you read an article, ask "What assumptions is this making?" and "How could this be wrong?"',
+          'Practice brainstorming. Set a timer for 5 minutes and generate as many solutions to a problem as you can. Quantity over quality at first.',
+          'Expose yourself to fields outside your comfort zone. If you are a STEM person, read philosophy. If you are in humanities, learn basic statistics.',
+          'Join a debate club, mock trial, or case competition. Structured argumentation builds critical thinking rapidly.'
+        ],
+        tips: [
+          'This is a very learnable skill. Minerva teaches it explicitly through their curriculum, but starting now gives you a significant advantage.',
+          'For the application challenges, practice working through problems out loud. Record yourself talking through logic puzzles or ethical dilemmas.'
+        ]
+      }
+    }
+  },
+  {
+    key: 'global',
+    name: 'Global Readiness',
+    icon: '\u{1F30D}',
+    color: 'var(--green)',
+    bgColor: 'rgba(5,150,105,0.1)',
+    questions: ['global_experience', 'global_adapt', 'global_perspectives', 'global_change'],
+    feedback: {
+      high: {
+        strengths: [
+          'Significant cross-cultural experience or genuine openness to it',
+          'Strong adaptability and comfort with change',
+          'Authentic interest in understanding fundamentally different worldviews'
+        ],
+        develop: [
+          'Deepen your engagement: move from observing other cultures to actively participating and building relationships',
+          'Reflect on moments where your own cultural assumptions were challenged. Those stories are powerful.'
+        ],
+        tips: [
+          'In your application, share specific moments of cross-cultural insight, not generic statements about valuing diversity.',
+          'Minerva wants to see that you will thrive in their rotational model, not just survive it.'
+        ]
+      },
+      mid: {
+        strengths: [
+          'Genuine curiosity about the world beyond your immediate context',
+          'Willingness to step outside your comfort zone'
+        ],
+        develop: [
+          'Actively seek out people with fundamentally different backgrounds in your own community. Have deep conversations.',
+          'Practice being uncomfortable. Travel to a neighborhood in your city where you are the minority. Eat food you have never tried. Attend a cultural event where you know no one.',
+          'Read international news from non-Western sources. Al Jazeera, The Hindu, The Japan Times. Notice how the same event is framed differently.'
+        ],
+        tips: [
+          'You do not need to have traveled the world. Minerva has many students from small towns who had limited travel but deep curiosity.',
+          'In your application, focus on HOW you engage with difference, not WHERE you have been.'
+        ]
+      },
+      low: {
+        strengths: [
+          'Honestly assessing your starting point is valuable',
+          'Interest in Minerva itself suggests you are open to growth in this area'
+        ],
+        develop: [
+          'Start exposing yourself to different perspectives now. Watch films from other countries, read translated literature, follow international news.',
+          'Find a language exchange partner or cultural exchange group in your area or online.',
+          'Practice being in unfamiliar situations on purpose. The discomfort you feel is the same discomfort of moving to a new city every semester. Learn to manage it now.',
+          'Build genuine relationships with people who are different from you, not as a resume line but as a real practice.'
+        ],
+        tips: [
+          'Minerva will push you far outside your comfort zone. Applicants who show awareness of their limitations and a genuine desire to grow are valued over those who claim to already "get it."',
+          'Consider whether you truly want this lifestyle. Living in seven cities in four years is exhilarating but demanding. Be honest with yourself.'
+        ]
+      }
+    }
+  },
+  {
+    key: 'communication',
+    name: 'Communication & Collaboration',
+    icon: '\u{1F5E3}\u{FE0F}',
+    color: '#7c3aed',
+    bgColor: 'rgba(124,58,237,0.1)',
+    questions: ['comm_discussion', 'comm_disagree', 'comm_articulate', 'comm_teams'],
+    feedback: {
+      high: {
+        strengths: [
+          'Confident and constructive in group discussions',
+          'Able to engage with disagreement productively rather than defensively',
+          'Strong articulation of complex ideas'
+        ],
+        develop: [
+          'Work on making others comfortable speaking up, not just contributing yourself',
+          'Practice summarizing opposing viewpoints more effectively than their holders can'
+        ],
+        tips: [
+          'Minerva classes are 100% active seminar. Your comfort here is a genuine advantage.',
+          'In interviews or essays, demonstrate that you listen as much as you speak. Minerva wants collaborators, not performers.'
+        ]
+      },
+      mid: {
+        strengths: [
+          'Baseline comfort with group work and discussion',
+          'Some ability to handle disagreement constructively'
+        ],
+        develop: [
+          'Practice speaking up in groups. Set a goal to contribute at least once in every discussion, class, or meeting.',
+          'When someone disagrees with you, practice saying "Tell me more about why you think that" before defending your position.',
+          'Write more. Clear writing is clear thinking. Start a journal, blog, or write explanations of complex topics for a friend.',
+          'Seek out team projects with people whose working styles differ from yours.'
+        ],
+        tips: [
+          'Minerva students are expected to speak in every class. If this makes you nervous, start practicing now by volunteering to speak first in smaller settings.',
+          'Record yourself explaining a complex idea in 2 minutes. Listen back. Rewrite. Repeat. Clarity comes from practice.'
+        ]
+      },
+      low: {
+        strengths: [
+          'Awareness that communication skills need development is the foundation for building them',
+          'Being thoughtful or introverted is not a weakness; many strong Minerva students are introverts who learned to engage actively'
+        ],
+        develop: [
+          'Start small: contribute one comment in every group setting. Build from there.',
+          'Join a club, team, or group where you have to interact with others regularly. Debate, theater, community organizing all work.',
+          'Practice articulating your thoughts by writing them down first. Then try saying them to one person. Then to a small group.',
+          'Work on separating ideas from identity. Disagreement about an idea is not a personal attack. Practice this reframe.'
+        ],
+        tips: [
+          'This is one of the most critical areas for Minerva success. Every class requires active verbal participation on camera.',
+          'If you are introverted, that is fine, but you need a strategy for active engagement. Build that strategy now, before you apply.',
+          'Consider taking a public speaking course, joining Toastmasters, or simply practicing explaining things to friends or family regularly.'
+        ]
+      }
+    }
+  },
+  {
+    key: 'motivation',
+    name: 'Motivation & Fit',
+    icon: '\u{1F3AF}',
+    color: '#d97706',
+    bgColor: 'rgba(217,119,6,0.1)',
+    questions: ['motiv_why', 'motiv_cities', 'motiv_self', 'motiv_goal'],
+    feedback: {
+      high: {
+        strengths: [
+          'Clear and specific understanding of why Minerva fits you',
+          'Strong self-motivation independent of external pressure',
+          'Educational goals aligned with Minerva\'s mission of developing transferable skills'
+        ],
+        develop: [
+          'Articulate your "why" even more specifically. What will you do at Minerva that you could not do anywhere else?',
+          'Connect your goals to specific aspects of the curriculum or city rotation.'
+        ],
+        tips: [
+          'Your application should clearly answer: "Why Minerva and not [excellent traditional university]?" Make it specific.',
+          'Admissions readers can tell when someone wants Minerva specifically versus wanting any "good school." Show the former.'
+        ]
+      },
+      mid: {
+        strengths: [
+          'Interest in what makes Minerva different from traditional universities',
+          'Some degree of self-motivation and clarity about educational goals'
+        ],
+        develop: [
+          'Dig deeper into why Minerva specifically. Read student blogs, watch class recordings, talk to current students. Generic interest is not enough.',
+          'Build your self-motivation muscle: start a project with no deadline, no grade, and no external accountability. See if you finish it.',
+          'Reflect on whether you want Minerva or just the idea of Minerva. The reality involves constant adaptation, small classes where you cannot hide, and no traditional campus life.'
+        ],
+        tips: [
+          'Minerva admissions can tell the difference between "I want a good school" and "I want THIS school." Research deeply enough to demonstrate the latter.',
+          'If your interest is mainly the travel, be honest with yourself. The travel is a byproduct of the educational model, not the point.'
+        ]
+      },
+      low: {
+        strengths: [
+          'Taking this assessment shows some level of genuine interest',
+          'Self-awareness about your current motivation level is useful'
+        ],
+        develop: [
+          'Spend significant time researching what Minerva actually is. Start with their website, then find student YouTube channels and blog posts.',
+          'Ask yourself hard questions: Do I want an active learning environment? Am I okay with no traditional campus, no sports teams, no Greek life?',
+          'If your motivation is primarily external (parents, prestige, travel), pause and consider whether this is the right school for you.',
+          'Build self-motivation now. Pick something hard that no one is making you do, and commit to it for 30 days.'
+        ],
+        tips: [
+          'Applying to Minerva without genuine, specific motivation will show in your application. Admissions readers are very good at detecting this.',
+          'There is no shame in deciding Minerva is not for you. It is a genuinely unusual university model and it is not optimal for everyone.',
+          'If after deep research you are still excited, great. Channel that into the most specific, personal application you can write.'
+        ]
+      }
+    }
+  }
+];
+
+// ── Utility Functions ─────────────────────────────────
+function saveProgress() {
+  const data = { currentStep, answers, timestamp: Date.now() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearProgress() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+// ── Slider Handling ───────────────────────────────────
+function handleSlider(input) {
+  const qid = input.dataset.qid;
+  const val = parseInt(input.value);
+  answers[qid] = val;
+  document.getElementById('sv-' + qid).textContent = SLIDER_LABELS[val];
+  markAnswered(qid);
+  saveProgress();
+}
+
+// ── Option (radio) Handling ───────────────────────────
+function selectOption(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+  el.classList.add('selected');
+  const qid = group.dataset.qid;
+  answers[qid] = parseInt(el.dataset.value);
+  markAnswered(qid);
+  saveProgress();
+}
+
+// ── Checkbox Handling ─────────────────────────────────
+function toggleCheckbox(el) {
+  el.classList.toggle('selected');
+  const group = el.parentElement;
+  const qid = group.dataset.qid;
+  const selected = group.querySelectorAll('.checkbox-item.selected');
+  el.querySelector('.checkbox-box').textContent = el.classList.contains('selected') ? '\u2713' : '';
+
+  // Score: more selections (up to a point) = better understanding of Minerva
+  // 4+ selections = 5, 3 = 4, 2 = 3, 1 = 2, 0 = 1
+  const count = selected.length;
+  if (count >= 4) answers[qid] = 5;
+  else if (count === 3) answers[qid] = 4;
+  else if (count === 2) answers[qid] = 3;
+  else if (count === 1) answers[qid] = 2;
+  else answers[qid] = 1;
+
+  markAnswered(qid);
+  saveProgress();
+}
+
+function markAnswered(qid) {
+  const q = document.querySelector('.question[data-qid="' + qid + '"]');
+  if (q) q.classList.add('answered');
+}
+
+// ── Navigation ────────────────────────────────────────
+function startAssessment(resume) {
+  if (resume) {
+    const saved = loadProgress();
+    if (saved) {
+      answers = saved.answers || {};
+      currentStep = saved.currentStep || 0;
+      restoreUI();
+    }
+  } else {
+    answers = {};
+    currentStep = 0;
+    clearProgress();
+  }
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('progress-area').style.display = 'block';
+  showStep(currentStep);
+  updateProgressBar();
+}
+
+function goToStart() {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('results-panel').classList.remove('active');
+  document.getElementById('progress-area').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  checkSavedProgress();
+}
+
+function showStep(index) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('results-panel').classList.remove('active');
+  const panel = document.querySelector('.step-panel[data-step="' + index + '"]');
+  if (panel) {
+    panel.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  currentStep = index;
+  updateProgressBar();
+  saveProgress();
+}
+
+function nextStep() {
+  if (currentStep < 4) {
+    showStep(currentStep + 1);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    showStep(currentStep - 1);
+  }
+}
+
+function updateProgressBar() {
+  const dots = document.querySelectorAll('.progress-dot');
+  const connectors = document.querySelectorAll('.progress-connector');
+  const steps = document.querySelectorAll('.progress-step');
+
+  dots.forEach((dot, i) => {
+    dot.classList.remove('active', 'completed');
+    steps[i].classList.remove('is-active', 'is-completed');
+    if (i < currentStep) {
+      dot.classList.add('completed');
+      dot.textContent = '\u2713';
+      steps[i].classList.add('is-completed');
+    } else if (i === currentStep) {
+      dot.classList.add('active');
+      dot.textContent = i + 1;
+      steps[i].classList.add('is-active');
+    } else {
+      dot.textContent = i + 1;
+    }
+  });
+
+  connectors.forEach((c, i) => {
+    c.classList.toggle('filled', i < currentStep);
+  });
+
+  const pct = (currentStep / 5) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text-display').textContent = 'Step ' + (currentStep + 1) + ' of 5';
+}
+
+// ── Restore UI from saved answers ─────────────────────
+function restoreUI() {
+  // Restore sliders
+  document.querySelectorAll('input[type="range"]').forEach(input => {
+    const qid = input.dataset.qid;
+    if (answers[qid] !== undefined) {
+      input.value = answers[qid];
+      document.getElementById('sv-' + qid).textContent = SLIDER_LABELS[answers[qid]];
+      markAnswered(qid);
+    }
+  });
+
+  // Restore radio options
+  document.querySelectorAll('.option-group').forEach(group => {
+    const qid = group.dataset.qid;
+    if (answers[qid] !== undefined) {
+      group.querySelectorAll('.option-item').forEach(item => {
+        if (parseInt(item.dataset.value) === answers[qid]) {
+          item.classList.add('selected');
+        }
+      });
+      markAnswered(qid);
+    }
+  });
+
+  // Restore checkboxes (motiv_why)
+  // Cannot perfectly restore which items were checked since we only store the score,
+  // so leave checkboxes unrestored if the score is ambiguous
+}
+
+// ── Results Calculation ───────────────────────────────
+function calculateCategoryScore(cat) {
+  let total = 0;
+  let count = 0;
+  cat.questions.forEach(qid => {
+    if (answers[qid] !== undefined) {
+      total += answers[qid];
+      count++;
+    }
+  });
+  if (count === 0) return 3; // default to middle
+  return total / count;
+}
+
+function getScoreColor(pct) {
+  if (pct >= 80) return 'var(--green)';
+  if (pct >= 60) return 'var(--blue)';
+  if (pct >= 40) return '#d97706';
+  return 'var(--clay)';
+}
+
+function getScoreTierLabel(pct) {
+  if (pct >= 85) return 'Strong';
+  if (pct >= 70) return 'Good';
+  if (pct >= 50) return 'Developing';
+  return 'Needs Work';
+}
+
+function getFeedbackTier(avg) {
+  if (avg >= 4) return 'high';
+  if (avg >= 2.5) return 'mid';
+  return 'low';
+}
+
+function showResults() {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('progress-area').style.display = 'none';
+
+  const categoryScores = CATEGORIES.map(cat => {
+    const avg = calculateCategoryScore(cat);
+    const pct = Math.round((avg / 5) * 100);
+    return { ...cat, avg, pct };
+  });
+
+  const overallAvg = categoryScores.reduce((sum, c) => sum + c.avg, 0) / categoryScores.length;
+  const overallPct = Math.round((overallAvg / 5) * 100);
+
+  // ── Circular score ──
+  const circle = document.getElementById('score-circle');
+  const circumference = 2 * Math.PI * 85; // ~534
+  const offset = circumference - (overallPct / 100) * circumference;
+  circle.style.stroke = getScoreColor(overallPct);
+  // Trigger animation
+  requestAnimationFrame(() => {
+    circle.style.strokeDashoffset = offset;
+  });
+
+  // Animate number
+  const scoreDisplay = document.getElementById('score-display');
+  let current = 0;
+  const increment = Math.max(1, Math.floor(overallPct / 40));
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= overallPct) {
+      current = overallPct;
+      clearInterval(timer);
+    }
+    scoreDisplay.innerHTML = current + '<small>%</small>';
+  }, 25);
+
+  // Score tier
+  const tier = document.getElementById('score-tier');
+  const desc = document.getElementById('score-desc');
+  if (overallPct >= 85) {
+    tier.textContent = 'Strong Readiness';
+    desc.textContent = 'Your self-assessment suggests you are well-prepared for the Minerva experience. You show strong alignment across academic habits, thinking skills, global readiness, and motivation. Focus on making your application as specific and personal as possible.';
+  } else if (overallPct >= 70) {
+    tier.textContent = 'Good Foundation';
+    desc.textContent = 'You have a solid foundation with some areas that would benefit from focused development. Review the category breakdown below to identify where targeted effort will make the biggest difference before you apply.';
+  } else if (overallPct >= 50) {
+    tier.textContent = 'Developing Readiness';
+    desc.textContent = 'You are building the skills and mindset Minerva looks for, but there are meaningful areas to develop. The good news: these are all learnable skills. Use the specific recommendations below to build a focused preparation plan.';
+  } else {
+    tier.textContent = 'Early Preparation Stage';
+    desc.textContent = 'Your self-assessment suggests you have significant room for growth in several areas Minerva values. This is not a disqualification. It means you should invest time in deliberate preparation before applying. Many strong Minerva students started exactly where you are.';
+  }
+
+  // ── Category bars ──
+  const barsContainer = document.getElementById('category-bars');
+  barsContainer.innerHTML = '';
+  categoryScores.forEach(cat => {
+    const html = '<div class="category-bar-item">' +
+      '<div class="category-bar-header">' +
+        '<span class="category-bar-name">' + cat.icon + ' ' + cat.name + '</span>' +
+        '<span class="category-bar-score" style="color:' + getScoreColor(cat.pct) + '">' + cat.pct + '%</span>' +
+      '</div>' +
+      '<div class="category-bar-track">' +
+        '<div class="category-bar-fill" style="width:0%;background:' + getScoreColor(cat.pct) + '"></div>' +
+      '</div>' +
+    '</div>';
+    barsContainer.insertAdjacentHTML('beforeend', html);
+  });
+
+  // Animate bars
+  setTimeout(() => {
+    barsContainer.querySelectorAll('.category-bar-fill').forEach((bar, i) => {
+      bar.style.width = categoryScores[i].pct + '%';
+    });
+  }, 100);
+
+  // ── Detail cards ──
+  const cardsContainer = document.getElementById('detail-cards');
+  cardsContainer.innerHTML = '';
+  categoryScores.forEach(cat => {
+    const feedbackTier = getFeedbackTier(cat.avg);
+    const fb = cat.feedback[feedbackTier];
+    const tierLabel = getScoreTierLabel(cat.pct);
+    const tierColor = getScoreColor(cat.pct);
+
+    let html = '<div class="detail-card">' +
+      '<div class="detail-card-header">' +
+        '<div class="detail-card-icon" style="background:' + cat.bgColor + '">' + cat.icon + '</div>' +
+        '<div class="detail-card-title">' + cat.name + '</div>' +
+        '<div class="detail-card-score" style="background:' + cat.bgColor + ';color:' + cat.color + '">' + tierLabel + '</div>' +
+      '</div>';
+
+    // Strengths
+    html += '<div class="detail-section strengths"><div class="detail-section-title strengths">Strengths Identified</div><ul>';
+    fb.strengths.forEach(s => { html += '<li>' + s + '</li>'; });
+    html += '</ul></div>';
+
+    // Areas to develop
+    html += '<div class="detail-section develop"><div class="detail-section-title develop">Areas to Develop</div><ul>';
+    fb.develop.forEach(d => { html += '<li>' + d + '</li>'; });
+    html += '</ul></div>';
+
+    // Tips
+    html += '<div class="detail-section tips"><div class="detail-section-title tips">Application Tips</div><ul>';
+    fb.tips.forEach(t => { html += '<li>' + t + '</li>'; });
+    html += '</ul></div>';
+
+    html += '</div>';
+    cardsContainer.insertAdjacentHTML('beforeend', html);
+  });
+
+  // ── Action plan (based on weakest areas) ──
+  const sorted = [...categoryScores].sort((a, b) => a.avg - b.avg);
+  const actionItems = document.getElementById('action-items');
+  actionItems.innerHTML = '';
+
+  const actionMap = {
+    academic: {
+      high: '<strong>Academic:</strong> You are on track. Keep pushing the boundaries of what you study and how deeply you engage.',
+      mid: '<strong>Academic:</strong> Build a daily self-learning habit starting this week. Pick one hard topic outside your school curriculum and spend 30 minutes a day on it for the next month.',
+      low: '<strong>Academic:</strong> This is your highest-priority area. Start with one challenging online course (MIT OpenCourseWare, Khan Academy advanced topics, or Coursera). Complete it fully. Then start another.'
+    },
+    thinking: {
+      high: '<strong>Creative & Critical Thinking:</strong> Challenge yourself with increasingly complex problems. Try writing about a topic from a perspective opposite to your own.',
+      mid: '<strong>Creative & Critical Thinking:</strong> Join a debate club or start doing weekly "assumption audits" where you write down three things you believe and challenge each one. Practice solving open-ended problems with no clear answer.',
+      low: '<strong>Creative & Critical Thinking:</strong> This needs focused effort. Start by reading one article per day and writing three questions about it. Practice solving lateral thinking puzzles. Consider taking a philosophy or logic course.'
+    },
+    global: {
+      high: '<strong>Global Readiness:</strong> Deepen your cross-cultural engagement. Seek out meaningful conversations with people whose worldview is fundamentally different from yours.',
+      mid: '<strong>Global Readiness:</strong> Expand your exposure. Start reading international news from three different regions daily. Find a language exchange partner. Attend cultural events in your community you have never been to.',
+      low: '<strong>Global Readiness:</strong> Start small but start now. Follow three international news sources. Watch one film from a different country each week. Have one conversation per week with someone from a different background.'
+    },
+    communication: {
+      high: '<strong>Communication:</strong> Focus on elevating others. Practice being the person who draws quieter voices into discussions. Master the art of summarizing complex group conversations.',
+      mid: '<strong>Communication:</strong> Set a daily practice: explain one complex idea to someone in under two minutes. Join a group where regular discussion is expected. Practice writing concise summaries of things you read.',
+      low: '<strong>Communication:</strong> This is critical for Minerva success. Start with low-stakes practice: explain your day to a family member in a structured way. Then join a small discussion group. Build up to public speaking gradually.'
+    },
+    motivation: {
+      high: '<strong>Motivation & Fit:</strong> Your alignment is strong. Now make your application razor-specific. Connect your goals to exact Minerva courses, cities, and opportunities.',
+      mid: '<strong>Motivation & Fit:</strong> Spend a full weekend researching Minerva deeply. Read the entire website. Watch student videos. Read about the Habits of Mind curriculum. Write down specifically what you would do at Minerva that you cannot do elsewhere.',
+      low: '<strong>Motivation & Fit:</strong> Before investing time in an application, honestly assess whether Minerva is right for you. Talk to current students. Read critical perspectives too. Applying with vague motivation will not result in admission.'
+    }
+  };
+
+  // Put weakest areas first
+  sorted.forEach((cat, i) => {
+    const tier = getFeedbackTier(cat.avg);
+    const text = actionMap[cat.key][tier];
+    const li = document.createElement('li');
+    li.innerHTML = text;
+    actionItems.appendChild(li);
+  });
+
+  // Show results
+  const panel = document.getElementById('results-panel');
+  panel.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  saveProgress();
+}
+
+// ── Reset ─────────────────────────────────────────────
+function resetAll() {
+  clearProgress();
+  answers = {};
+  currentStep = 0;
+
+  // Reset all UI elements
+  document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.checkbox-item').forEach(el => {
+    el.classList.remove('selected');
+    el.querySelector('.checkbox-box').textContent = '';
+  });
+  document.querySelectorAll('input[type="range"]').forEach(input => {
+    input.value = 3;
+    const qid = input.dataset.qid;
+    document.getElementById('sv-' + qid).textContent = SLIDER_LABELS[3];
+  });
+  document.querySelectorAll('.question').forEach(q => q.classList.remove('answered'));
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('results-panel').classList.remove('active');
+  document.getElementById('progress-area').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  checkSavedProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Check for saved progress on load ──────────────────
+function checkSavedProgress() {
+  const saved = loadProgress();
+  if (saved && saved.answers && Object.keys(saved.answers).length > 0) {
+    document.getElementById('resume-notice').style.display = 'block';
+    document.getElementById('resume-btn').style.display = 'inline-flex';
+    document.getElementById('restart-btn').style.display = 'inline-flex';
+  } else {
+    document.getElementById('resume-notice').style.display = 'none';
+    document.getElementById('resume-btn').style.display = 'none';
+    document.getElementById('restart-btn').style.display = 'none';
+  }
+}
+
+// ── Initialize ────────────────────────────────────────
+checkSavedProgress();
+</script>
+</body>
+</html>

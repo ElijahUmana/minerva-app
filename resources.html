@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources & Links | Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active {
+  color: var(--bone); background: rgba(200,85,61,0.3);
+}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 4rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.15rem; color: rgba(245,240,235,0.75);
+  max-width: 650px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ── Search ─────────────────────────────────────────── */
+.search-bar-wrapper {
+  max-width: 600px; margin: -1.5rem auto 0; position: relative; z-index: 10;
+  padding: 0 1.5rem;
+}
+.search-bar {
+  width: 100%; padding: 1rem 1.25rem 1rem 3rem;
+  border: 1px solid var(--mid-gray); border-radius: 12px;
+  font-family: inherit; font-size: 1rem;
+  background: var(--white);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-bar:focus {
+  border-color: var(--clay);
+  box-shadow: 0 4px 20px rgba(200,85,61,0.12);
+}
+.search-bar::placeholder { color: #aaa; }
+.search-icon {
+  position: absolute; left: 2.5rem; top: 50%; transform: translateY(-50%);
+  font-size: 1.1rem; color: var(--text2); pointer-events: none;
+}
+.search-meta {
+  text-align: center; margin-top: 0.75rem;
+  font-size: 0.85rem; color: var(--text2);
+}
+.no-results {
+  text-align: center; padding: 3rem 1.5rem;
+  display: none;
+}
+.no-results p {
+  font-size: 1.05rem; color: var(--text2);
+}
+
+/* ── Sections ───────────────────────────────────────── */
+section { padding: 4.5rem 1.5rem; }
+.container { max-width: 900px; margin: 0 auto; }
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 1rem;
+  color: var(--obsidian); line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 650px; margin-bottom: 2.5rem; line-height: 1.6;
+}
+.alt-bg { background: var(--light-gray); }
+
+/* ── Resource Cards ────────────────────────────────── */
+.card-grid {
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.resource-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none; color: inherit;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+.resource-card[href]:hover {
+  border-color: var(--clay);
+}
+.resource-card .card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; margin-bottom: 1rem;
+}
+.card-icon.red { background: rgba(200,85,61,0.1); }
+.card-icon.blue { background: rgba(37,99,235,0.1); }
+.card-icon.green { background: rgba(5,150,105,0.1); }
+.card-icon.purple { background: rgba(124,58,237,0.1); }
+.card-icon.orange { background: rgba(234,88,12,0.1); }
+.card-icon.teal { background: rgba(13,148,136,0.1); }
+.resource-card h3 {
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;
+  color: var(--obsidian);
+}
+.resource-card p {
+  font-size: 0.9rem; color: var(--text2); line-height: 1.6;
+  flex: 1;
+}
+.card-link-indicator {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.8rem; font-weight: 600; color: var(--clay);
+  margin-top: 0.75rem;
+}
+.card-tag {
+  display: inline-block; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem; border-radius: 4px;
+  position: absolute; top: 1rem; right: 1rem;
+}
+.card-tag.official { background: rgba(5,150,105,0.1); color: var(--green); }
+.card-tag.community { background: rgba(37,99,235,0.1); color: var(--blue); }
+.card-tag.learning { background: rgba(124,58,237,0.1); color: #7c3aed; }
+.card-tag.video { background: rgba(200,85,61,0.1); color: var(--clay); }
+
+/* ── City List ─────────────────────────────────────── */
+.city-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 1rem;
+}
+.city-item {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 10px; padding: 1.25rem; text-align: center;
+  transition: transform 0.2s;
+}
+.city-item:hover { transform: translateY(-1px); }
+.city-item .city-emoji { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.city-item h4 {
+  font-size: 0.95rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.25rem;
+}
+.city-item p { font-size: 0.82rem; color: var(--text2); line-height: 1.5; }
+
+/* ── Video Section ─────────────────────────────────── */
+.video-grid {
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.video-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; overflow: hidden;
+  text-decoration: none; color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.video-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  border-color: var(--clay);
+}
+.video-thumb {
+  background: linear-gradient(135deg, var(--obsidian), #16213e);
+  padding: 2rem 1.5rem; text-align: center; position: relative;
+}
+.video-thumb .play-icon {
+  font-size: 2.5rem; opacity: 0.8;
+}
+.video-thumb .video-type {
+  position: absolute; top: 0.75rem; left: 0.75rem;
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--bone);
+  background: rgba(200,85,61,0.6); padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+.video-card-body { padding: 1.25rem; }
+.video-card-body h4 {
+  font-size: 0.95rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.35rem;
+}
+.video-card-body p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; }
+
+/* ── Tip Box ───────────────────────────────────────── */
+.tip-box {
+  background: linear-gradient(135deg, rgba(200,85,61,0.06), rgba(200,85,61,0.02));
+  border: 1px solid rgba(200,85,61,0.15);
+  border-left: 4px solid var(--clay);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.tip-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--clay);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.tip-box p { font-size: 0.9rem; color: var(--text); }
+
+.insight-box {
+  background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(37,99,235,0.02));
+  border: 1px solid rgba(37,99,235,0.15);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.insight-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.insight-box p { font-size: 0.9rem; color: var(--text); }
+
+/* ── Parents Section ───────────────────────────────── */
+.parents-section {
+  background: linear-gradient(135deg, rgba(26,26,46,0.03), rgba(26,26,46,0.01));
+  border: 1px solid var(--mid-gray);
+  border-radius: 16px; padding: 2.5rem;
+  margin-top: 1rem;
+}
+.parents-section h3 {
+  font-size: 1.2rem; font-weight: 800; color: var(--obsidian);
+  margin-bottom: 0.5rem;
+}
+.parents-section > p {
+  font-size: 0.95rem; color: var(--text2); margin-bottom: 1.5rem;
+}
+.parents-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.parent-item {
+  display: flex; gap: 1rem; align-items: flex-start;
+  padding: 1rem; background: var(--white); border-radius: 10px;
+  border: 1px solid var(--mid-gray);
+}
+.parent-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  background: rgba(200,85,61,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.parent-item h4 {
+  font-size: 0.92rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.25rem;
+}
+.parent-item p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; }
+
+/* ── CTA ────────────────────────────────────────────── */
+.cta-section {
+  background: var(--obsidian); color: var(--bone);
+  text-align: center; padding: 4rem 1.5rem;
+}
+.cta-section h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  margin-bottom: 1rem;
+}
+.cta-section p {
+  color: rgba(245,240,235,0.65); max-width: 550px;
+  margin: 0 auto 2rem; font-size: 1.05rem;
+}
+.cta-btn {
+  display: inline-block; background: var(--clay);
+  color: white; text-decoration: none;
+  padding: 0.85rem 2rem; border-radius: 10px;
+  font-weight: 700; font-size: 1rem;
+  transition: background 0.2s, transform 0.1s;
+}
+.cta-btn:hover { background: var(--clay-light); transform: translateY(-1px); }
+
+/* ── Footer ─────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Hidden ─────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Mobile ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3.5rem; }
+  section { padding: 3rem 1.25rem; }
+  .card-grid, .video-grid { grid-template-columns: 1fr; }
+  .city-grid { grid-template-columns: repeat(2, 1fr); }
+  .parents-section { padding: 1.5rem; }
+  .parents-grid { grid-template-columns: 1fr; }
+  .search-bar-wrapper { padding: 0 1.25rem; }
+}
+@media (max-width: 480px) {
+  .city-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html#why">Why Minerva</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#challenges">Challenges</a>
+      <a href="index.html#essays">Essays</a>
+      <a href="index.html#checklist">Checklist</a>
+      <a href="index.html#aid">Financial Aid</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="resources.html" class="active">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1>Resources & Links for<br><span>Minerva Applicants</span></h1>
+    <p>A curated collection of official resources, preparation materials, community links, and insider knowledge to support your Minerva application journey.</p>
+  </div>
+</section>
+
+<!-- ── Search Bar ───────────────────────────────────── -->
+<div class="search-bar-wrapper">
+  <span class="search-icon">&#128269;</span>
+  <input type="text" class="search-bar" id="search-input" placeholder="Search resources by keyword..." autocomplete="off">
+  <p class="search-meta" id="search-meta"></p>
+</div>
+
+<div class="no-results" id="no-results">
+  <p>No resources match your search. Try a different keyword.</p>
+</div>
+
+<!-- ── Official Minerva Resources ──────────────────── -->
+<section id="official" class="resource-section">
+  <div class="container">
+    <span class="section-label">Official Resources</span>
+    <h2 class="section-title">Official Minerva Resources</h2>
+    <p class="section-subtitle">Primary sources directly from Minerva University. Start here for the most accurate and up-to-date information.</p>
+
+    <div class="card-grid">
+      <a href="https://www.minerva.edu" target="_blank" rel="noopener" class="resource-card" data-keywords="official website homepage minerva university about">
+        <span class="card-tag official">Official</span>
+        <div class="card-icon green">&#127891;</div>
+        <h3>Minerva University Website</h3>
+        <p>The primary source for everything about Minerva's mission, curriculum, faculty, and student outcomes. Start here to understand the institution before you apply.</p>
+        <span class="card-link-indicator">Visit minerva.edu &#8599;</span>
+      </a>
+      <a href="https://apply.minerva.edu" target="_blank" rel="noopener" class="resource-card" data-keywords="apply application portal account create submit">
+        <span class="card-tag official">Official</span>
+        <div class="card-icon red">&#128221;</div>
+        <h3>Application Portal</h3>
+        <p>Create your applicant account, complete your application, and track its status. The application is free and can be saved and resumed at any time.</p>
+        <span class="card-link-indicator">Go to apply.minerva.edu &#8599;</span>
+      </a>
+      <a href="https://www.minerva.edu/tuition-and-aid/" target="_blank" rel="noopener" class="resource-card" data-keywords="financial aid tuition cost scholarship money fees need-based">
+        <span class="card-tag official">Official</span>
+        <div class="card-icon green">&#128176;</div>
+        <h3>Financial Aid & Tuition</h3>
+        <p>Details on tuition costs, need-based financial aid, the aid application process, and how Minerva structures its financial support. Over 80% of students receive aid.</p>
+        <span class="card-link-indicator">View financial aid info &#8599;</span>
+      </a>
+      <a href="https://www.youtube.com/@MinervaUniversity" target="_blank" rel="noopener" class="resource-card" data-keywords="youtube video channel watch official media content">
+        <span class="card-tag official">Official</span>
+        <div class="card-icon red">&#9654;</div>
+        <h3>Minerva YouTube Channel</h3>
+        <p>Official videos including info sessions, student testimonials, event recordings, and explanations of the Active Learning Forum and curriculum.</p>
+        <span class="card-link-indicator">Watch on YouTube &#8599;</span>
+      </a>
+      <a href="https://www.minerva.edu/blog/" target="_blank" rel="noopener" class="resource-card" data-keywords="blog news articles updates stories official publications">
+        <span class="card-tag official">Official</span>
+        <div class="card-icon blue">&#128240;</div>
+        <h3>Minerva Blog</h3>
+        <p>Articles about student achievements, faculty research, curriculum developments, and institutional news. Useful for understanding Minerva's evolving direction.</p>
+        <span class="card-link-indicator">Read the blog &#8599;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Student Life Insights ───────────────────────── -->
+<section id="student-life" class="alt-bg resource-section">
+  <div class="container">
+    <span class="section-label">Student Life</span>
+    <h2 class="section-title">Student Life Insights</h2>
+    <p class="section-subtitle">What it's actually like to be a Minerva student, from daily routines to the city rotation experience.</p>
+
+    <div class="card-grid" style="margin-bottom: 2rem;">
+      <div class="resource-card" data-keywords="daily routine schedule typical day class forum study life">
+        <div class="card-icon blue">&#9200;</div>
+        <h3>A Typical Day at Minerva</h3>
+        <p>Mornings often start with independent study or readings. Classes run on the Active Learning Forum in focused 90-minute sessions. Afternoons are for location-based assignments, group projects, or civic engagements in the city. Evenings involve studying, clubs, and exploring with your cohort. There is no "campus" to retreat to &mdash; the city itself is your learning environment.</p>
+      </div>
+      <div class="resource-card" data-keywords="clubs activities extracurricular organizations student groups sports">
+        <div class="card-icon purple">&#127752;</div>
+        <h3>Student Clubs & Activities</h3>
+        <p>Students organize clubs around everything from debate and entrepreneurship to film, hiking, and cultural exchange. Because the cohort travels together, clubs adapt to each city. Some of the most rewarding experiences come from student-initiated projects that engage with local communities.</p>
+      </div>
+      <a href="https://www.minerva.edu/outcomes/" target="_blank" rel="noopener" class="resource-card" data-keywords="career outcomes alumni jobs graduate school employment network">
+        <div class="card-icon green">&#127793;</div>
+        <h3>Career Outcomes & Alumni Network</h3>
+        <p>Minerva graduates work at leading organizations worldwide and attend top graduate programs. The alumni network, though young, is tightly connected across industries and continents. Career services support begins early, with real-world projects serving as portfolio material.</p>
+        <span class="card-link-indicator">View outcomes &#8599;</span>
+      </a>
+    </div>
+
+    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--obsidian); margin-bottom: 0.5rem;">The City Rotation Experience</h3>
+    <p style="font-size: 0.92rem; color: var(--text2); margin-bottom: 1rem;">Over four years, you live and study in seven cities. Each location shapes your coursework, projects, and perspective.</p>
+
+    <div class="city-grid" data-keywords="cities rotation travel global international location semester">
+      <div class="city-item">
+        <div class="city-emoji">&#127463;&#127479;</div>
+        <h4>San Francisco</h4>
+        <p>First year. Tech, innovation, and the founding city of Minerva. Your introduction to the model.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127472;&#127479;</div>
+        <h4>Seoul</h4>
+        <p>East Asian culture, rapid development, K-innovation, and one of the world's most connected cities.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127470;&#127475;</div>
+        <h4>Hyderabad</h4>
+        <p>Emerging tech hub with deep historical roots. Complexity, scale, and entrepreneurship in India's heartland.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127465;&#127466;</div>
+        <h4>Berlin</h4>
+        <p>European politics, history, arts, and social enterprise. A city constantly reinventing itself.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127462;&#127479;</div>
+        <h4>Buenos Aires</h4>
+        <p>Latin American perspectives on economics, culture, and community. Vibrant, expressive, and resilient.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127468;&#127463;</div>
+        <h4>London</h4>
+        <p>Global finance, governance, media, and centuries of institutional history in a multicultural capital.</p>
+      </div>
+      <div class="city-item">
+        <div class="city-emoji">&#127481;&#127484;</div>
+        <h4>Taipei</h4>
+        <p>Technology, democracy, sustainability, and a bridge between East Asian traditions and modern innovation.</p>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>Current Student Perspective</h4>
+      <p>The city rotations are genuinely transformative. You don't just visit a city for tourism &mdash; you live there, navigate daily life, work on projects with local organizations, and develop a real understanding of how place shapes everything from policy to culture. By graduation, you have a global network of experiences and relationships that no traditional study abroad program can replicate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Academic Preparation ─────────────────────────── -->
+<section id="academic-prep" class="resource-section">
+  <div class="container">
+    <span class="section-label">Preparation</span>
+    <h2 class="section-title">Academic Preparation</h2>
+    <p class="section-subtitle">You can't study for Minerva's challenges in the traditional sense, but you can build the thinking skills that matter. These resources will sharpen the right muscles.</p>
+
+    <div class="card-grid">
+      <div class="resource-card" data-keywords="books reading critical thinking recommended list intellectual">
+        <div class="card-icon red">&#128218;</div>
+        <h3>Recommended Books</h3>
+        <p>Books that develop the kind of thinking Minerva values:</p>
+        <p style="margin-top: 0.5rem;"><strong>Thinking, Fast and Slow</strong> by Daniel Kahneman &mdash; understand cognitive biases and how your mind works.</p>
+        <p><strong>The Art of Thinking Clearly</strong> by Rolf Dobelli &mdash; common reasoning errors and how to avoid them.</p>
+        <p><strong>A Short History of Nearly Everything</strong> by Bill Bryson &mdash; interdisciplinary curiosity in action.</p>
+        <p><strong>Factfulness</strong> by Hans Rosling &mdash; evidence-based thinking about the world.</p>
+        <p><strong>Range</strong> by David Epstein &mdash; why generalists thrive in a specialized world.</p>
+      </div>
+      <div class="resource-card" data-keywords="online courses mooc coursera edx khan academy learning skills free">
+        <div class="card-icon blue">&#128187;</div>
+        <h3>Online Courses</h3>
+        <p>Free and affordable courses that build relevant skills:</p>
+        <p style="margin-top: 0.5rem;"><strong>Coursera:</strong> "Learning How to Learn" by Barbara Oakley &mdash; the science of effective learning.</p>
+        <p><strong>Coursera:</strong> "Model Thinking" by Scott Page &mdash; multiple frameworks for problem-solving.</p>
+        <p><strong>edX:</strong> "Critical Thinking & Problem Solving" &mdash; structured analytical reasoning.</p>
+        <p><strong>Khan Academy:</strong> Logic and statistics courses &mdash; foundational quantitative reasoning.</p>
+        <p><strong>Coursera:</strong> "Creative Problem Solving" by University of Minnesota &mdash; structured approaches to novel challenges.</p>
+      </div>
+      <a href="https://www.ted.com/topics/creativity" target="_blank" rel="noopener" class="resource-card" data-keywords="creative thinking practice brainstorm lateral divergent innovation puzzles">
+        <div class="card-icon purple">&#128161;</div>
+        <h3>Creative Thinking Practice</h3>
+        <p>Build your creative muscles before the challenges:</p>
+        <p style="margin-top: 0.5rem;"><strong>TED Talks on Creativity</strong> &mdash; diverse perspectives on what creativity actually means.</p>
+        <p><strong>Lateral thinking puzzles</strong> &mdash; practice approaching problems from unusual angles.</p>
+        <p><strong>Edward de Bono's "Six Thinking Hats"</strong> &mdash; a framework for examining problems from multiple perspectives.</p>
+        <p><strong>Daily brainstorming exercises</strong> &mdash; pick any object and find 20 unconventional uses for it in 5 minutes.</p>
+        <span class="card-link-indicator">Browse TED Talks &#8599;</span>
+      </a>
+      <div class="resource-card" data-keywords="writing improve essay skill grammar style communication">
+        <div class="card-icon green">&#9997;</div>
+        <h3>Writing Improvement</h3>
+        <p>Strengthen your writing for the application responses:</p>
+        <p style="margin-top: 0.5rem;"><strong>Purdue OWL</strong> (owl.purdue.edu) &mdash; comprehensive writing guidance and grammar reference.</p>
+        <p><strong>"On Writing Well"</strong> by William Zinsser &mdash; the classic guide to clear, concise nonfiction writing.</p>
+        <p><strong>Hemingway Editor</strong> (hemingwayapp.com) &mdash; tool that highlights overly complex sentences.</p>
+        <p><strong>Daily journaling practice</strong> &mdash; write 500 words daily on anything. The habit of clear expression translates directly to better application responses.</p>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>Preparation Strategy</h4>
+      <p>Don't try to cram all of these at once. Pick one book and one course, and engage with them deeply over several weeks. The goal isn't to accumulate credentials &mdash; it's to genuinely develop how you think. Minerva's challenges are designed to detect surface-level preparation, so the only real prep is authentic intellectual development.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Community & Support ──────────────────────────── -->
+<section id="community" class="alt-bg resource-section">
+  <div class="container">
+    <span class="section-label">Community</span>
+    <h2 class="section-title">Community & Support</h2>
+    <p class="section-subtitle">Connect with current students, admitted students, and the broader Minerva community. Real conversations with real people are the best way to understand what Minerva is like.</p>
+
+    <div class="card-grid">
+      <a href="https://www.instagram.com/minervauniversity/" target="_blank" rel="noopener" class="resource-card" data-keywords="social media instagram facebook twitter linkedin follow accounts">
+        <span class="card-tag community">Community</span>
+        <div class="card-icon red">&#128247;</div>
+        <h3>Social Media Accounts</h3>
+        <p>Follow Minerva on Instagram, LinkedIn, Facebook, and Twitter for student stories, event announcements, and glimpses of daily life across rotation cities. Student takeovers are particularly insightful.</p>
+        <span class="card-link-indicator">Follow on Instagram &#8599;</span>
+      </a>
+      <a href="https://www.minerva.edu/admissions/" target="_blank" rel="noopener" class="resource-card" data-keywords="ambassador student connect talk ask questions current mentor">
+        <span class="card-tag community">Community</span>
+        <div class="card-icon blue">&#129309;</div>
+        <h3>Student Ambassador Program</h3>
+        <p>Minerva's admissions team can connect you with student ambassadors who answer questions about their experience. These are current students who volunteered to help applicants &mdash; they give honest, unfiltered perspectives.</p>
+        <span class="card-link-indicator">Connect through admissions &#8599;</span>
+      </a>
+      <div class="resource-card" data-keywords="admitted student group forum chat discussion admitted class">
+        <span class="card-tag community">Community</span>
+        <div class="card-icon green">&#128172;</div>
+        <h3>Admitted Student Groups</h3>
+        <p>After admission, you'll be invited to class-specific groups (typically on WhatsApp or similar platforms) where you can meet your future classmates, ask questions, and coordinate before arrival. These groups form the first bonds of your cohort.</p>
+      </div>
+      <div class="resource-card" data-keywords="connect current students reach out email network talk real">
+        <div class="card-icon purple">&#127760;</div>
+        <h3>Connecting with Current Students</h3>
+        <p>Beyond official channels, you can reach current Minerva students through LinkedIn, university events, and information sessions. Most students are happy to chat with prospective applicants. Be specific in your questions &mdash; "What surprised you most?" gets better answers than "What's it like?"</p>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>Current Student Perspective</h4>
+      <p>I've had dozens of conversations with prospective applicants, and the students who stand out are the ones who ask specific, thoughtful questions. Don't ask "Is Minerva good?" Ask things like "How do you handle group projects across time zones?" or "What was your biggest adjustment moving to Seoul?" That specificity shows you've done your research and are genuinely interested in understanding the reality of the experience.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── For Parents & Guardians ─────────────────────── -->
+<section id="parents" class="resource-section">
+  <div class="container">
+    <span class="section-label">For Families</span>
+    <h2 class="section-title">For Parents & Guardians</h2>
+    <p class="section-subtitle">Minerva is a different kind of university, and that naturally raises questions from families. Here are the key things parents need to understand.</p>
+
+    <div class="parents-section">
+      <h3>Understanding Minerva for Your Family</h3>
+      <p>These are the most common concerns parents have, addressed directly.</p>
+
+      <div class="parents-grid">
+        <div class="parent-item" data-keywords="accreditation legitimate real degree recognized valid university parent">
+          <div class="parent-icon">&#127891;</div>
+          <div>
+            <h4>Accreditation & Legitimacy</h4>
+            <p>Minerva University is accredited by WSCUC (the same body that accredits Stanford, Caltech, and USC). The bachelor's degree is recognized globally. Graduates are accepted into top graduate programs and hired by leading employers worldwide.</p>
+          </div>
+        </div>
+        <div class="parent-item" data-keywords="safety security support cities travel international living abroad parent guardian">
+          <div class="parent-icon">&#128737;</div>
+          <div>
+            <h4>Safety & Support in Rotation Cities</h4>
+            <p>Each rotation city has dedicated Minerva staff, residential support, and emergency resources. Students live in managed housing with 24/7 access to university support. Minerva conducts thorough safety assessments of all locations and provides orientation for each new city.</p>
+          </div>
+        </div>
+        <div class="parent-item" data-keywords="compare comparison traditional university college vs difference better parent">
+          <div class="parent-icon">&#9878;</div>
+          <div>
+            <h4>How Minerva Compares</h4>
+            <p>Unlike traditional universities, Minerva has no lectures, no campus, and no standardized tests for admission. What it offers instead: smaller class sizes, proven active learning pedagogy, global immersion, lower cost, and career outcomes that match or exceed those of top-20 U.S. schools.</p>
+          </div>
+        </div>
+        <div class="parent-item" data-keywords="financial planning cost afford tuition budget payment plan parent money">
+          <div class="parent-icon">&#128200;</div>
+          <div>
+            <h4>Financial Planning</h4>
+            <p>Minerva's total cost of attendance is significantly lower than comparable institutions. Need-based aid is generous and applying for aid does not affect admissions decisions. The financial aid team works individually with admitted families to create feasible plans. External scholarships can also be applied.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <h4>For Parents</h4>
+      <p>The most helpful thing you can do is attend a Minerva information session with your child. Hearing directly from admissions staff and current students addresses concerns much more effectively than reading about it. Minerva regularly hosts online events for families.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Video Resources ─────────────────────────────── -->
+<section id="videos" class="alt-bg resource-section">
+  <div class="container">
+    <span class="section-label">Watch & Learn</span>
+    <h2 class="section-title">Video Resources</h2>
+    <p class="section-subtitle">Key videos that give you an inside look at Minerva. Organized by what you're most curious about.</p>
+
+    <h3 style="font-size: 1rem; font-weight: 700; color: var(--obsidian); margin-bottom: 1rem;">Information Sessions</h3>
+    <div class="video-grid" style="margin-bottom: 2rem;">
+      <a href="https://www.youtube.com/results?search_query=minerva+university+info+session" target="_blank" rel="noopener" class="video-card" data-keywords="video info session admissions overview presentation official watch">
+        <div class="video-thumb">
+          <span class="video-type">Info Session</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Admissions Information Sessions</h4>
+          <p>Official presentations covering the application process, curriculum, financial aid, and Q&A with admissions staff. The best starting point for understanding Minerva.</p>
+        </div>
+      </a>
+      <a href="https://www.youtube.com/results?search_query=minerva+university+active+learning+forum+demo" target="_blank" rel="noopener" class="video-card" data-keywords="video forum active learning classroom platform demo technology watch">
+        <div class="video-thumb">
+          <span class="video-type">Demo</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Active Learning Forum Demo</h4>
+          <p>See what the classroom experience actually looks like. Live demos of the Forum show how professors facilitate real-time engagement with every student.</p>
+        </div>
+      </a>
+    </div>
+
+    <h3 style="font-size: 1rem; font-weight: 700; color: var(--obsidian); margin-bottom: 1rem;">Student Testimonials</h3>
+    <div class="video-grid" style="margin-bottom: 2rem;">
+      <a href="https://www.youtube.com/results?search_query=minerva+university+student+experience+testimonial" target="_blank" rel="noopener" class="video-card" data-keywords="video student testimonial experience story personal perspective watch">
+        <div class="video-thumb">
+          <span class="video-type">Testimonial</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Student Experience Stories</h4>
+          <p>Current and former students share their genuine experiences &mdash; what they love, what challenged them, and how Minerva shaped their thinking and careers.</p>
+        </div>
+      </a>
+      <a href="https://www.youtube.com/results?search_query=minerva+university+day+in+the+life" target="_blank" rel="noopener" class="video-card" data-keywords="video day life vlog daily routine student watch">
+        <div class="video-thumb">
+          <span class="video-type">Day in the Life</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Day in the Life at Minerva</h4>
+          <p>Follow students through a typical day in different rotation cities. See the balance between classes, city exploration, and community life.</p>
+        </div>
+      </a>
+    </div>
+
+    <h3 style="font-size: 1rem; font-weight: 700; color: var(--obsidian); margin-bottom: 1rem;">City & Campus Tours</h3>
+    <div class="video-grid">
+      <a href="https://www.youtube.com/results?search_query=minerva+university+city+rotation+tour" target="_blank" rel="noopener" class="video-card" data-keywords="video tour campus city rotation housing residence life location watch">
+        <div class="video-thumb">
+          <span class="video-type">Tour</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Rotation City Tours</h4>
+          <p>Virtual tours of housing, neighborhoods, and key locations in each rotation city. Get a feel for where you'd be living and studying.</p>
+        </div>
+      </a>
+      <a href="https://www.youtube.com/results?search_query=minerva+university+graduation+commencement" target="_blank" rel="noopener" class="video-card" data-keywords="video graduation commencement ceremony outcomes alumni watch">
+        <div class="video-thumb">
+          <span class="video-type">Ceremony</span>
+          <div class="play-icon">&#9654;</div>
+        </div>
+        <div class="video-card-body">
+          <h4>Graduation & Outcomes</h4>
+          <p>Commencement ceremonies and alumni outcomes. See the culmination of the Minerva journey and where graduates end up.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────── -->
+<div class="cta-section">
+  <div class="container">
+    <h2>Ready to Start Your Application?</h2>
+    <p>The application is free, no standardized tests are required, and you can work on it at your own pace. The hardest part is clicking "start."</p>
+    <a href="https://apply.minerva.edu" target="_blank" class="cta-btn">Apply to Minerva</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Search / Filter ──────────────────────────────────────
+const searchInput = document.getElementById('search-input');
+const searchMeta = document.getElementById('search-meta');
+const noResults = document.getElementById('no-results');
+const sections = document.querySelectorAll('.resource-section');
+
+function getSearchableItems() {
+  const items = [];
+
+  // Resource cards
+  document.querySelectorAll('.resource-card').forEach(card => {
+    items.push({
+      el: card,
+      text: (card.textContent + ' ' + (card.dataset.keywords || '')).toLowerCase(),
+      section: card.closest('.resource-section')
+    });
+  });
+
+  // City grid items
+  document.querySelectorAll('.city-item').forEach(item => {
+    const parent = item.closest('.city-grid');
+    items.push({
+      el: item,
+      text: (item.textContent + ' ' + (parent ? parent.dataset.keywords || '' : '') + ' city rotation travel').toLowerCase(),
+      section: item.closest('.resource-section')
+    });
+  });
+
+  // Video cards
+  document.querySelectorAll('.video-card').forEach(card => {
+    items.push({
+      el: card,
+      text: (card.textContent + ' ' + (card.dataset.keywords || '')).toLowerCase(),
+      section: card.closest('.resource-section')
+    });
+  });
+
+  // Parent items
+  document.querySelectorAll('.parent-item').forEach(item => {
+    items.push({
+      el: item,
+      text: (item.textContent + ' ' + (item.dataset.keywords || '')).toLowerCase(),
+      section: item.closest('.resource-section')
+    });
+  });
+
+  return items;
+}
+
+const allItems = getSearchableItems();
+
+searchInput.addEventListener('input', function() {
+  const query = this.value.trim().toLowerCase();
+
+  if (!query) {
+    // Show everything
+    allItems.forEach(item => item.el.classList.remove('hidden'));
+    sections.forEach(s => s.classList.remove('hidden'));
+    noResults.style.display = 'none';
+    searchMeta.textContent = '';
+    return;
+  }
+
+  const terms = query.split(/\s+/);
+  let visibleCount = 0;
+  const visibleSections = new Set();
+
+  allItems.forEach(item => {
+    const matches = terms.every(term => item.text.includes(term));
+    if (matches) {
+      item.el.classList.remove('hidden');
+      visibleSections.add(item.section);
+      visibleCount++;
+    } else {
+      item.el.classList.add('hidden');
+    }
+  });
+
+  sections.forEach(s => {
+    if (visibleSections.has(s)) {
+      s.classList.remove('hidden');
+    } else {
+      s.classList.add('hidden');
+    }
+  });
+
+  if (visibleCount === 0) {
+    noResults.style.display = 'block';
+    searchMeta.textContent = '';
+  } else {
+    noResults.style.display = 'none';
+    searchMeta.textContent = visibleCount + ' resource' + (visibleCount === 1 ? '' : 's') + ' found';
+  }
+});
+</script>
+</body>
+</html>

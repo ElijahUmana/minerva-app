@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Timeline & Deadlines | Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active {
+  color: var(--bone); background: rgba(200,85,61,0.3);
+}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 4.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(200,85,61,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%);
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.15rem; color: rgba(245,240,235,0.75);
+  max-width: 650px; margin: 0 auto 2rem; line-height: 1.6;
+}
+
+/* ── Sections ───────────────────────────────────────── */
+section { padding: 4.5rem 1.5rem; }
+.container { max-width: 900px; margin: 0 auto; }
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 1rem;
+  color: var(--obsidian); line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 650px; margin-bottom: 2.5rem; line-height: 1.6;
+}
+.alt-bg { background: var(--light-gray); }
+
+/* ── Countdown Picker ──────────────────────────────── */
+.countdown-section {
+  background: var(--obsidian);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--bone);
+}
+.countdown-section h3 {
+  font-size: 1.15rem; font-weight: 700; margin-bottom: 0.3rem;
+}
+.countdown-section .subtitle {
+  font-size: 0.9rem; color: rgba(245,240,235,0.55); margin-bottom: 1.5rem;
+}
+.round-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+.round-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(245,240,235,0.7);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-align: left;
+}
+.round-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--bone);
+}
+.round-btn.selected {
+  background: rgba(200,85,61,0.2);
+  border-color: var(--clay);
+  color: var(--bone);
+}
+.round-btn .round-btn-label {
+  display: block; font-size: 0.75rem; font-weight: 400;
+  color: rgba(245,240,235,0.45); margin-top: 0.15rem;
+}
+.round-btn.selected .round-btn-label {
+  color: rgba(245,240,235,0.6);
+}
+.countdown-display {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.countdown-unit {
+  text-align: center;
+  min-width: 80px;
+}
+.countdown-num {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: var(--clay-light);
+  line-height: 1.1;
+  display: block;
+}
+.countdown-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(245,240,235,0.45);
+}
+.countdown-message {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: rgba(245,240,235,0.6);
+}
+.countdown-passed {
+  text-align: center;
+  padding: 1.5rem;
+}
+.countdown-passed .countdown-num {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Vertical Timeline ─────────────────────────────── */
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    var(--clay),
+    var(--clay-light),
+    var(--blue),
+    var(--green)
+  );
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+.timeline-item:last-child { margin-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: -2.5rem;
+  top: 1.75rem;
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--white);
+  z-index: 2;
+  box-shadow: 0 0 0 5px var(--white);
+}
+.alt-bg .timeline-dot {
+  box-shadow: 0 0 0 5px var(--light-gray);
+}
+
+.timeline-card {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.timeline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+}
+
+.timeline-card-header {
+  padding: 1.5rem 1.75rem 1rem;
+  border-bottom: 1px solid var(--mid-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.timeline-card-header h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--obsidian);
+  letter-spacing: -0.01em;
+}
+.timeline-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+.deadline-date {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text2);
+  margin-top: 0.2rem;
+}
+
+.timeline-card-body {
+  padding: 1.25rem 1.75rem 1.5rem;
+}
+.timeline-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.timeline-meta-item {
+  background: var(--light-gray);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+.timeline-meta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text2);
+  margin-bottom: 0.2rem;
+}
+.timeline-meta-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--obsidian);
+}
+
+.timeline-pros h4,
+.timeline-tips h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+.timeline-pros h4 { color: var(--green); }
+.timeline-tips h4 { color: var(--blue); }
+
+.timeline-pros ul,
+.timeline-tips ul {
+  list-style: none;
+  margin-bottom: 1rem;
+}
+.timeline-pros ul li,
+.timeline-tips ul li {
+  font-size: 0.9rem;
+  color: var(--text2);
+  padding: 0.3rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+  line-height: 1.5;
+}
+.timeline-pros ul li::before {
+  content: '\2713';
+  position: absolute; left: 0; top: 0.3rem;
+  color: var(--green); font-weight: 700; font-size: 0.8rem;
+}
+.timeline-tips ul li::before {
+  content: '\2192';
+  position: absolute; left: 0; top: 0.3rem;
+  color: var(--blue); font-weight: 700; font-size: 0.8rem;
+}
+
+/* ── Preparation Calendar ──────────────────────────── */
+.prep-calendar {
+  position: relative;
+  display: grid;
+  gap: 0;
+}
+.prep-month {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  min-height: 110px;
+  border-bottom: 1px solid var(--mid-gray);
+}
+.prep-month:last-child { border-bottom: none; }
+
+.prep-month-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+  position: relative;
+}
+.prep-month-label::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--mid-gray);
+}
+.prep-month-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--obsidian);
+}
+.prep-month-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text2);
+  margin-top: 0.2rem;
+}
+.prep-month-content {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.prep-month-content h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--obsidian);
+  margin-bottom: 0.35rem;
+}
+.prep-month-content p {
+  font-size: 0.88rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.prep-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+.prep-tag.research { background: rgba(37,99,235,0.1); color: var(--blue); }
+.prep-tag.writing { background: rgba(200,85,61,0.1); color: var(--clay); }
+.prep-tag.prep { background: rgba(5,150,105,0.1); color: var(--green); }
+.prep-tag.submit { background: rgba(124,58,237,0.1); color: #7c3aed; }
+
+.prep-calendar-wrapper {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Tip & Insight Boxes ───────────────────────────── */
+.tip-box {
+  background: linear-gradient(135deg, rgba(200,85,61,0.06), rgba(200,85,61,0.02));
+  border: 1px solid rgba(200,85,61,0.15);
+  border-left: 4px solid var(--clay);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.tip-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--clay);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.tip-box p { font-size: 0.9rem; color: var(--text); }
+
+.insight-box {
+  background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(37,99,235,0.02));
+  border: 1px solid rgba(37,99,235,0.15);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+}
+.insight-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.insight-box p { font-size: 0.9rem; color: var(--text); }
+
+/* ── Footer ─────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3.5rem; }
+  section { padding: 3rem 1.25rem; }
+  .timeline { padding-left: 2rem; }
+  .timeline::before { left: 12px; }
+  .timeline-dot {
+    left: -2rem;
+    width: 27px; height: 27px;
+    font-size: 0.75rem;
+  }
+  .timeline-card-header { padding: 1.25rem 1.25rem 0.75rem; }
+  .timeline-card-body { padding: 1rem 1.25rem 1.25rem; }
+  .timeline-meta { grid-template-columns: 1fr; }
+  .prep-month { grid-template-columns: 100px 1fr; }
+  .prep-month-label { padding: 1rem 0.75rem; }
+  .prep-month-num { font-size: 1.4rem; }
+  .prep-month-content { padding: 1rem; }
+  .countdown-section { padding: 1.75rem; }
+  .round-picker { grid-template-columns: 1fr 1fr; }
+  .countdown-unit { min-width: 60px; }
+}
+
+@media (max-width: 480px) {
+  .round-picker { grid-template-columns: 1fr; }
+  .prep-month { grid-template-columns: 80px 1fr; }
+  .prep-month-num { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html#why">Why Minerva</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#challenges">Challenges</a>
+      <a href="index.html#essays">Essays</a>
+      <a href="index.html#checklist">Checklist</a>
+      <a href="index.html#aid">Financial Aid</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="timeline.html" class="active">Timeline</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1>Application <span>Timeline</span><br>& Deadlines</h1>
+    <p>Know exactly when to apply and what to prepare. Minerva offers multiple application rounds, each with its own advantages. Plan your approach and stay ahead of deadlines.</p>
+  </div>
+</section>
+
+<!-- ── Countdown ────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <span class="section-label">Countdown</span>
+    <h2 class="section-title">Time Until Your Deadline</h2>
+    <p class="section-subtitle">Select the application round you're targeting to see how much time you have left to prepare.</p>
+
+    <div class="countdown-section">
+      <h3>Choose your target round</h3>
+      <p class="subtitle">Deadlines shown are approximate and based on typical Minerva admissions cycles. Always verify current dates at apply.minerva.edu.</p>
+      <div class="round-picker" id="round-picker">
+        <button class="round-btn selected" data-round="ea1" onclick="selectRound(this, 'ea1')">
+          Early Action I
+          <span class="round-btn-label">November 1</span>
+        </button>
+        <button class="round-btn" data-round="ea2" onclick="selectRound(this, 'ea2')">
+          Early Action II
+          <span class="round-btn-label">January 15</span>
+        </button>
+        <button class="round-btn" data-round="rd1" onclick="selectRound(this, 'rd1')">
+          Regular Decision I
+          <span class="round-btn-label">March 1</span>
+        </button>
+        <button class="round-btn" data-round="rd2" onclick="selectRound(this, 'rd2')">
+          Regular Decision II
+          <span class="round-btn-label">April 15</span>
+        </button>
+      </div>
+      <div id="countdown-display" class="countdown-display"></div>
+      <div id="countdown-message" class="countdown-message"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Application Rounds Timeline ──────────────────── -->
+<section class="alt-bg" id="rounds">
+  <div class="container">
+    <span class="section-label">Application Rounds</span>
+    <h2 class="section-title">Four Rounds, Four Chances</h2>
+    <p class="section-subtitle">Minerva accepts applications in multiple rounds throughout the admissions cycle. Earlier rounds tend to have strategic advantages, but strong applicants are admitted in every round.</p>
+
+    <div class="timeline">
+
+      <!-- EA I -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background: var(--clay);">1</div>
+        <div class="timeline-card">
+          <div class="timeline-card-header">
+            <div>
+              <h3>Early Action I</h3>
+              <div class="deadline-date">Deadline: November 1</div>
+            </div>
+            <span class="timeline-badge" style="background: rgba(200,85,61,0.1); color: var(--clay);">Recommended</span>
+          </div>
+          <div class="timeline-card-body">
+            <div class="timeline-meta">
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Decision by</div>
+                <div class="timeline-meta-value">Mid-December</div>
+              </div>
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Binding?</div>
+                <div class="timeline-meta-value">No &mdash; non-binding</div>
+              </div>
+            </div>
+            <div class="timeline-pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Smallest applicant pool &mdash; less competition relative to later rounds</li>
+                <li>Earliest decision notification, reducing months of uncertainty</li>
+                <li>Demonstrates strong interest and initiative to the admissions team</li>
+                <li>Maximum time to plan finances, visa applications, and logistics if admitted</li>
+              </ul>
+            </div>
+            <div class="timeline-tips">
+              <h4>Tips for this round</h4>
+              <ul>
+                <li>Start your application in the summer to give yourself ample time</li>
+                <li>Have your essays reviewed by at least two people you trust before submitting</li>
+                <li>Complete the creative challenges in a quiet, distraction-free environment</li>
+                <li>Non-binding means you can still consider other options &mdash; there's no downside to applying early</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EA II -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background: var(--clay-light);">2</div>
+        <div class="timeline-card">
+          <div class="timeline-card-header">
+            <div>
+              <h3>Early Action II</h3>
+              <div class="deadline-date">Deadline: January 15</div>
+            </div>
+            <span class="timeline-badge" style="background: rgba(37,99,235,0.1); color: var(--blue);">Popular</span>
+          </div>
+          <div class="timeline-card-body">
+            <div class="timeline-meta">
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Decision by</div>
+                <div class="timeline-meta-value">Late February</div>
+              </div>
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Binding?</div>
+                <div class="timeline-meta-value">No &mdash; non-binding</div>
+              </div>
+            </div>
+            <div class="timeline-pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>More time to prepare your application than EA I while still applying early</li>
+                <li>Still benefits from a relatively smaller pool compared to Regular Decision</li>
+                <li>Decision arrives before most other universities' regular deadlines</li>
+                <li>Good option if you discovered Minerva later in the fall</li>
+              </ul>
+            </div>
+            <div class="timeline-tips">
+              <h4>Tips for this round</h4>
+              <ul>
+                <li>Use the November &ndash; January window to refine your essays through multiple drafts</li>
+                <li>Research Minerva's Habits of Mind &mdash; understanding the curriculum makes your "why Minerva" response more compelling</li>
+                <li>Talk to current students on the forum or social media for authentic perspective</li>
+                <li>Don't rush just because the deadline is soon &mdash; a thoughtful late-January submission beats a sloppy November one</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RD I -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background: var(--blue);">3</div>
+        <div class="timeline-card">
+          <div class="timeline-card-header">
+            <div>
+              <h3>Regular Decision I</h3>
+              <div class="deadline-date">Deadline: March 1</div>
+            </div>
+            <span class="timeline-badge" style="background: rgba(5,150,105,0.1); color: var(--green);">Available</span>
+          </div>
+          <div class="timeline-card-body">
+            <div class="timeline-meta">
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Decision by</div>
+                <div class="timeline-meta-value">Late April</div>
+              </div>
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Binding?</div>
+                <div class="timeline-meta-value">No &mdash; non-binding</div>
+              </div>
+            </div>
+            <div class="timeline-pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Extended preparation time for the most polished application possible</li>
+                <li>You may have more life experiences and achievements to include from the academic year</li>
+                <li>Can incorporate feedback from other application processes to strengthen your Minerva essays</li>
+                <li>Decision still arrives in time to compare with other university offers</li>
+              </ul>
+            </div>
+            <div class="timeline-tips">
+              <h4>Tips for this round</h4>
+              <ul>
+                <li>The larger applicant pool means your application needs to be especially strong and distinctive</li>
+                <li>Use the extra time to create multiple drafts &mdash; don't just start later</li>
+                <li>The interview becomes more valuable in later rounds for differentiating yourself</li>
+                <li>Start your financial aid research now so you're ready to apply immediately after an offer</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RD II -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background: var(--green);">4</div>
+        <div class="timeline-card">
+          <div class="timeline-card-header">
+            <div>
+              <h3>Regular Decision II</h3>
+              <div class="deadline-date">Deadline: April 15</div>
+            </div>
+            <span class="timeline-badge" style="background: rgba(107,114,128,0.1); color: var(--text2);">Final Round</span>
+          </div>
+          <div class="timeline-card-body">
+            <div class="timeline-meta">
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Decision by</div>
+                <div class="timeline-meta-value">Late May / Early June</div>
+              </div>
+              <div class="timeline-meta-item">
+                <div class="timeline-meta-label">Binding?</div>
+                <div class="timeline-meta-value">No &mdash; non-binding</div>
+              </div>
+            </div>
+            <div class="timeline-pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Last chance to apply if you only recently discovered Minerva</li>
+                <li>Maximum time to prepare the strongest application you can</li>
+                <li>Strong candidates are still admitted &mdash; Minerva evaluates quality, not timing</li>
+                <li>Can include late-year achievements, awards, or projects in your application</li>
+              </ul>
+            </div>
+            <div class="timeline-tips">
+              <h4>Tips for this round</h4>
+              <ul>
+                <li>Spaces are more limited since some have been filled by earlier rounds</li>
+                <li>Make your application as distinctive as possible &mdash; generic responses won't stand out</li>
+                <li>Prepare for a faster turnaround on financial aid and enrollment decisions</li>
+                <li>If you're applying this late, be ready to act quickly once you receive a decision</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="insight-box" style="margin-top: 2.5rem;">
+      <h4>Student Insight</h4>
+      <p>There is no penalty for applying in later rounds &mdash; Minerva genuinely evaluates every application on its own merit. That said, applying early gives you practical advantages: less stress, more time to plan, and the peace of mind of knowing sooner. If your application is ready, there's no reason to wait.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Preparation Calendar ─────────────────────────── -->
+<section id="prep">
+  <div class="container">
+    <span class="section-label">Preparation Calendar</span>
+    <h2 class="section-title">Month-by-Month Preparation Guide</h2>
+    <p class="section-subtitle">A structured timeline to help you prepare a strong application. Adjust the months based on your target deadline.</p>
+
+    <div class="prep-calendar-wrapper">
+      <div class="prep-calendar">
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(37,99,235,0.04);">
+            <span class="prep-month-num">6</span>
+            <span class="prep-month-text">months before</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag research">Research</span>
+            </div>
+            <h4>Explore and Connect</h4>
+            <p>Research Minerva's curriculum, Habits of Mind, and city rotation model. Browse the student forum at forum.minerva.edu. Reach out to current students on social media or LinkedIn. Watch Minerva webinars and info sessions. Understand what makes Minerva different and start articulating why it's the right fit for you.</p>
+          </div>
+        </div>
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(37,99,235,0.04);">
+            <span class="prep-month-num">4</span>
+            <span class="prep-month-text">months before</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag writing">Writing</span>
+              <span class="prep-tag research">Research</span>
+            </div>
+            <h4>Start Your Application</h4>
+            <p>Create your account at apply.minerva.edu. Begin filling in personal information and academic history. Start brainstorming your short-answer essay responses. Don't try to write final versions yet &mdash; focus on generating ideas, stories, and angles. Use the brainstorming prompts on the main site.</p>
+          </div>
+        </div>
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(200,85,61,0.04);">
+            <span class="prep-month-num">3</span>
+            <span class="prep-month-text">months before</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag writing">Writing</span>
+            </div>
+            <h4>Draft and Get Feedback</h4>
+            <p>Write complete first drafts of all your essay responses. Share them with 2&ndash;3 trusted people &mdash; a teacher, mentor, friend, or family member who will be honest. Focus on authenticity and specificity. Revise based on feedback but keep your voice. Start your second and third drafts.</p>
+          </div>
+        </div>
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(200,85,61,0.04);">
+            <span class="prep-month-num">2</span>
+            <span class="prep-month-text">months before</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag prep">Challenges</span>
+              <span class="prep-tag writing">Writing</span>
+            </div>
+            <h4>Complete Challenges</h4>
+            <p>Practice creative thinking exercises &mdash; puzzles, brain teasers, lateral thinking problems. When you feel ready, complete Minerva's creative challenges in a quiet, distraction-free environment. These are timed, so practice managing your time under pressure. Continue refining your essay drafts in parallel.</p>
+          </div>
+        </div>
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(5,150,105,0.04);">
+            <span class="prep-month-num">1</span>
+            <span class="prep-month-text">month before</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag submit">Final Review</span>
+            </div>
+            <h4>Polish and Submit</h4>
+            <p>Do a final review of your entire application for errors, typos, or gaps. Read your essays aloud to catch awkward phrasing. Verify all personal information and academic details are accurate. Submit your application at least a few days before the deadline &mdash; don't wait until the last hour. Technical issues happen.</p>
+          </div>
+        </div>
+
+        <div class="prep-month">
+          <div class="prep-month-label" style="background: rgba(5,150,105,0.04);">
+            <span class="prep-month-num">&plus;</span>
+            <span class="prep-month-text">after submit</span>
+          </div>
+          <div class="prep-month-content">
+            <div style="margin-bottom: 0.4rem;">
+              <span class="prep-tag prep">Interview</span>
+              <span class="prep-tag research">Financial Aid</span>
+            </div>
+            <h4>Interview Prep &amp; Financial Aid</h4>
+            <p>Sign up for an admissions interview (optional but strongly recommended). Prepare by thinking about what questions you want to ask them &mdash; this is a two-way conversation, not an interrogation. Research financial aid options and start preparing your financial aid application, which is separate from admissions. Look into external scholarships relevant to your country or background.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="tip-box" style="margin-top: 2rem;">
+      <h4>Important Timing Note</h4>
+      <p>This calendar is flexible. If you discovered Minerva two months before a deadline, you can still prepare a strong application &mdash; you'll just need to compress the timeline. Quality matters more than how long you spent. Focus on authenticity in your essays and genuine engagement with the creative challenges.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────── -->
+<div class="cta-section" style="background: var(--obsidian); color: var(--bone); text-align: center; padding: 4rem 1.5rem;">
+  <div class="container">
+    <h2 style="font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; margin-bottom: 1rem;">Ready to Start Your Application?</h2>
+    <p style="color: rgba(245,240,235,0.65); max-width: 550px; margin: 0 auto 2rem; font-size: 1.05rem;">The application is free, no standardized tests are required, and you can work on it at your own pace. The hardest part is clicking "start."</p>
+    <a href="https://apply.minerva.edu" target="_blank" style="display: inline-block; background: var(--clay); color: white; text-decoration: none; padding: 0.85rem 2rem; border-radius: 10px; font-weight: 700; font-size: 1rem; transition: background 0.2s, transform 0.1s;" onmouseover="this.style.background='var(--clay-light)';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--clay)';this.style.transform='none'">Apply to Minerva</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Deadline Data ──────────────────────────────────────
+// Uses the NEXT upcoming occurrence of each deadline
+function getNextDeadline(month, day) {
+  const now = new Date();
+  const thisYear = now.getFullYear();
+  let target = new Date(thisYear, month, day, 23, 59, 59);
+  // If this year's deadline has passed, use next year's
+  if (target < now) {
+    target = new Date(thisYear + 1, month, day, 23, 59, 59);
+  }
+  return target;
+}
+
+const rounds = {
+  ea1: {
+    name: 'Early Action I',
+    deadline: getNextDeadline(10, 1),   // November 1
+    label: 'November 1'
+  },
+  ea2: {
+    name: 'Early Action II',
+    deadline: getNextDeadline(0, 15),   // January 15
+    label: 'January 15'
+  },
+  rd1: {
+    name: 'Regular Decision I',
+    deadline: getNextDeadline(2, 1),    // March 1
+    label: 'March 1'
+  },
+  rd2: {
+    name: 'Regular Decision II',
+    deadline: getNextDeadline(3, 15),   // April 15
+    label: 'April 15'
+  }
+};
+
+let selectedRound = 'ea1';
+let countdownInterval;
+
+function selectRound(btn, round) {
+  document.querySelectorAll('.round-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedRound = round;
+  updateCountdown();
+}
+
+function updateCountdown() {
+  const round = rounds[selectedRound];
+  const now = new Date();
+  const diff = round.deadline - now;
+
+  const display = document.getElementById('countdown-display');
+  const message = document.getElementById('countdown-message');
+
+  if (diff <= 0) {
+    display.innerHTML = '<div class="countdown-passed"><span class="countdown-num">Deadline Passed</span></div>';
+    message.textContent = 'This deadline has passed for the current cycle. Check apply.minerva.edu for the next cycle\'s dates.';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  display.innerHTML = `
+    <div class="countdown-unit">
+      <span class="countdown-num">${days}</span>
+      <span class="countdown-label">${days === 1 ? 'Day' : 'Days'}</span>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-num">${String(hours).padStart(2, '0')}</span>
+      <span class="countdown-label">${hours === 1 ? 'Hour' : 'Hours'}</span>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-num">${String(minutes).padStart(2, '0')}</span>
+      <span class="countdown-label">${minutes === 1 ? 'Minute' : 'Minutes'}</span>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-num">${String(seconds).padStart(2, '0')}</span>
+      <span class="countdown-label">${seconds === 1 ? 'Second' : 'Seconds'}</span>
+    </div>
+  `;
+
+  if (days > 90) {
+    message.textContent = `You have plenty of time. Use it wisely \u2014 start your preparation now.`;
+  } else if (days > 30) {
+    message.textContent = `Time to be actively working on your application. Draft your essays and practice challenges.`;
+  } else if (days > 7) {
+    message.textContent = `The deadline is approaching. Focus on polishing your essays and completing your application.`;
+  } else {
+    message.textContent = `Final stretch \u2014 submit your application soon. Don't wait until the last day.`;
+  }
+}
+
+// Update countdown every second
+updateCountdown();
+countdownInterval = setInterval(updateCountdown, 1000);
+
+// ── Smooth scroll for nav links pointing to this page ──
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
