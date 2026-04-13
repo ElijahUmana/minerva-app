@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Essay Feedback | Minerva Application Companion</title>
+<style>
+:root {
+  --obsidian: #1a1a2e;
+  --bone: #f5f0eb;
+  --clay: #c8553d;
+  --clay-light: #e8745d;
+  --clay-dark: #a03f2d;
+  --slate: #374151;
+  --light-gray: #f9fafb;
+  --mid-gray: #e5e7eb;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --white: #ffffff;
+  --green: #059669;
+  --blue: #2563eb;
+  --yellow: #d97706;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: var(--white);
+}
+
+/* ── Nav ────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,26,46,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.1rem; color: var(--bone);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-brand span { color: var(--clay-light); }
+.nav-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: rgba(245,240,235,0.7); text-decoration: none;
+  font-size: 0.82rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-links a:hover { color: var(--bone); background: rgba(255,255,255,0.08); }
+.nav-links a.active {
+  color: var(--bone); background: rgba(200,85,61,0.3);
+}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--obsidian), #16213e, #0f3460);
+  color: var(--bone); padding: 7rem 1.5rem 4rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(200,85,61,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%);
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(transparent, var(--white));
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+  line-height: 1.15;
+}
+.hero h1 span { color: var(--clay-light); }
+.hero p {
+  font-size: 1.15rem; color: rgba(245,240,235,0.75);
+  max-width: 650px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ── Sections ──────────────────────────────────────── */
+section { padding: 4.5rem 1.5rem; }
+.container { max-width: 900px; margin: 0 auto; }
+.section-label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--clay); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 1rem;
+  color: var(--obsidian); line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 1.05rem; color: var(--text2);
+  max-width: 650px; margin-bottom: 2.5rem; line-height: 1.6;
+}
+.alt-bg { background: var(--light-gray); }
+
+/* ── Essay Input ──────────────────────────────────── */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+.input-label {
+  display: block; font-size: 0.9rem; font-weight: 700;
+  color: var(--obsidian); margin-bottom: 0.4rem;
+}
+.input-hint {
+  font-size: 0.8rem; color: var(--text2); margin-bottom: 0.5rem;
+}
+.essay-select {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1px solid var(--mid-gray); border-radius: 8px;
+  font-family: inherit; font-size: 0.9rem;
+  color: var(--text); background: var(--white);
+  transition: border-color 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  cursor: pointer;
+}
+.essay-select:focus {
+  outline: none; border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(200,85,61,0.1);
+}
+.essay-textarea {
+  width: 100%; min-height: 300px; padding: 1rem 1.25rem;
+  border: 1px solid var(--mid-gray); border-radius: 10px;
+  font-family: inherit; font-size: 0.95rem;
+  color: var(--text); background: var(--white);
+  resize: vertical; line-height: 1.7;
+  transition: border-color 0.2s;
+}
+.essay-textarea:focus {
+  outline: none; border-color: var(--clay);
+  box-shadow: 0 0 0 3px rgba(200,85,61,0.1);
+}
+.essay-textarea::placeholder { color: #aaa; }
+.textarea-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem;
+}
+.word-char-count {
+  font-size: 0.8rem; color: var(--text2);
+  display: flex; gap: 1rem;
+}
+.word-char-count .count-item {
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.word-char-count .count-num {
+  font-weight: 700; color: var(--obsidian);
+}
+.word-char-count .count-num.warn { color: var(--yellow); }
+.word-char-count .count-num.over { color: #dc2626; }
+.submit-btn {
+  padding: 0.75rem 2rem; border-radius: 8px;
+  background: var(--clay); color: white; border: none;
+  font-family: inherit; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px;
+}
+.submit-btn:hover { background: var(--clay-light); transform: translateY(-1px); }
+.submit-btn:disabled {
+  opacity: 0.5; cursor: not-allowed; transform: none;
+}
+.submit-btn .btn-spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: none;
+}
+.submit-btn.loading .btn-spinner { display: block; }
+.submit-btn.loading .btn-label { display: none; }
+.submit-btn.loading .btn-loading-label { display: inline; }
+.btn-loading-label { display: none; }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Results ──────────────────────────────────────── */
+.results-area { display: none; }
+.results-area.visible { display: block; }
+
+/* Score Cards */
+.score-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-bottom: 2.5rem;
+}
+.score-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.score-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+.score-card-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.score-card-title {
+  font-size: 0.9rem; font-weight: 700; color: var(--obsidian);
+}
+.score-card-value {
+  font-size: 1.5rem; font-weight: 800; line-height: 1;
+  min-width: 2.5rem; text-align: right;
+}
+.score-card-value.high { color: var(--green); }
+.score-card-value.mid { color: var(--yellow); }
+.score-card-value.low { color: #dc2626; }
+.score-bar {
+  height: 6px; background: var(--mid-gray); border-radius: 999px;
+  overflow: hidden; margin-bottom: 0.75rem;
+}
+.score-bar-fill {
+  height: 100%; border-radius: 999px;
+  transition: width 0.6s ease;
+  width: 0%;
+}
+.score-bar-fill.high { background: var(--green); }
+.score-bar-fill.mid { background: var(--yellow); }
+.score-bar-fill.low { background: #dc2626; }
+.score-card-desc {
+  font-size: 0.85rem; color: var(--text2); line-height: 1.55;
+}
+
+/* Feedback Sections */
+.feedback-block {
+  margin-bottom: 2rem;
+}
+.feedback-block-header {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.feedback-block-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.feedback-block-icon.strengths {
+  background: rgba(5,150,105,0.1);
+}
+.feedback-block-icon.improvements {
+  background: rgba(200,85,61,0.1);
+}
+.feedback-block-title {
+  font-size: 1.1rem; font-weight: 700; color: var(--obsidian);
+}
+.feedback-list {
+  list-style: none;
+}
+.feedback-list li {
+  padding: 0.65rem 0 0.65rem 1.25rem;
+  position: relative; font-size: 0.92rem;
+  color: var(--text); line-height: 1.6;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.feedback-list li:last-child { border-bottom: none; }
+.feedback-list li::before {
+  content: '';
+  position: absolute; left: 0; top: 1rem;
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.feedback-list.strengths-list li::before { background: var(--green); }
+.feedback-list.improvements-list li::before { background: var(--clay); }
+
+/* Summary */
+.summary-box {
+  background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(37,99,235,0.02));
+  border: 1px solid rgba(37,99,235,0.15);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem; margin-top: 2rem;
+}
+.summary-box h4 {
+  font-size: 0.85rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+.summary-box p {
+  font-size: 0.92rem; color: var(--text); line-height: 1.65;
+}
+
+/* ── Loading Skeleton ─────────────────────────────── */
+.skeleton-area { display: none; }
+.skeleton-area.visible { display: block; }
+.skeleton-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-bottom: 2rem;
+}
+.skeleton-card {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.5rem;
+  overflow: hidden;
+}
+.skeleton-line {
+  height: 14px; border-radius: 7px;
+  background: linear-gradient(90deg, var(--mid-gray) 25%, #f0f0f0 50%, var(--mid-gray) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 0.75rem;
+}
+.skeleton-line:last-child { margin-bottom: 0; }
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+.skeleton-line.score {
+  width: 40px; height: 28px; border-radius: 6px;
+  margin-bottom: 1rem;
+}
+.skeleton-line.bar {
+  height: 6px; border-radius: 999px;
+  margin-bottom: 1rem;
+}
+.skeleton-block {
+  background: var(--white); border: 1px solid var(--mid-gray);
+  border-radius: 12px; padding: 1.5rem;
+  margin-bottom: 1rem; overflow: hidden;
+}
+.skeleton-loading-text {
+  text-align: center; padding: 1.5rem 0 0.5rem;
+  font-size: 0.9rem; color: var(--text2); font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.skeleton-loading-text .dot-pulse {
+  display: inline-flex; gap: 3px;
+}
+.skeleton-loading-text .dot-pulse span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--clay); animation: dotPulse 1.2s infinite;
+}
+.skeleton-loading-text .dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
+.skeleton-loading-text .dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Error ─────────────────────────────────────────── */
+.error-area { display: none; }
+.error-area.visible { display: block; }
+.error-card {
+  background: var(--white); border: 1px solid rgba(220,38,38,0.2);
+  border-radius: 12px; padding: 2rem;
+  text-align: center;
+}
+.error-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(220,38,38,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; margin: 0 auto 1rem;
+}
+.error-title {
+  font-size: 1.1rem; font-weight: 700; color: var(--obsidian);
+  margin-bottom: 0.5rem;
+}
+.error-message {
+  font-size: 0.9rem; color: var(--text2); margin-bottom: 1.5rem;
+  line-height: 1.6; max-width: 450px; margin-left: auto; margin-right: auto;
+}
+.retry-btn {
+  padding: 0.65rem 1.5rem; border-radius: 8px;
+  background: var(--clay); color: white; border: none;
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.retry-btn:hover { background: var(--clay-light); }
+
+/* ── Save Indicator ───────────────────────────────── */
+.save-indicator {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  background: var(--obsidian); color: var(--bone);
+  padding: 0.55rem 1rem; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 600;
+  opacity: 0; transform: translateY(10px);
+  transition: all 0.3s; z-index: 200;
+  pointer-events: none;
+}
+.save-indicator.visible {
+  opacity: 1; transform: translateY(0);
+}
+
+/* ── Footer ────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.5rem;
+  font-size: 0.82rem; color: var(--text2);
+  border-top: 1px solid var(--mid-gray);
+}
+footer a { color: var(--clay); text-decoration: none; }
+
+/* ── Mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 6rem 1.25rem 3.5rem; }
+  section { padding: 3rem 1.25rem; }
+  .score-grid { grid-template-columns: 1fr; }
+  .skeleton-grid { grid-template-columns: 1fr; }
+  .textarea-footer { flex-direction: column; align-items: stretch; }
+  .submit-btn { width: 100%; justify-content: center; }
+  .retry-btn { width: 100%; min-height: 44px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">Minerva <span>Companion</span></a>
+    <div class="nav-links">
+      <a href="index.html">Guide</a>
+      <a href="timeline.html">Timeline</a>
+      <a href="practice.html">Practice</a>
+      <a href="essays.html">Essays</a>
+      <a href="essay-feedback.html" class="active">Essay Feedback</a>
+      <a href="interview.html">Interview</a>
+      <a href="simulator.html">Simulator</a>
+      <a href="resources.html">Resources</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section class="hero">
+  <h1>AI Essay <span>Feedback</span></h1>
+  <p>Paste your essay draft and get detailed feedback powered by Claude. Scores across five dimensions, specific strengths, and actionable improvements.</p>
+</section>
+
+<!-- ── Essay Input ───────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="section-label">Your Draft</div>
+    <h2 class="section-title">Submit Your Essay</h2>
+    <p class="section-subtitle">Select the essay prompt type and paste your draft below. Your essay is saved locally so you won't lose it.</p>
+
+    <div class="input-group">
+      <label class="input-label" for="essay-type">Essay Prompt Type</label>
+      <div class="input-hint">Choose the prompt your essay responds to</div>
+      <select class="essay-select" id="essay-type">
+        <option value="motivation">Why Minerva? (Motivation)</option>
+        <option value="personal_challenge">Personal Challenge</option>
+        <option value="intellectual_curiosity">Intellectual Curiosity</option>
+        <option value="community_impact">Community Impact</option>
+        <option value="global_perspective">Global Perspective</option>
+        <option value="creative_thinking">Creative Thinking</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label" for="essay-text">Your Essay</label>
+      <div class="input-hint">Paste or type your full essay draft</div>
+      <textarea class="essay-textarea" id="essay-text" placeholder="Paste your essay draft here..."></textarea>
+      <div class="textarea-footer">
+        <div class="word-char-count">
+          <div class="count-item"><span class="count-num" id="word-count">0</span> words</div>
+          <div class="count-item"><span class="count-num" id="char-count">0</span> characters</div>
+        </div>
+        <button class="submit-btn" id="submit-btn" onclick="submitEssay()">
+          <span class="btn-label">Get AI Feedback</span>
+          <span class="btn-loading-label">Analyzing</span>
+          <div class="btn-spinner"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Loading Skeleton ─────────────────────────────── -->
+<section class="skeleton-area" id="skeleton-area">
+  <div class="container">
+    <div class="skeleton-loading-text">
+      Analyzing your essay
+      <div class="dot-pulse"><span></span><span></span><span></span></div>
+    </div>
+    <div class="skeleton-grid">
+      <div class="skeleton-card">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line score"></div>
+        <div class="skeleton-line bar"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line score"></div>
+        <div class="skeleton-line bar"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line medium"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line score"></div>
+        <div class="skeleton-line bar"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line score"></div>
+        <div class="skeleton-line bar"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line medium"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line score"></div>
+        <div class="skeleton-line bar"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line"></div>
+      </div>
+    </div>
+    <div class="skeleton-block">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+    </div>
+    <div class="skeleton-block">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Error State ───────────────────────────────────── -->
+<section class="error-area" id="error-area">
+  <div class="container">
+    <div class="error-card">
+      <div class="error-icon">&#9888;</div>
+      <div class="error-title">Something went wrong</div>
+      <div class="error-message" id="error-message">We couldn't analyze your essay right now. This might be a temporary issue with the server.</div>
+      <button class="retry-btn" onclick="submitEssay()">Try Again</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Results ───────────────────────────────────────── -->
+<section class="results-area" id="results-area">
+  <div class="container">
+    <div class="section-label">Feedback</div>
+    <h2 class="section-title">Your Essay Analysis</h2>
+
+    <div class="score-grid" id="score-grid"></div>
+
+    <div class="feedback-block" id="strengths-block">
+      <div class="feedback-block-header">
+        <div class="feedback-block-icon strengths">&#10003;</div>
+        <div class="feedback-block-title">Strengths</div>
+      </div>
+      <ul class="feedback-list strengths-list" id="strengths-list"></ul>
+    </div>
+
+    <div class="feedback-block" id="improvements-block">
+      <div class="feedback-block-header">
+        <div class="feedback-block-icon improvements">&#9650;</div>
+        <div class="feedback-block-title">Areas for Improvement</div>
+      </div>
+      <ul class="feedback-list improvements-list" id="improvements-list"></ul>
+    </div>
+
+    <div class="summary-box" id="summary-box">
+      <h4>Overall Assessment</h4>
+      <p id="summary-text"></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Built by a current Minerva University student. Not an official Minerva resource.<br>
+    <a href="https://minerva.edu" target="_blank">minerva.edu</a></p>
+  </div>
+</footer>
+
+<div class="save-indicator" id="save-indicator">Saved</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'minerva-essay-feedback';
+
+function loadDraft() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveDraft() {
+  try {
+    const data = {
+      essay: document.getElementById('essay-text').value,
+      type: document.getElementById('essay-type').value
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showSaveIndicator();
+  } catch (e) { /* quota exceeded */ }
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  el.classList.add('visible');
+  clearTimeout(el._timeout);
+  el._timeout = setTimeout(() => el.classList.remove('visible'), 1500);
+}
+
+// ══════════════════════════════════════════════════════════
+// WORD / CHARACTER COUNT
+// ══════════════════════════════════════════════════════════
+
+function updateCounts() {
+  const text = document.getElementById('essay-text').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const chars = text.length;
+
+  const wordEl = document.getElementById('word-count');
+  const charEl = document.getElementById('char-count');
+
+  wordEl.textContent = words;
+  charEl.textContent = chars;
+
+  wordEl.className = 'count-num' + (words > 600 ? ' over' : words > 450 ? ' warn' : '');
+}
+
+// ══════════════════════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════════════════════
+
+let abortController = null;
+
+async function submitEssay() {
+  const essay = document.getElementById('essay-text').value.trim();
+  const promptType = document.getElementById('essay-type').value;
+
+  if (!essay) {
+    document.getElementById('essay-text').focus();
+    return;
+  }
+  if (essay.length < 50) {
+    showError('Your essay must be at least 50 characters. Please paste more of your draft.');
+    return;
+  }
+
+  // Reset states
+  document.getElementById('results-area').classList.remove('visible');
+  document.getElementById('error-area').classList.remove('visible');
+  document.getElementById('skeleton-area').classList.add('visible');
+
+  const btn = document.getElementById('submit-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  // Cancel any in-flight request
+  if (abortController) abortController.abort();
+  abortController = new AbortController();
+
+  try {
+    const response = await fetch('/api/essay-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ essay, prompt_type: promptType }),
+      signal: abortController.signal
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Server returned ' + response.status);
+    }
+
+    // Collect the full streamed text then parse as markdown
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+    }
+
+    renderResults(parseEssayFeedback(buffer));
+
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    showError(err.message);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    document.getElementById('skeleton-area').classList.remove('visible');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER RESULTS
+// ══════════════════════════════════════════════════════════
+
+function getScoreClass(score) {
+  if (score >= 7) return 'high';
+  if (score >= 5) return 'mid';
+  return 'low';
+}
+
+function renderResults(data) {
+  const categories = [
+    { key: 'structure', label: 'Structure', icon: '&#9881;' },
+    { key: 'authentic_voice', label: 'Authentic Voice', icon: '&#9998;' },
+    { key: 'specificity', label: 'Specificity', icon: '&#128270;' },
+    { key: 'minerva_fit', label: 'Minerva Fit', icon: '&#127891;' },
+    { key: 'growth_reflection', label: 'Growth & Reflection', icon: '&#127793;' }
+  ];
+
+  // Score cards
+  const grid = document.getElementById('score-grid');
+  grid.innerHTML = '';
+
+  const scores = data.scores || {};
+  categories.forEach(cat => {
+    const scoreObj = scores[cat.key] || {};
+    const score = typeof scoreObj === 'number' ? scoreObj : (scoreObj.score || 0);
+    const desc = typeof scoreObj === 'object' ? (scoreObj.feedback || scoreObj.description || '') : '';
+    const cls = getScoreClass(score);
+
+    const card = document.createElement('div');
+    card.className = 'score-card';
+    card.innerHTML =
+      '<div class="score-card-header">' +
+        '<div class="score-card-title">' + cat.icon + ' ' + cat.label + '</div>' +
+        '<div class="score-card-value ' + cls + '">' + score + '<span style="font-size:0.75rem;font-weight:600;color:var(--text2)">/10</span></div>' +
+      '</div>' +
+      '<div class="score-bar"><div class="score-bar-fill ' + cls + '" style="width:' + (score * 10) + '%"></div></div>' +
+      '<div class="score-card-desc">' + escapeHtml(desc) + '</div>';
+    grid.appendChild(card);
+  });
+
+  // Strengths
+  const strengthsList = document.getElementById('strengths-list');
+  strengthsList.innerHTML = '';
+  (data.strengths || []).forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = s;
+    strengthsList.appendChild(li);
+  });
+
+  // Improvements
+  const improvementsList = document.getElementById('improvements-list');
+  improvementsList.innerHTML = '';
+  (data.improvements || []).forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = s;
+    improvementsList.appendChild(li);
+  });
+
+  // Summary
+  document.getElementById('summary-text').textContent = data.summary || '';
+
+  // Show results
+  document.getElementById('results-area').classList.add('visible');
+  document.getElementById('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ══════════════════════════════════════════════════════════
+// ERROR HANDLING
+// ══════════════════════════════════════════════════════════
+
+function showError(message) {
+  const errorArea = document.getElementById('error-area');
+  const errorMsg = document.getElementById('error-message');
+
+  if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
+    errorMsg.textContent = 'Could not reach the server. Check your internet connection and try again.';
+  } else if (message.includes('429') || message.toLowerCase().includes('rate')) {
+    errorMsg.textContent = 'You\u2019ve sent too many requests. Please wait 30–60 seconds before trying again.';
+  } else if (message.includes('500') || message.includes('server')) {
+    errorMsg.textContent = 'The server encountered an error. This is usually temporary — try again in a few seconds.';
+  } else if (message.includes('50 characters') || message.includes('50 char')) {
+    errorMsg.textContent = message;
+  } else {
+    errorMsg.textContent = message || 'Something went wrong. Please try again.';
+  }
+
+  errorArea.classList.add('visible');
+  errorArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════════════════
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── Markdown parser for AI essay feedback response ──
+function parseEssayFeedback(text) {
+  const result = { scores: {}, strengths: [], improvements: [], summary: '' };
+
+  // Map display labels to score keys
+  const scoreMap = {
+    'Structure': 'structure',
+    'Authentic Voice': 'authentic_voice',
+    'Specificity': 'specificity',
+    'Minerva Fit': 'minerva_fit',
+    'Growth/Reflection': 'growth_reflection',
+    'Growth & Reflection': 'growth_reflection',
+    'Growth': 'growth_reflection'
+  };
+
+  // Extract scores: **Label: X/10** — explanation
+  const scoreRe = /\*\*([^:*]+):\s*(\d+)\/10\*\*\s*[—–-]+\s*(.+)/g;
+  let m;
+  while ((m = scoreRe.exec(text)) !== null) {
+    const key = scoreMap[m[1].trim()];
+    if (key) result.scores[key] = { score: parseInt(m[2]), feedback: m[3].trim() };
+  }
+
+  // Extract bullet sections
+  const sectionRe = /##\s+([^\n]+)\n([\s\S]*?)(?=\n##\s|\s*$)/g;
+  while ((m = sectionRe.exec(text)) !== null) {
+    const heading = m[1].trim();
+    const body = m[2].trim();
+    if (/Strengths/i.test(heading)) {
+      result.strengths = parseBullets(body);
+    } else if (/Improv|Areas/i.test(heading)) {
+      result.improvements = parseBullets(body);
+    } else if (/Overall|Assessment/i.test(heading)) {
+      result.summary = body;
+    }
+  }
+
+  return result;
+}
+
+function parseBullets(text) {
+  return text.split('\n')
+    .filter(l => /^[-•*]\s/.test(l.trim()))
+    .map(l => l.trim().replace(/^[-•*]\s+/, '').trim())
+    .filter(Boolean);
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', function() {
+  const textarea = document.getElementById('essay-text');
+  const typeSelect = document.getElementById('essay-type');
+
+  // Restore draft
+  const draft = loadDraft();
+  if (draft.essay) textarea.value = draft.essay;
+  if (draft.type) typeSelect.value = draft.type;
+  updateCounts();
+
+  // Live updates
+  let saveTimeout;
+  textarea.addEventListener('input', function() {
+    updateCounts();
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveDraft, 500);
+  });
+
+  typeSelect.addEventListener('change', saveDraft);
+});
+</script>
+
+</body>
+</html>

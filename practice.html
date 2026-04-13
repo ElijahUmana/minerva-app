@@ -525,6 +525,143 @@ footer a { color: var(--clay); text-decoration: none; }
 @media (max-width: 480px) {
   .progress-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── AI Feedback ─────────────────────────────────────── */
+.btn-ai {
+  background: linear-gradient(135deg, var(--obsidian), #16213e);
+  color: var(--bone);
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+.btn-ai:hover { background: linear-gradient(135deg, #16213e, #0f3460); }
+.btn-ai:disabled { opacity: 0.6; cursor: default; }
+.ai-score-card {
+  background: var(--light-gray);
+  border: 1px solid var(--mid-gray);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+.ai-score-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--mid-gray);
+}
+.ai-score-gauge {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--clay);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: var(--white);
+}
+.ai-score-num { font-size: 1.4rem; font-weight: 800; line-height: 1; }
+.ai-score-denom { font-size: 0.65rem; color: var(--text2); line-height: 1; }
+.ai-score-label { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.ai-score-sublabel { font-size: 0.8rem; color: var(--text2); margin-top: 0.15rem; }
+.ai-assess-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.75rem; margin-bottom: 0.75rem;
+}
+.ai-assess-item {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 8px; padding: 0.75rem;
+}
+.ai-assess-label {
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--text2); margin-bottom: 0.3rem;
+}
+.ai-assess-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+.ai-lists-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+}
+.ai-list-section {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 8px; padding: 0.75rem;
+}
+.ai-list-label {
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  margin-bottom: 0.4rem; padding-bottom: 0.3rem;
+  border-bottom: 2px solid;
+}
+.ai-strengths-label { color: var(--green); border-color: var(--green); }
+.ai-improvements-label { color: var(--clay); border-color: var(--clay); }
+.ai-list { list-style: none; padding: 0; }
+.ai-list li {
+  font-size: 0.83rem; color: var(--text);
+  line-height: 1.4; padding: 0.3rem 0;
+  border-bottom: 1px solid var(--mid-gray);
+}
+.ai-list li:last-child { border-bottom: none; }
+.ai-list li::before { content: '→'; color: var(--text2); margin-right: 0.4rem; font-size: 0.75rem; }
+.ai-feedback-loading {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 1rem; color: var(--text2); font-size: 0.88rem;
+}
+.ai-loading-header {
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.ai-spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--mid-gray);
+  border-top-color: var(--clay);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-shimmer-lines { display: flex; flex-direction: column; gap: 0.5rem; }
+.ai-shimmer-line {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--mid-gray) 25%, #f0f0f0 50%, var(--mid-gray) 75%);
+  background-size: 200% 100%;
+  animation: aiShimmer 1.5s infinite;
+}
+.ai-shimmer-line:nth-child(1) { width: 40%; }
+.ai-shimmer-line:nth-child(2) { width: 85%; }
+.ai-shimmer-line:nth-child(3) { width: 65%; }
+@keyframes aiShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.ai-feedback-error {
+  padding: 0.75rem 1rem;
+  background: rgba(200,85,61,0.08);
+  border: 1px solid rgba(200,85,61,0.25);
+  border-radius: 8px;
+  color: var(--clay-dark);
+  font-size: 0.88rem;
+  margin-top: 0.75rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.ai-feedback-error .ai-retry-btn {
+  background: var(--clay); color: white; border: none;
+  border-radius: 6px; padding: 0.35rem 0.85rem;
+  font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: background 0.2s;
+  margin-left: auto; white-space: nowrap;
+}
+.ai-feedback-error .ai-retry-btn:hover { background: var(--clay-light); }
+.ai-model-response {
+  background: var(--white);
+  border: 1px solid var(--mid-gray);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+}
+@media (max-width: 600px) {
+  .ai-assess-grid, .ai-lists-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -537,6 +674,8 @@ footer a { color: var(--clay); text-decoration: none; }
       <a href="timeline.html">Timeline</a>
       <a href="practice.html" class="active">Practice</a>
       <a href="essays.html">Essays</a>
+      <a href="essay-feedback.html">Essay Feedback</a>
+      <a href="interview.html">Interview</a>
       <a href="simulator.html">Simulator</a>
       <a href="resources.html">Resources</a>
     </div>
@@ -1286,8 +1425,10 @@ function renderLateralThinking() {
   html += '<textarea class="lt-input" id="ltInput' + idx + '" placeholder="Type your answer before revealing the solution..." oninput="saveLateralResponse(' + idx + ')">' + response + '</textarea>';
   html += '<div class="lt-controls">';
   html += '<button class="btn btn-primary btn-small" onclick="revealLateral(' + idx + ')" id="ltRevealBtn' + idx + '">Reveal Answer</button>';
+  html += '<button class="btn btn-ai btn-small" id="ltAIBtn' + idx + '" onclick="getAIFeedback(\'lateral_thinking\',' + idx + ',\'ltInput' + idx + '\',\'ltAIBtn' + idx + '\',\'ltAIFeedback' + idx + '\')">Get AI Feedback</button>';
   html += '<span style="font-size:0.78rem;color:var(--text2);margin-left:0.5rem;">Hint: ' + p.hint + '</span>';
   html += '</div>';
+  html += '<div id="ltAIFeedback' + idx + '"></div>';
 
   html += '<div class="lt-answer' + (rating !== undefined ? ' show' : '') + '" id="ltAnswer' + idx + '">';
   html += '<div class="lt-answer-label">Answer</div>';
@@ -1408,6 +1549,10 @@ function renderCreativeProblemSolving() {
   html += '</ul>';
   html += '<div class="cp-sample-label">Sample Strong Response</div>';
   html += '<div class="cp-sample-text">' + p.sampleResponse + '</div>';
+  html += '<div style="margin-top:1.25rem;border-top:1px solid var(--mid-gray);padding-top:1.25rem;">';
+  html += '<button class="btn btn-ai btn-small" id="cpAIBtn' + idx + '" onclick="getAIFeedback(\'creative_problem_solving\',' + idx + ',\'cpTextarea' + idx + '\',\'cpAIBtn' + idx + '\',\'cpAIFeedback' + idx + '\')">Get AI Feedback</button>';
+  html += '<div id="cpAIFeedback' + idx + '"></div>';
+  html += '</div>';
   html += '</div>';
   html += '</div>';
 
@@ -1722,6 +1867,152 @@ function resetArgument() {
   saveState();
   renderArgumentAnalysis();
   updateProgress();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// AI EVALUATION
+// ═══════════════════════════════════════════════════════
+
+async function getAIFeedback(challengeType, puzzleIdx, inputId, btnId, containerId) {
+  const btn = document.getElementById(btnId);
+  const container = document.getElementById(containerId);
+  const answer = (document.getElementById(inputId)?.value || '').trim();
+
+  if (!answer) {
+    container.innerHTML = '<div class="ai-feedback-error"><span>Please write your answer first before requesting feedback.</span></div>';
+    return;
+  }
+  if (answer.length < 10) {
+    container.innerHTML = '<div class="ai-feedback-error"><span>Please write a more detailed answer before requesting feedback.</span></div>';
+    return;
+  }
+
+  let question;
+  if (challengeType === 'lateral_thinking') question = lateralPuzzles[puzzleIdx].puzzle;
+  else if (challengeType === 'creative_problem_solving') question = creativeProblems[puzzleIdx].prompt;
+
+  btn.disabled = true;
+  btn.textContent = 'Getting Feedback\u2026';
+  container.innerHTML = '<div class="ai-feedback-loading">' +
+    '<div class="ai-loading-header"><div class="ai-spinner"></div><span>Analyzing your response\u2026</span></div>' +
+    '<div class="ai-shimmer-lines"><div class="ai-shimmer-line"></div><div class="ai-shimmer-line"></div><div class="ai-shimmer-line"></div></div>' +
+    '</div>';
+
+  try {
+    const res = await fetch('/api/challenge-eval', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ challenge_type: challengeType, question: question, answer: answer })
+    });
+    if (!res.ok) {
+      if (res.status === 429) throw new Error('rate_limit');
+      throw new Error('HTTP ' + res.status);
+    }
+    // Collect the full streamed text then parse as markdown
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+    }
+    container.innerHTML = renderAIScoreCard(parseChallengeEval(buffer));
+  } catch (err) {
+    var errMsg = 'Could not get feedback. Check your connection and try again.';
+    if (err.message === 'rate_limit') {
+      errMsg = 'Too many requests. Please wait 30\u201360 seconds before trying again.';
+    } else if (err.message.includes('500') || err.message.includes('server')) {
+      errMsg = 'Server error. This is usually temporary \u2014 try again in a few seconds.';
+    }
+    container.innerHTML = '<div class="ai-feedback-error"><span>' + errMsg + '</span>' +
+      '<button class="ai-retry-btn" onclick="getAIFeedback(\'' + challengeType + '\',' + puzzleIdx + ',\'' + inputId + '\',\'' + btnId + '\',\'' + containerId + '\')">Retry</button></div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Get AI Feedback';
+  }
+}
+
+function renderAIScoreCard(data) {
+  const score = Math.max(1, Math.min(10, Number(data.score) || 0));
+  const color = score >= 8 ? 'var(--green)' : score >= 5 ? 'var(--yellow)' : 'var(--clay)';
+  const label = score >= 9 ? 'Exceptional' : score >= 7 ? 'Strong' : score >= 5 ? 'Developing' : score >= 3 ? 'Needs Work' : 'Keep Practicing';
+
+  let h = '<div class="ai-score-card">';
+  h += '<div class="ai-score-header">';
+  h += '<div class="ai-score-gauge" style="border-color:' + color + '">';
+  h += '<div class="ai-score-num" style="color:' + color + '">' + score + '</div>';
+  h += '<div class="ai-score-denom">/ 10</div>';
+  h += '</div>';
+  h += '<div><div class="ai-score-label">AI Evaluation</div><div class="ai-score-sublabel">' + label + '</div></div>';
+  h += '</div>';
+
+  h += '<div class="ai-assess-grid">';
+  if (data.thinking_process) {
+    h += '<div class="ai-assess-item"><div class="ai-assess-label">Thinking Process</div><div class="ai-assess-text">' + data.thinking_process + '</div></div>';
+  }
+  if (data.creativity) {
+    h += '<div class="ai-assess-item"><div class="ai-assess-label">Creativity</div><div class="ai-assess-text">' + data.creativity + '</div></div>';
+  }
+  h += '</div>';
+
+  h += '<div class="ai-lists-grid">';
+  if (data.strengths && data.strengths.length) {
+    h += '<div class="ai-list-section"><div class="ai-list-label ai-strengths-label">Strengths</div><ul class="ai-list">';
+    data.strengths.forEach(function(s) { h += '<li>' + s + '</li>'; });
+    h += '</ul></div>';
+  }
+  if (data.improvements && data.improvements.length) {
+    h += '<div class="ai-list-section"><div class="ai-list-label ai-improvements-label">Areas for Improvement</div><ul class="ai-list">';
+    data.improvements.forEach(function(s) { h += '<li>' + s + '</li>'; });
+    h += '</ul></div>';
+  }
+  h += '</div>';
+
+  if (data.model_response) {
+    h += '<div class="ai-model-response"><div class="ai-assess-label" style="margin-bottom:0.4rem;">Model Strong Response</div>';
+    h += '<div class="ai-assess-text">' + data.model_response + '</div></div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+// ── Markdown parser for challenge-eval streaming response ──
+function parseChallengeEval(text) {
+  const result = { score: 0, thinking_process: '', creativity: '', strengths: [], improvements: [], model_response: '' };
+
+  const sectionRe = /##\s+([^\n]+)\n([\s\S]*?)(?=\n##\s|\s*$)/g;
+  let m;
+  while ((m = sectionRe.exec(text)) !== null) {
+    const heading = m[1].trim();
+    const body = m[2].trim();
+    if (/^Score/i.test(heading)) {
+      // Handle: "8", "8/10", "**8/10**", or inline "Score: 8/10"
+      const nm = body.match(/\b(10|[1-9])\b/);
+      if (nm) result.score = parseInt(nm[1]);
+    } else if (/Thinking/i.test(heading)) result.thinking_process = body;
+    else if (/Creativity/i.test(heading)) result.creativity = body;
+    else if (/Strengths/i.test(heading)) result.strengths = parseBullets(body);
+    else if (/Improv|Areas/i.test(heading)) result.improvements = parseBullets(body);
+    else if (/Model/i.test(heading)) result.model_response = body;
+  }
+
+  // Fallback: inline "Score: 7/10" anywhere
+  if (!result.score) {
+    const inline = text.match(/Score[:\s]+\*{0,2}(10|[1-9])(?:\/10)?\*{0,2}/i);
+    if (inline) result.score = parseInt(inline[1]);
+  }
+
+  return result;
+}
+
+function parseBullets(text) {
+  return text.split('\n')
+    .filter(function(l) { return /^[-•*]\s/.test(l.trim()); })
+    .map(function(l) { return l.trim().replace(/^[-•*]\s+/, '').trim(); })
+    .filter(Boolean);
 }
 
 
