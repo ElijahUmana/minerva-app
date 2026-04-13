@@ -2,7 +2,9 @@
 
 A comprehensive, multi-page web application to support prospective students in applying to Minerva University. Built by a current Minerva student with insider perspective and practical, actionable guidance across every stage of the application process.
 
-**Live App: [https://elijahumana.github.io/minerva-app](https://elijahumana.github.io/minerva-app)**
+**Live App: [https://minerva-app-ivory.vercel.app](https://minerva-app-ivory.vercel.app)**
+
+Also available at: [https://elijahumana.github.io/minerva-app](https://elijahumana.github.io/minerva-app) (static pages only, no AI features)
 
 ## Pages & Features
 
@@ -50,12 +52,34 @@ A comprehensive, multi-page web application to support prospective students in a
 - Section for parents and guardians
 - Searchable/filterable resource grid
 
+### [AI Essay Feedback](https://minerva-app-ivory.vercel.app/essay-feedback.html) (essay-feedback.html)
+- Paste your essay draft and get real AI feedback from Claude
+- Scores across 5 categories: Structure, Authentic Voice, Specificity, Minerva Fit, Growth/Reflection
+- Specific strengths identified with quotes from your essay
+- Actionable improvement suggestions
+- Streaming responses for real-time feedback display
+
+### [AI Mock Interview](https://minerva-app-ivory.vercel.app/interview.html) (interview.html)
+- Practice admissions interviews with an AI interviewer
+- 4 interview modes: Behavioral, Creative, Motivation, Rapid-Fire
+- Chat-style interface with streaming responses
+- Interview history and session review
+- End-of-interview performance summary
+
+### AI Challenge Evaluation (integrated in practice.html)
+- Get AI feedback on your creative problem solving and lateral thinking answers
+- Scored evaluation with thinking process and creativity assessments
+- Strengths, improvements, and model strong responses for comparison
+
 ## Tech Stack
 
-- Vanilla HTML5, CSS3, JavaScript (no frameworks, no dependencies)
+- Vanilla HTML5, CSS3, JavaScript (no frameworks)
+- Vercel serverless functions (Node.js) for AI API routes
+- Anthropic Claude Sonnet 4 for AI features
+- Streaming responses for real-time UX
 - Responsive design across all pages
-- All user data persists in localStorage (checklist progress, essay drafts, simulator results, practice scores)
-- Deployed via GitHub Pages
+- All user data persists in localStorage (checklist progress, essay drafts, simulator results, practice scores, interview history)
+- Deployed on Vercel (AI features) + GitHub Pages (static fallback)
 
 ## AI Disclosure
 
