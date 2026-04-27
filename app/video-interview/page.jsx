@@ -1053,6 +1053,14 @@ export default function VideoInterviewPage() {
     }
   }, []);
 
+  /* ----------- Sync stream to video element after it mounts ----------- */
+  useEffect(() => {
+    if (cameraReady && streamRef.current && videoRef.current && !videoRef.current.srcObject) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(() => {});
+    }
+  });
+
   /* ----------- Load MediaPipe models when camera is ready ----------- */
   useEffect(() => {
     if (!cameraReady) return;
